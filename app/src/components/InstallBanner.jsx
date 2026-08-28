@@ -27,7 +27,7 @@ export default function InstallBanner() {
 
   return (
     <>
-      <div className="sticky top-0 z-20 flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-white">
+      <div className="relative z-20 flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-white">
         <p className="text-sm">Installe l'app BDE sur ton écran d'accueil</p>
         <div className="flex shrink-0 items-center gap-2">
           <button

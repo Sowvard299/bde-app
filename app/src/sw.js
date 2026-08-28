@@ -4,6 +4,10 @@ import { registerRoute } from 'workbox-routing'
 import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 
+// Merges OneSignal's push handlers into this same service worker/scope
+// instead of registering a second worker, which would collide with this one.
+importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js')
+
 self.skipWaiting()
 clientsClaim()
 cleanupOutdatedCaches()
@@ -25,8 +29,3 @@ registerRoute(
     plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 })],
   })
 )
-
-// OneSignal will register its own service worker for push (step 7). To avoid
-// two workers fighting over the same scope, its script gets merged in here
-// with importScripts('OneSignalSDKWorker.js') once push is wired up, instead
-// of living at a separate URL.

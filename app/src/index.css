@@ -1,13 +1,37 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Advercase";
+  src: url("./assets/fonts/Advercase-Regular.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("./assets/fonts/neuemontreal-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("./assets/fonts/neuemontreal-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-ink: #0f1564;
   --color-accent: #ff4214;
   --color-accent-pink: #ff66c4;
   --color-accent-gold: #ffc300;
 
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Advercase", ui-serif, Georgia, serif;
+  --font-sans: "Neue Montreal", system-ui, sans-serif;
 }
 
 html {

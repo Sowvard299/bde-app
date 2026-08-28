@@ -1,4 +1,5 @@
 import logoWhite from '../assets/logo-mark-white.png'
+import NotificationSettings from '../components/NotificationSettings'
 
 // TODO: renseigner ces deux valeurs dès qu'elles sont connues.
 const HELLOASSO_URL = null // ex: 'https://www.helloasso.com/associations/.../adhesions/...'
@@ -62,6 +63,8 @@ export default function MaCarteBdePage() {
         Sur HelloAsso, une contribution volontaire à l'association sera proposée au moment du
         paiement — elle n'est pas obligatoire, tu peux la mettre à 0 €.
       </p>
+
+      <NotificationSettings />
     </main>
   )
 }

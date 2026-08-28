@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { fetchEventById } from '../lib/events'
 import { formatEventDateTime } from '../lib/formatDate'
 import { downloadEventIcs } from '../lib/ics'
+import { markEventViewed } from '../components/PushOptInBanner'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -15,6 +16,7 @@ export default function EvenementDetailPage() {
       .then((data) => {
         setEvent(data)
         setStatus('ok')
+        markEventViewed()
       })
       .catch((err) => {
         console.error(err)
