@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { OneSignal, initOneSignal } from '../lib/onesignal'
 
 export function usePushSubscription() {
-  const [ready, setReady] = useState(false)
+  const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'unavailable'
   const [permission, setPermission] = useState(false)
   const [optedIn, setOptedIn] = useState(false)
 
@@ -10,24 +10,33 @@ export function usePushSubscription() {
     let cancelled = false
     let cleanup = () => {}
 
-    initOneSignal().then((available) => {
-      if (cancelled || !available) return
+    initOneSignal()
+      .then((available) => {
+        if (cancelled) return
+        if (!available) {
+          setStatus('unavailable')
+          return
+        }
 
-      setPermission(Boolean(OneSignal.Notifications.permission))
-      setOptedIn(Boolean(OneSignal.User.PushSubscription.optedIn))
-      setReady(true)
+        setPermission(Boolean(OneSignal.Notifications.permission))
+        setOptedIn(Boolean(OneSignal.User.PushSubscription.optedIn))
+        setStatus('ready')
 
-      const onPermissionChange = (value) => setPermission(Boolean(value))
-      const onSubscriptionChange = (event) => setOptedIn(Boolean(event.current.optedIn))
+        const onPermissionChange = (value) => setPermission(Boolean(value))
+        const onSubscriptionChange = (event) => setOptedIn(Boolean(event.current.optedIn))
 
-      OneSignal.Notifications.addEventListener('permissionChange', onPermissionChange)
-      OneSignal.User.PushSubscription.addEventListener('change', onSubscriptionChange)
+        OneSignal.Notifications.addEventListener('permissionChange', onPermissionChange)
+        OneSignal.User.PushSubscription.addEventListener('change', onSubscriptionChange)
 
-      cleanup = () => {
-        OneSignal.Notifications.removeEventListener('permissionChange', onPermissionChange)
-        OneSignal.User.PushSubscription.removeEventListener('change', onSubscriptionChange)
-      }
-    })
+        cleanup = () => {
+          OneSignal.Notifications.removeEventListener('permissionChange', onPermissionChange)
+          OneSignal.User.PushSubscription.removeEventListener('change', onSubscriptionChange)
+        }
+      })
+      .catch((err) => {
+        console.error('OneSignal init failed', err)
+        if (!cancelled) setStatus('unavailable')
+      })
 
     return () => {
       cancelled = true
@@ -46,5 +55,13 @@ export function usePushSubscription() {
     await OneSignal.User.PushSubscription.optOut()
   }, [])
 
-  return { ready, permission, optedIn, subscribe, unsubscribe }
+  return {
+    ready: status === 'ready',
+    loading: status === 'loading',
+    unavailable: status === 'unavailable',
+    permission,
+    optedIn,
+    subscribe,
+    unsubscribe,
+  }
 }
