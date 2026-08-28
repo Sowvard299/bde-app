@@ -20,8 +20,8 @@ export default function MentionsLegalesPage() {
         <p>Directrice de la publication : Emma Lagenèbre, Présidente.</p>
         <p>
           Contact :{' '}
-          <a href="mailto:nathanlefol00@gmail.com" className="text-accent underline">
-            nathanlefol00@gmail.com
+          <a href="mailto:bde.iaeparis@gmail.com" className="text-accent underline">
+            bde.iaeparis@gmail.com
           </a>
         </p>
       </Section>

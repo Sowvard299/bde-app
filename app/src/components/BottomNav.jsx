@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 
 const TABS = [
+  { to: '/accueil', label: 'Accueil' },
   { to: '/evenements', label: 'Événements' },
   { to: '/partenaires', label: 'Partenaires' },
   { to: '/carte-bde', label: 'Ma carte' },

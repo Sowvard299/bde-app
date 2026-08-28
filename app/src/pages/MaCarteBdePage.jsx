@@ -2,8 +2,9 @@ import logoWhite from '../assets/logo-mark-white.png'
 import NotificationSettings from '../components/NotificationSettings'
 import AppFooter from '../components/AppFooter'
 
-// TODO: renseigner ces deux valeurs dès qu'elles sont connues.
-const HELLOASSO_URL = null // ex: 'https://www.helloasso.com/associations/.../adhesions/...'
+const HELLOASSO_URL =
+  'https://www.helloasso.com/associations/nouveau-bureau-des-etudiants-de-l-institut-d-administration-des-entreprises-de-paris/evenements/carte-partenariats-2026-2027'
+// TODO: renseigner le prix dès qu'il est connu.
 const CARD_PRICE = null // ex: '15 €'
 
 const AVANTAGES = [

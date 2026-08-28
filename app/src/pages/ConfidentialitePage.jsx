@@ -20,8 +20,8 @@ export default function ConfidentialitePage() {
       <Section title="Responsable du traitement">
         <p>
           NBDE IAE Paris, 11-15 rue Ponscarme, 75013 Paris —{' '}
-          <a href="mailto:nathanlefol00@gmail.com" className="text-accent underline">
-            nathanlefol00@gmail.com
+          <a href="mailto:bde.iaeparis@gmail.com" className="text-accent underline">
+            bde.iaeparis@gmail.com
           </a>
         </p>
       </Section>
@@ -71,8 +71,8 @@ export default function ConfidentialitePage() {
         <p>
           Conformément au RGPD, tu peux demander l'accès, la rectification ou la suppression des
           données te concernant en écrivant à{' '}
-          <a href="mailto:nathanlefol00@gmail.com" className="text-accent underline">
-            nathanlefol00@gmail.com
+          <a href="mailto:bde.iaeparis@gmail.com" className="text-accent underline">
+            bde.iaeparis@gmail.com
           </a>
           .
         </p>

@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import AccueilPage from './pages/AccueilPage'
 import PartenairesPage from './pages/PartenairesPage'
 import PartenaireDetailPage from './pages/PartenaireDetailPage'
 import EvenementsPage from './pages/EvenementsPage'
@@ -16,7 +17,8 @@ function App() {
       <InstallBanner />
       <PushOptInBanner />
       <Routes>
-        <Route path="/" element={<Navigate to="/evenements" replace />} />
+        <Route path="/" element={<Navigate to="/accueil" replace />} />
+        <Route path="/accueil" element={<AccueilPage />} />
         <Route path="/evenements" element={<EvenementsPage />} />
         <Route path="/evenements/:id" element={<EvenementDetailPage />} />
         <Route path="/partenaires" element={<PartenairesPage />} />
