@@ -3,7 +3,7 @@ import { usePushSubscription } from '../hooks/usePushSubscription'
 import { isIosSafari, isStandalone } from '../lib/platform'
 
 export default function NotificationSettings() {
-  const { ready, loading, unavailable, permission, optedIn, subscribe, unsubscribe } =
+  const { ready, loading, unavailable, error: initError, permission, optedIn, subscribe, unsubscribe } =
     usePushSubscription()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
@@ -37,6 +37,9 @@ export default function NotificationSettings() {
         <p className="text-sm text-neutral-500">
           Les notifications ne sont pas disponibles pour le moment sur cet appareil.
         </p>
+        {initError && (
+          <p className="mt-1 select-all break-words text-xs text-neutral-400">{initError}</p>
+        )}
       </div>
     )
   }

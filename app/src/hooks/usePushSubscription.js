@@ -1,10 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { OneSignal, initOneSignal } from '../lib/onesignal'
 
+function envSupport() {
+  return {
+    secureContext: typeof window.isSecureContext === 'boolean' ? window.isSecureContext : 'n/a',
+    serviceWorker: 'serviceWorker' in navigator,
+    pushManager: 'PushManager' in window,
+    notification: 'Notification' in window,
+  }
+}
+
 export function usePushSubscription() {
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'unavailable'
   const [permission, setPermission] = useState(false)
   const [optedIn, setOptedIn] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -14,6 +24,7 @@ export function usePushSubscription() {
       .then((available) => {
         if (cancelled) return
         if (!available) {
+          setError('VITE_ONESIGNAL_APP_ID manquant')
           setStatus('unavailable')
           return
         }
@@ -35,7 +46,13 @@ export function usePushSubscription() {
       })
       .catch((err) => {
         console.error('OneSignal init failed', err)
-        if (!cancelled) setStatus('unavailable')
+        if (cancelled) return
+        const support = envSupport()
+        const supportStr = Object.entries(support)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(', ')
+        setError(`${err?.message || String(err)} · ${supportStr}`)
+        setStatus('unavailable')
       })
 
     return () => {
@@ -59,6 +76,7 @@ export function usePushSubscription() {
     ready: status === 'ready',
     loading: status === 'loading',
     unavailable: status === 'unavailable',
+    error,
     permission,
     optedIn,
     subscribe,
