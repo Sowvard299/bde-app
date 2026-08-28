@@ -5,6 +5,7 @@ import EventCard from '../components/EventCard'
 import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
 import ViewToggle from '../components/ViewToggle'
+import AppFooter from '../components/AppFooter'
 
 const todayParts = getParisDateParts(new Date().toISOString())
 const todayKey = `${todayParts.year}-${String(todayParts.month).padStart(2, '0')}-${String(todayParts.day).padStart(2, '0')}`
@@ -110,6 +111,8 @@ export default function EvenementsPage() {
           )}
         </div>
       )}
+
+      <AppFooter />
     </main>
   )
 }

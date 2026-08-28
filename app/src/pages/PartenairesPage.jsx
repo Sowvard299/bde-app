@@ -4,6 +4,7 @@ import PartnerRow from '../components/PartnerRow'
 import CategoryChips from '../components/CategoryChips'
 import PartnersMap from '../components/PartnersMap'
 import ViewToggle from '../components/ViewToggle'
+import AppFooter from '../components/AppFooter'
 
 export default function PartenairesPage() {
   const [partners, setPartners] = useState(null)
@@ -98,6 +99,8 @@ export default function PartenairesPage() {
       {!error && filtered.length > 0 && view === 'carte' && (
         <PartnersMap partners={filtered} />
       )}
+
+      <AppFooter />
     </main>
   )
 }

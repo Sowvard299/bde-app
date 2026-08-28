@@ -1,5 +1,6 @@
 import logoWhite from '../assets/logo-mark-white.png'
 import NotificationSettings from '../components/NotificationSettings'
+import AppFooter from '../components/AppFooter'
 
 // TODO: renseigner ces deux valeurs dès qu'elles sont connues.
 const HELLOASSO_URL = null // ex: 'https://www.helloasso.com/associations/.../adhesions/...'
@@ -65,6 +66,8 @@ export default function MaCarteBdePage() {
       </p>
 
       <NotificationSettings />
+
+      <AppFooter />
     </main>
   )
 }

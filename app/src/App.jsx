@@ -4,6 +4,8 @@ import PartenaireDetailPage from './pages/PartenaireDetailPage'
 import EvenementsPage from './pages/EvenementsPage'
 import EvenementDetailPage from './pages/EvenementDetailPage'
 import MaCarteBdePage from './pages/MaCarteBdePage'
+import MentionsLegalesPage from './pages/MentionsLegalesPage'
+import ConfidentialitePage from './pages/ConfidentialitePage'
 import BottomNav from './components/BottomNav'
 import InstallBanner from './components/InstallBanner'
 import PushOptInBanner from './components/PushOptInBanner'
@@ -20,6 +22,8 @@ function App() {
         <Route path="/partenaires" element={<PartenairesPage />} />
         <Route path="/partenaires/:id" element={<PartenaireDetailPage />} />
         <Route path="/carte-bde" element={<MaCarteBdePage />} />
+        <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+        <Route path="/confidentialite" element={<ConfidentialitePage />} />
       </Routes>
       <BottomNav />
     </>

@@ -4,6 +4,7 @@ import { fetchEventById } from '../lib/events'
 import { formatEventDateTime } from '../lib/formatDate'
 import { downloadEventIcs } from '../lib/ics'
 import { markEventViewed } from '../components/PushOptInBanner'
+import AppFooter from '../components/AppFooter'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -41,6 +42,7 @@ export default function EvenementDetailPage() {
         <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">
           Cet événement est introuvable.
         </p>
+        <AppFooter />
       </main>
     )
   }
@@ -96,6 +98,8 @@ export default function EvenementDetailPage() {
             </a>
           )}
         </div>
+
+        <AppFooter />
       </div>
     </main>
   )

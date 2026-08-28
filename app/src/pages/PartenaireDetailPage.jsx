@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchPartnerById } from '../lib/partners'
 import PartnerMiniMap from '../components/PartnerMiniMap'
+import AppFooter from '../components/AppFooter'
 
 export default function PartenaireDetailPage() {
   const { id } = useParams()
@@ -36,6 +37,7 @@ export default function PartenaireDetailPage() {
           ‹ Retour aux partenaires
         </Link>
         <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">Ce partenaire est introuvable.</p>
+        <AppFooter />
       </main>
     )
   }
@@ -107,6 +109,8 @@ export default function PartenaireDetailPage() {
           </a>
         )}
       </div>
+
+      <AppFooter />
     </main>
   )
 }
