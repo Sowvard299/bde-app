@@ -3,7 +3,7 @@ import PartenairesPage from './pages/PartenairesPage'
 import PartenaireDetailPage from './pages/PartenaireDetailPage'
 import EvenementsPage from './pages/EvenementsPage'
 import EvenementDetailPage from './pages/EvenementDetailPage'
-import CartePage from './pages/CartePage'
+import MaCarteBdePage from './pages/MaCarteBdePage'
 import BottomNav from './components/BottomNav'
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
         <Route path="/evenements/:id" element={<EvenementDetailPage />} />
         <Route path="/partenaires" element={<PartenairesPage />} />
         <Route path="/partenaires/:id" element={<PartenaireDetailPage />} />
-        <Route path="/carte" element={<CartePage />} />
+        <Route path="/carte-bde" element={<MaCarteBdePage />} />
       </Routes>
       <BottomNav />
     </>

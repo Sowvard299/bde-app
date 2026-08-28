@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { fetchCategories, fetchPartners } from '../lib/partners'
 import PartnerRow from '../components/PartnerRow'
 import CategoryChips from '../components/CategoryChips'
+import PartnersMap from '../components/PartnersMap'
+import ViewToggle from '../components/ViewToggle'
 
 export default function PartenairesPage() {
   const [partners, setPartners] = useState(null)
@@ -9,6 +11,7 @@ export default function PartenairesPage() {
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [activeSlug, setActiveSlug] = useState(null)
+  const [view, setView] = useState('liste')
 
   useEffect(() => {
     Promise.all([fetchPartners(), fetchCategories()])
@@ -40,6 +43,15 @@ export default function PartenairesPage() {
   return (
     <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
       <h1 className="font-display text-2xl font-semibold text-ink">Partenaires</h1>
+
+      <ViewToggle
+        options={[
+          { value: 'liste', label: 'Liste' },
+          { value: 'carte', label: 'Carte' },
+        ]}
+        value={view}
+        onChange={setView}
+      />
 
       <input
         type="search"
@@ -75,11 +87,17 @@ export default function PartenairesPage() {
         </p>
       )}
 
-      <ul className="flex flex-col gap-2">
-        {filtered.map((partner) => (
-          <PartnerRow key={partner.id} partner={partner} />
-        ))}
-      </ul>
+      {!error && filtered.length > 0 && view === 'liste' && (
+        <ul className="flex flex-col gap-2">
+          {filtered.map((partner) => (
+            <PartnerRow key={partner.id} partner={partner} />
+          ))}
+        </ul>
+      )}
+
+      {!error && filtered.length > 0 && view === 'carte' && (
+        <PartnersMap partners={filtered} />
+      )}
     </main>
   )
 }

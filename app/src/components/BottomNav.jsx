@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 const TABS = [
   { to: '/evenements', label: 'Événements' },
   { to: '/partenaires', label: 'Partenaires' },
-  { to: '/carte', label: 'Carte' },
+  { to: '/carte-bde', label: 'Ma carte' },
 ]
 
 export default function BottomNav() {
