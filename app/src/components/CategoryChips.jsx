@@ -23,7 +23,7 @@ function Chip({ label, active, onClick }) {
       className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
         active
           ? 'border-accent bg-accent text-white'
-          : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+          : 'border-line bg-surface text-fg-muted hover:border-fg-subtle'
       }`}
     >
       {label}

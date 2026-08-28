@@ -6,7 +6,7 @@ export default function EventCard({ event }) {
     <li>
       <Link
         to={`/evenements/${event.id}`}
-        className="block overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="block overflow-hidden rounded-2xl border border-line bg-surface transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {event.image_url ? (
           <img
@@ -26,9 +26,9 @@ export default function EventCard({ event }) {
           <span className="text-sm font-semibold uppercase tracking-wide text-accent">
             {formatEventDateTime(event.starts_at)}
           </span>
-          <span className="font-display text-xl font-semibold text-ink">{event.title}</span>
+          <span className="font-display text-xl font-semibold text-fg">{event.title}</span>
           {event.location_name && (
-            <span className="text-sm text-neutral-500">{event.location_name}</span>
+            <span className="text-sm text-fg-faint">{event.location_name}</span>
           )}
         </div>
       </Link>

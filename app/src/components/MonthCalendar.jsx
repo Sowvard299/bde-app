@@ -23,18 +23,18 @@ export default function MonthCalendar({ year, month, eventDays, selectedDay, tod
           type="button"
           onClick={() => onChangeMonth(-1)}
           aria-label="Mois précédent"
-          className="rounded-full p-2 text-neutral-500 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          className="rounded-full p-2 text-fg-faint hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
         >
           ‹
         </button>
-        <span className="font-display text-base font-semibold capitalize text-ink">
+        <span className="font-display text-base font-semibold capitalize text-fg">
           {MONTH_LABEL.format(new Date(year, month, 1))}
         </span>
         <button
           type="button"
           onClick={() => onChangeMonth(1)}
           aria-label="Mois suivant"
-          className="rounded-full p-2 text-neutral-500 hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          className="rounded-full p-2 text-fg-faint hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
         >
           ›
         </button>
@@ -42,7 +42,7 @@ export default function MonthCalendar({ year, month, eventDays, selectedDay, tod
 
       <div className="grid grid-cols-7 gap-y-1 text-center">
         {WEEKDAYS.map((day, i) => (
-          <span key={i} className="text-xs font-medium text-neutral-400">
+          <span key={i} className="text-xs font-medium text-fg-subtle">
             {day}
           </span>
         ))}
@@ -66,8 +66,8 @@ export default function MonthCalendar({ year, month, eventDays, selectedDay, tod
                   : isToday
                     ? 'font-semibold text-accent'
                     : hasEvent
-                      ? 'font-medium text-ink hover:bg-neutral-100'
-                      : 'text-neutral-300'
+                      ? 'font-medium text-fg hover:bg-surface'
+                      : 'text-fg-subtle'
               }`}
             >
               {day}

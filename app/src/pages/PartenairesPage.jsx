@@ -42,8 +42,8 @@ export default function PartenairesPage() {
   }, [partners, search, activeSlug])
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
-      <h1 className="font-display text-2xl font-semibold text-ink">Partenaires</h1>
+    <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-6xl lg:px-10 lg:pb-16 lg:pt-12">
+      <h1 className="font-display text-2xl font-semibold text-fg lg:text-3xl">Partenaires</h1>
 
       <ViewToggle
         options={[
@@ -59,7 +59,7 @@ export default function PartenairesPage() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Rechercher un partenaire"
-        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-base text-fg placeholder:text-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:max-w-sm"
       />
 
       {categories.length > 0 && (
@@ -71,17 +71,17 @@ export default function PartenairesPage() {
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">
+        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">
           Impossible de charger les partenaires. Réessaie plus tard.
         </p>
       )}
 
       {!error && partners === null && (
-        <p className="text-neutral-500">Chargement…</p>
+        <p className="text-fg-faint">Chargement…</p>
       )}
 
       {!error && partners !== null && filtered.length === 0 && (
-        <p className="rounded-lg bg-neutral-50 px-4 py-6 text-center text-neutral-500">
+        <p className="rounded-lg bg-surface px-4 py-6 text-center text-fg-faint">
           {partners.length === 0
             ? 'Pas encore de partenaire — reviens vite'
             : 'Aucun partenaire ne correspond à ta recherche'}
@@ -89,7 +89,7 @@ export default function PartenairesPage() {
       )}
 
       {!error && filtered.length > 0 && view === 'liste' && (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
           {filtered.map((partner) => (
             <PartnerRow key={partner.id} partner={partner} />
           ))}

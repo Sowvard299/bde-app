@@ -20,29 +20,29 @@ export default function AccueilPage() {
   }, [])
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-8 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
-      <h1 className="font-display text-2xl font-semibold text-ink">
+    <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-8 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-6xl lg:px-10 lg:pb-16 lg:pt-12">
+      <h1 className="font-display text-2xl font-semibold text-fg lg:text-3xl">
         Bienvenue au BDE IAE Paris Sorbonne
       </h1>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-lg font-semibold text-ink">L'année en un coup d'œil</h2>
+          <h2 className="font-display text-lg font-semibold text-fg">L'année en un coup d'œil</h2>
           <Link to="/evenements" className="text-sm font-medium text-accent">
             Tout voir
           </Link>
         </div>
 
         {error && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">
+          <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">
             Impossible de charger les événements. Réessaie plus tard.
           </p>
         )}
 
-        {!error && events === null && <p className="text-neutral-500">Chargement…</p>}
+        {!error && events === null && <p className="text-fg-faint">Chargement…</p>}
 
         {!error && events !== null && events.length === 0 && (
-          <p className="rounded-lg bg-neutral-50 px-4 py-6 text-center text-neutral-500">
+          <p className="rounded-lg bg-surface px-4 py-6 text-center text-fg-faint">
             Pas encore d'événement — reviens vite
           </p>
         )}
@@ -69,17 +69,17 @@ export default function AccueilPage() {
       </Link>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-display text-lg font-semibold text-ink">Chaque mois</h2>
+        <h2 className="font-display text-lg font-semibold text-fg">Chaque mois</h2>
         <MonthlyActivities />
       </section>
 
       <Link
         to="/partenaires"
-        className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 p-4 transition hover:border-neutral-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="flex items-center justify-between gap-3 rounded-2xl border border-line p-4 transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <div>
-          <p className="font-display text-base font-semibold text-ink">Partenaires</p>
-          <p className="text-sm text-neutral-500">Toutes les réductions près de toi</p>
+          <p className="font-display text-base font-semibold text-fg">Partenaires</p>
+          <p className="text-sm text-fg-faint">Toutes les réductions près de toi</p>
         </div>
         <span className="text-accent">›</span>
       </Link>

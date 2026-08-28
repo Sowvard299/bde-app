@@ -8,7 +8,7 @@ export default function EventsSideScroll({ events }) {
         <Link
           key={event.id}
           to={`/evenements/${event.id}`}
-          className="flex w-40 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-neutral-200 transition hover:border-neutral-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="flex w-40 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-line bg-surface transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {event.image_url ? (
             <img src={event.image_url} alt="" className="h-24 w-full object-cover" />
@@ -21,7 +21,7 @@ export default function EventsSideScroll({ events }) {
             <p className="text-xs font-semibold uppercase tracking-wide text-accent">
               {formatEventDateShort(event.starts_at)} · {formatEventTime(event.starts_at)}
             </p>
-            <p className="line-clamp-2 font-display text-sm font-semibold text-ink">
+            <p className="line-clamp-2 font-display text-sm font-semibold text-fg">
               {event.title}
             </p>
           </div>

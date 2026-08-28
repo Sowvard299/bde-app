@@ -14,7 +14,7 @@ export default function PartnerRow({ partner }) {
     <li>
       <Link
         to={`/partenaires/${partner.id}`}
-        className="flex w-full items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3 text-left transition hover:border-neutral-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="flex w-full items-center gap-3 rounded-xl border border-line bg-surface p-3 text-left transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {partner.logo_url ? (
           <img
@@ -23,13 +23,13 @@ export default function PartnerRow({ partner }) {
             className="h-12 w-12 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-sm font-semibold text-neutral-500">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-muted text-sm font-semibold text-fg-faint">
             {initials(partner.name)}
           </span>
         )}
 
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm text-neutral-500">{partner.name}</span>
+          <span className="block truncate text-sm text-fg-faint">{partner.name}</span>
           <span className="block truncate text-base font-bold text-accent">
             {partner.benefit}
           </span>

@@ -22,8 +22,8 @@ export default defineConfig({
         short_name: 'BDE Sorbonne',
         description:
           "Événements, partenaires et carte du BDE de l'IAE Paris Sorbonne",
-        theme_color: '#0F1564',
-        background_color: '#0F1564',
+        theme_color: '#0A0A12',
+        background_color: '#0A0A12',
         display: 'standalone',
         start_url: '/',
         lang: 'fr',

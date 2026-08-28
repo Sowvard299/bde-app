@@ -23,11 +23,11 @@ const ACTIVITIES = [
 
 export default function MonthlyActivities() {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
       {ACTIVITIES.map((activity) => (
-        <div key={activity.title} className="rounded-xl bg-neutral-50 p-3">
-          <p className="font-display text-sm font-semibold text-ink">{activity.title}</p>
-          <p className="mt-0.5 text-xs text-neutral-500">{activity.description}</p>
+        <div key={activity.title} className="rounded-xl bg-surface p-3">
+          <p className="font-display text-sm font-semibold text-fg">{activity.title}</p>
+          <p className="mt-0.5 text-xs text-fg-faint">{activity.description}</p>
         </div>
       ))}
     </div>

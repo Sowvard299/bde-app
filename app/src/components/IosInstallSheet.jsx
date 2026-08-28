@@ -5,10 +5,10 @@ export default function IosInstallSheet({ onClose }) {
         role="dialog"
         aria-label="Comment installer l'application"
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[480px] rounded-t-2xl bg-white p-6 pb-8 sm:max-w-xl lg:max-w-3xl"
+        className="w-full max-w-[480px] rounded-t-2xl bg-surface p-6 pb-8 sm:max-w-xl"
       >
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-neutral-200" />
-        <h2 className="font-display text-lg font-semibold text-ink">Installer l'application</h2>
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line" />
+        <h2 className="font-display text-lg font-semibold text-fg">Installer l'application</h2>
         <ol className="mt-4 flex flex-col gap-4">
           <Step number={1}>
             Appuie sur l'icône <ShareIcon /> <strong>Partager</strong> dans la barre Safari
@@ -38,7 +38,7 @@ function Step({ number, children }) {
       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white">
         {number}
       </span>
-      <p className="text-neutral-700">{children}</p>
+      <p className="text-fg-muted">{children}</p>
     </li>
   )
 }

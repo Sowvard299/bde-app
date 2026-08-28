@@ -16,8 +16,8 @@ const AVANTAGES = [
 
 export default function MaCarteBdePage() {
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
-      <h1 className="font-display text-2xl font-semibold text-ink">Ma carte BDE</h1>
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
+      <h1 className="font-display text-2xl font-semibold text-fg lg:text-3xl">Ma carte BDE</h1>
 
       <div className="relative flex flex-col gap-2 overflow-hidden rounded-2xl bg-ink p-6 text-white">
         <img
@@ -32,10 +32,10 @@ export default function MaCarteBdePage() {
       </div>
 
       <div>
-        <h2 className="mb-2 font-display text-lg font-semibold text-ink">Ce que ça te donne</h2>
+        <h2 className="mb-2 font-display text-lg font-semibold text-fg">Ce que ça te donne</h2>
         <ul className="flex flex-col gap-2">
           {AVANTAGES.map((avantage) => (
-            <li key={avantage} className="flex gap-2 text-neutral-700">
+            <li key={avantage} className="flex gap-2 text-fg-muted">
               <span className="text-accent">•</span>
               {avantage}
             </li>
@@ -55,13 +55,13 @@ export default function MaCarteBdePage() {
       ) : (
         <p
           aria-disabled="true"
-          className="rounded-full bg-neutral-200 px-4 py-4 text-center text-base font-semibold text-neutral-500"
+          className="rounded-full bg-surface-muted px-4 py-4 text-center text-base font-semibold text-fg-faint"
         >
           Lien HelloAsso à venir
         </p>
       )}
 
-      <p className="text-sm text-neutral-500">
+      <p className="text-sm text-fg-faint">
         Sur HelloAsso, une contribution volontaire à l'association sera proposée au moment du
         paiement — elle n'est pas obligatoire, tu peux la mettre à 0 €.
       </p>

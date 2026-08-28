@@ -24,26 +24,26 @@ export default function PartenaireDetailPage() {
 
   if (status === 'loading') {
     return (
-      <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
-        <p className="text-neutral-500">Chargement…</p>
+      <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
+        <p className="text-fg-faint">Chargement…</p>
       </main>
     )
   }
 
   if (status === 'error' || !partner) {
     return (
-      <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
+      <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
         <Link to="/partenaires" className="text-sm font-medium text-accent">
           ‹ Retour aux partenaires
         </Link>
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">Ce partenaire est introuvable.</p>
+        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">Ce partenaire est introuvable.</p>
         <AppFooter />
       </main>
     )
   }
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
       <Link to="/partenaires" className="text-sm font-medium text-accent">
         ‹ Retour aux partenaires
       </Link>
@@ -56,7 +56,7 @@ export default function PartenaireDetailPage() {
             className="h-16 w-16 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-lg font-semibold text-neutral-500">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-surface-muted text-lg font-semibold text-fg-faint">
             {partner.name
               .split(' ')
               .slice(0, 2)
@@ -67,32 +67,32 @@ export default function PartenaireDetailPage() {
         )}
 
         <div className="min-w-0">
-          <h1 className="font-display text-xl font-semibold text-ink">{partner.name}</h1>
+          <h1 className="font-display text-xl font-semibold text-fg">{partner.name}</h1>
           {partner.partner_categories && (
-            <p className="text-sm text-neutral-500">{partner.partner_categories.name}</p>
+            <p className="text-sm text-fg-faint">{partner.partner_categories.name}</p>
           )}
         </div>
       </div>
 
-      <p className="rounded-lg bg-accent/10 px-4 py-3 text-lg font-bold text-accent">
+      <p className="rounded-lg bg-accent/15 px-4 py-3 text-lg font-bold text-accent">
         {partner.benefit}
       </p>
 
       {partner.description && (
-        <p className="whitespace-pre-line text-neutral-700">{partner.description}</p>
+        <p className="whitespace-pre-line text-fg-muted">{partner.description}</p>
       )}
 
       {partner.latitude && partner.longitude && (
         <PartnerMiniMap latitude={partner.latitude} longitude={partner.longitude} />
       )}
 
-      {partner.address && <p className="text-neutral-700">{partner.address}</p>}
+      {partner.address && <p className="text-fg-muted">{partner.address}</p>}
 
       <div className="flex flex-col gap-2">
         {partner.phone && (
           <a
             href={`tel:${partner.phone.replace(/\s+/g, '')}`}
-            className="rounded-full border border-ink px-4 py-3 text-center text-sm font-semibold text-ink transition hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="rounded-full border border-line px-4 py-3 text-center text-sm font-semibold text-fg transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             {partner.phone}
           </a>

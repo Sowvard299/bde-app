@@ -50,8 +50,8 @@ export default function EvenementsPage() {
   const dayEvents = selectedDay ? eventsByDay.get(selectedDay) ?? [] : []
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
-      <h1 className="font-display text-2xl font-semibold text-ink">Événements</h1>
+    <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl lg:px-10 lg:pb-16 lg:pt-12">
+      <h1 className="font-display text-2xl font-semibold text-fg lg:text-3xl">Événements</h1>
 
       <ViewToggle
         options={[
@@ -63,15 +63,15 @@ export default function EvenementsPage() {
       />
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">
+        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">
           Impossible de charger les événements. Réessaie plus tard.
         </p>
       )}
 
-      {!error && events === null && <p className="text-neutral-500">Chargement…</p>}
+      {!error && events === null && <p className="text-fg-faint">Chargement…</p>}
 
       {!error && events !== null && events.length === 0 && (
-        <p className="rounded-lg bg-neutral-50 px-4 py-6 text-center text-neutral-500">
+        <p className="rounded-lg bg-surface px-4 py-6 text-center text-fg-faint">
           Pas encore d'événement — reviens vite
         </p>
       )}
@@ -105,7 +105,7 @@ export default function EvenementsPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-center text-sm text-neutral-400">
+            <p className="text-center text-sm text-fg-subtle">
               Touche une date avec un point pour voir les événements du jour
             </p>
           )}

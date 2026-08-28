@@ -27,26 +27,26 @@ export default function EventTimeline({ events }) {
     <div className="flex flex-col gap-8">
       {groups.map((group) => (
         <div key={group.key}>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wide text-ink/50">
+          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
             {MONTH_LABEL.format(new Date(group.year, group.month - 1, 1))}
           </h2>
 
-          <ol className="relative flex flex-col gap-6 border-l-2 border-ink/15 pl-6">
+          <ol className="relative flex flex-col gap-6 border-l-2 border-line pl-6">
             {group.events.map((event) => (
               <li key={event.id} className="relative">
-                <span className="absolute top-1.5 -left-[29px] h-3 w-3 rounded-full border-2 border-white bg-accent" />
+                <span className="absolute top-1.5 -left-[29px] h-3 w-3 rounded-full border-2 border-canvas bg-accent" />
 
                 <Link
                   to={`/evenements/${event.id}`}
-                  className="flex items-center gap-3 rounded-xl transition hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  className="flex items-center gap-3 rounded-xl transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
                   <div className="min-w-0 flex-1 py-1">
                     <p className="text-xs font-semibold uppercase tracking-wide text-accent">
                       {formatEventDateShort(event.starts_at)} · {formatEventTime(event.starts_at)}
                     </p>
-                    <p className="font-display text-lg font-semibold text-ink">{event.title}</p>
+                    <p className="font-display text-lg font-semibold text-fg">{event.title}</p>
                     {event.location_name && (
-                      <p className="truncate text-sm text-neutral-500">{event.location_name}</p>
+                      <p className="truncate text-sm text-fg-faint">{event.location_name}</p>
                     )}
                   </div>
 

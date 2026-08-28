@@ -2,17 +2,17 @@ import { Link } from 'react-router-dom'
 
 export default function ConfidentialitePage() {
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
       <div>
         <Link to="/evenements" className="text-sm font-medium text-accent">
           ‹ Retour
         </Link>
-        <h1 className="mt-2 font-display text-2xl font-semibold text-ink">
+        <h1 className="mt-2 font-display text-2xl font-semibold text-fg lg:text-3xl">
           Politique de confidentialité
         </h1>
       </div>
 
-      <p className="text-neutral-700">
+      <p className="text-fg-muted">
         Cette page explique quelles données sont utilisées par l'application BDE IAE Paris
         Sorbonne, et comment.
       </p>
@@ -84,8 +84,8 @@ export default function ConfidentialitePage() {
 function Section({ title, children }) {
   return (
     <div className="flex flex-col gap-1">
-      <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>
-      <div className="flex flex-col gap-1 text-neutral-700">{children}</div>
+      <h2 className="font-display text-lg font-semibold text-fg">{title}</h2>
+      <div className="flex flex-col gap-1 text-fg-muted">{children}</div>
     </div>
   )
 }

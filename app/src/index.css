@@ -30,18 +30,29 @@
   --color-accent-pink: #ff66c4;
   --color-accent-gold: #ffc300;
 
+  /* Dark theme surfaces/text, near-black with a faint navy tint. */
+  --color-canvas: #0a0a12;
+  --color-surface: #16161f;
+  --color-surface-muted: #1e1e2a;
+  --color-line: #2b2b38;
+  --color-fg: #f5f5f7;
+  --color-fg-muted: #c7c7d1;
+  --color-fg-faint: #94949f;
+  --color-fg-subtle: #6b6b78;
+
   --font-display: "Advercase", ui-serif, Georgia, serif;
   --font-sans: "Neue Montreal", system-ui, sans-serif;
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   min-height: 100svh;
-  background: #fff;
+  background: var(--color-canvas);
+  color: var(--color-fg);
   font-family: var(--font-sans);
 }
 

@@ -30,7 +30,7 @@ export default function PushOptInBanner() {
   }
 
   return (
-    <div className="relative z-20 flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-white">
+    <div className="relative z-20 hidden items-center justify-between gap-3 bg-ink px-4 py-2.5 text-white max-md:flex">
       <p className="text-sm">Active les notifications pour ne rater aucun événement</p>
       <div className="flex shrink-0 items-center gap-2">
         <button
