@@ -63,8 +63,32 @@ export function usePushSubscription() {
 
   const subscribe = useCallback(async () => {
     await initOneSignal()
-    await OneSignal.Notifications.requestPermission()
-    await OneSignal.User.PushSubscription.optIn()
+    const granted = await OneSignal.Notifications.requestPermission()
+    if (!granted) {
+      throw new Error('Permission refusée par le système')
+    }
+
+    // Granting permission should auto-create the push subscription, but
+    // that happens asynchronously — poll briefly instead of assuming
+    // it's instant.
+    let id = OneSignal.User.PushSubscription.id
+    for (let i = 0; i < 10 && !id; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      id = OneSignal.User.PushSubscription.id
+    }
+
+    if (!id) {
+      // Fallback in case auto-subscribe didn't fire.
+      await OneSignal.User.PushSubscription.optIn()
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      id = OneSignal.User.PushSubscription.id
+    }
+
+    if (!id) {
+      throw new Error('Permission accordée mais aucun abonnement créé (id vide)')
+    }
+
+    return id
   }, [])
 
   const unsubscribe = useCallback(async () => {

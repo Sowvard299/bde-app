@@ -7,6 +7,7 @@ export default function NotificationSettings() {
     usePushSubscription()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+  const [debugInfo, setDebugInfo] = useState(null)
 
   const iosBlocked = isIosSafari() && !isStandalone()
   if (iosBlocked) {
@@ -50,12 +51,19 @@ export default function NotificationSettings() {
 
   async function handleClick() {
     setError(null)
+    setDebugInfo(null)
     setBusy(true)
     try {
-      await (active ? unsubscribe() : subscribe())
+      if (active) {
+        await unsubscribe()
+        setDebugInfo('Désabonné')
+      } else {
+        const id = await subscribe()
+        setDebugInfo(`Abonné · id=${id}`)
+      }
     } catch (err) {
       console.error(err)
-      setError("Impossible de mettre à jour les notifications. Réessaie plus tard.")
+      setError(err?.message || 'Impossible de mettre à jour les notifications.')
     } finally {
       setBusy(false)
     }
@@ -81,7 +89,10 @@ export default function NotificationSettings() {
           {active ? 'Désactiver' : 'Activer'}
         </button>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="select-all break-words text-sm text-red-600">{error}</p>}
+      {debugInfo && (
+        <p className="select-all break-words text-xs text-neutral-400">{debugInfo}</p>
+      )}
     </div>
   )
 }
