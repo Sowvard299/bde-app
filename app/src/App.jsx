@@ -5,10 +5,12 @@ import EvenementsPage from './pages/EvenementsPage'
 import EvenementDetailPage from './pages/EvenementDetailPage'
 import MaCarteBdePage from './pages/MaCarteBdePage'
 import BottomNav from './components/BottomNav'
+import InstallBanner from './components/InstallBanner'
 
 function App() {
   return (
     <>
+      <InstallBanner />
       <Routes>
         <Route path="/" element={<Navigate to="/evenements" replace />} />
         <Route path="/evenements" element={<EvenementsPage />} />
