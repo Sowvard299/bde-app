@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function initials(name) {
   return name
     .split(' ')
@@ -10,8 +12,8 @@ function initials(name) {
 export default function PartnerRow({ partner }) {
   return (
     <li>
-      <button
-        type="button"
+      <Link
+        to={`/partenaires/${partner.id}`}
         className="flex w-full items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3 text-left transition hover:border-neutral-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {partner.logo_url ? (
@@ -32,7 +34,7 @@ export default function PartnerRow({ partner }) {
             {partner.benefit}
           </span>
         </span>
-      </button>
+      </Link>
     </li>
   )
 }

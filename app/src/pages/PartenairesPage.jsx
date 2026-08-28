@@ -38,7 +38,7 @@ export default function PartenairesPage() {
   }, [partners, search, activeSlug])
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6">
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
       <h1 className="font-display text-2xl font-semibold text-ink">Partenaires</h1>
 
       <input

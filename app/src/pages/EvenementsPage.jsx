@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { fetchUpcomingEvents } from '../lib/events'
 import { getParisDateParts } from '../lib/formatDate'
 import EventCard from '../components/EventCard'
+import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
 
 const todayParts = getParisDateParts(new Date().toISOString())
@@ -47,11 +48,11 @@ export default function EvenementsPage() {
   const dayEvents = selectedDay ? eventsByDay.get(selectedDay) ?? [] : []
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6">
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl">
       <h1 className="font-display text-2xl font-semibold text-ink">Événements</h1>
 
-      <div className="flex gap-1 rounded-full bg-neutral-100 p-1" role="tablist">
-        <ViewButton label="Liste" active={view === 'liste'} onClick={() => setView('liste')} />
+      <div className="flex gap-1 rounded-full bg-neutral-100 p-1 sm:w-fit" role="tablist">
+        <ViewButton label="Frise" active={view === 'liste'} onClick={() => setView('liste')} />
         <ViewButton label="Calendrier" active={view === 'calendrier'} onClick={() => setView('calendrier')} />
       </div>
 
@@ -70,11 +71,7 @@ export default function EvenementsPage() {
       )}
 
       {!error && events !== null && events.length > 0 && view === 'liste' && (
-        <ul className="flex flex-col gap-4">
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </ul>
+        <EventTimeline events={events} />
       )}
 
       {!error && events !== null && events.length > 0 && view === 'calendrier' && (

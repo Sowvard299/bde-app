@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 const TABS = [
   { to: '/evenements', label: 'Événements' },
   { to: '/partenaires', label: 'Partenaires' },
+  { to: '/carte', label: 'Carte' },
 ]
 
 export default function BottomNav() {
@@ -11,7 +12,7 @@ export default function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-10 border-t border-neutral-200 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
       aria-label="Navigation principale"
     >
-      <ul className="mx-auto flex max-w-[480px]">
+      <ul className="mx-auto flex max-w-[480px] sm:max-w-xl lg:max-w-3xl">
         {TABS.map((tab) => (
           <li key={tab.to} className="flex-1">
             <NavLink

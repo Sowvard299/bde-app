@@ -11,6 +11,18 @@ export async function fetchPartners() {
   return data
 }
 
+export async function fetchPartnerById(id) {
+  const { data, error } = await supabase
+    .from('partners')
+    .select('*, partner_categories(id, name, slug)')
+    .eq('is_published', true)
+    .eq('id', id)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export async function fetchCategories() {
   const { data, error } = await supabase
     .from('partner_categories')
