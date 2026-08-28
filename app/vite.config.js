@@ -9,7 +9,10 @@ export default defineConfig({
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
-      filename: 'sw.js',
+      // OneSignal's SDK checks for a service worker at this exact default
+      // filename regardless of the serviceWorkerPath override, so our merged
+      // worker keeps this name instead of "sw.js".
+      filename: 'OneSignalSDKWorker.js',
       registerType: 'autoUpdate',
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico}'],

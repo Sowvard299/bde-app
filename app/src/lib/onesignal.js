@@ -12,10 +12,10 @@ export function initOneSignal() {
       appId,
       // Our own service worker (registered by vite-plugin-pwa) already owns
       // this scope. Point OneSignal at it instead of letting it register a
-      // second worker, which would collide — src/sw.js merges OneSignal's
-      // push handlers in via importScripts.
+      // second worker, which would collide — src/OneSignalSDKWorker.js
+      // merges OneSignal's push handlers in via importScripts.
       serviceWorkerParam: { scope: '/' },
-      serviceWorkerPath: 'sw.js',
+      serviceWorkerPath: 'OneSignalSDKWorker.js',
     }).then(() => true)
   }
 
