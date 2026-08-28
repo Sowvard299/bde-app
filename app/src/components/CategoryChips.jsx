@@ -20,9 +20,9 @@ function Chip({ label, active, onClick }) {
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
+      className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
         active
-          ? 'border-blue-600 bg-blue-600 text-white'
+          ? 'border-accent bg-accent text-white'
           : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
       }`}
     >

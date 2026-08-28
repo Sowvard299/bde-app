@@ -38,15 +38,15 @@ export default function PartenairesPage() {
   }, [partners, search, activeSlug])
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-8 pt-6">
-      <h1 className="text-2xl font-semibold text-neutral-900">Partenaires</h1>
+    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6">
+      <h1 className="font-display text-2xl font-semibold text-ink">Partenaires</h1>
 
       <input
         type="search"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Rechercher un partenaire"
-        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       />
 
       {categories.length > 0 && (
