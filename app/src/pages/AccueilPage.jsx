@@ -12,13 +12,7 @@ export default function AccueilPage() {
       </h1>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-lg font-semibold text-fg">L'année en un coup d'œil</h2>
-          <Link to="/evenements" className="text-sm font-medium text-accent">
-            Tout voir
-          </Link>
-        </div>
-
+        <h2 className="font-display text-lg font-semibold text-fg">L'année en un coup d'œil</h2>
         <AnnualMilestones />
       </section>
 
