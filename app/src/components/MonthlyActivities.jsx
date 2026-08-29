@@ -1,18 +1,16 @@
 import runningPhoto from '../assets/activities/running.jpg'
-import jeuxPhoto from '../assets/activities/jeux.jpg'
 import culturePhoto from '../assets/activities/culture.jpg'
 import matchsPhoto from '../assets/activities/matchs.jpg'
 
 const ACTIVITIES = [
   {
-    title: 'Team running',
-    description: 'Run en groupe, challenges, courses organisées (Ekiden, Marathon de Paris)…',
-    photo: runningPhoto,
+    title: 'Sorbonne Night',
+    description: 'La soirée mensuelle du BDE, tous les mois.',
   },
   {
-    title: 'Soirées jeux',
+    title: 'Sorbonne Game',
     description: 'Jeux de société, FIFA…',
-    photo: jeuxPhoto,
+    // TODO: photo à venir (dés) une fois uploadée sur Supabase.
   },
   {
     title: 'Sorties culturelles',
@@ -20,17 +18,18 @@ const ACTIVITIES = [
     photo: culturePhoto,
   },
   {
-    title: 'Soirées matchs',
-    description: 'Matchs de basket, foot, rugby…',
-    photo: matchsPhoto,
-  },
-  {
-    title: 'Sorbonne Night',
-    description: 'La soirée mensuelle du BDE, tous les mois.',
+    title: 'Team running',
+    description: 'Run en groupe, challenges, courses organisées (Ekiden, Marathon de Paris)…',
+    photo: runningPhoto,
   },
   {
     title: 'Escalade',
     description: 'Sessions grimpe entre étudiants, tous niveaux.',
+  },
+  {
+    title: 'Soirées matchs',
+    description: 'Matchs de basket, foot, rugby…',
+    photo: matchsPhoto,
   },
 ]
 

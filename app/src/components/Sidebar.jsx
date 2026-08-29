@@ -4,7 +4,6 @@ import logoWhite from '../assets/logo-mark-white.png'
 const TABS = [
   { to: '/accueil', label: 'Accueil' },
   { to: '/evenements', label: 'Événements' },
-  { to: '/partenaires', label: 'Partenaires' },
   { to: '/carte-bde', label: 'Ma carte BDE' },
 ]
 
