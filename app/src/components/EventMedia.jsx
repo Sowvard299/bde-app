@@ -5,18 +5,30 @@ import { isVideoUrl } from '../lib/media'
 // same callers, no schema change needed.
 //
 // The size/shape className (h-16 w-16, aspect-[4/3], rounded-xl, etc.) goes
-// on a wrapper div, and the <video> itself always fills that wrapper at
+// on a wrapper div, and the media itself always fills that wrapper at
 // 100%/100% via inline style — iOS Safari sometimes ignores the Tailwind
 // object-fit class directly on <video>, and an inline style would otherwise
 // override (and break) any size classes passed straight to the element.
-export default function EventMedia({ src, alt = '', className }) {
-  if (isVideoUrl(src)) {
-    const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
-    return (
-      <div className={className} style={{ overflow: 'hidden' }}>
+//
+// `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
+// cases like reused footage from a previous edition.
+export default function EventMedia({ src, alt = '', className, badge }) {
+  const isVideo = isVideoUrl(src)
+  const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
+  const mediaStyle = {
+    display: 'block',
+    width: '100%',
+    height: '100%',
+    objectFit,
+    objectPosition: 'center',
+  }
+
+  return (
+    <div className={className} style={{ position: 'relative', overflow: 'hidden' }}>
+      {isVideo ? (
         <video
           src={src}
-          style={{ display: 'block', width: '100%', height: '100%', objectFit, objectPosition: 'center' }}
+          style={mediaStyle}
           autoPlay
           muted
           loop
@@ -25,9 +37,14 @@ export default function EventMedia({ src, alt = '', className }) {
           disablePictureInPicture
           preload="auto"
         />
-      </div>
-    )
-  }
-
-  return <img src={src} alt={alt} className={className} />
+      ) : (
+        <img src={src} alt={alt} style={mediaStyle} />
+      )}
+      {badge && (
+        <span className="absolute bottom-1 right-1 rounded bg-black/30 px-1.5 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-sm">
+          {badge}
+        </span>
+      )}
+    </div>
+  )
 }

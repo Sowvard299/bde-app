@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatEventDateTime } from '../lib/formatDate'
 import EventMedia from './EventMedia'
+import { isReusedMedia } from '../lib/media'
 
 export default function EventCard({ event }) {
   return (
@@ -10,7 +11,11 @@ export default function EventCard({ event }) {
         className="block overflow-hidden rounded-2xl border border-line bg-surface transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {event.image_url ? (
-          <EventMedia src={event.image_url} className="aspect-[4/3] w-full object-cover" />
+          <EventMedia
+            src={event.image_url}
+            className="aspect-[4/3] w-full object-cover"
+            badge={isReusedMedia(event) ? '*' : undefined}
+          />
         ) : (
           <div className="flex aspect-[4/3] w-full items-center justify-center bg-ink">
             <span className="font-display text-lg font-semibold text-white">

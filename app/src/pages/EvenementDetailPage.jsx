@@ -6,6 +6,7 @@ import { downloadEventIcs } from '../lib/ics'
 import { markEventViewed } from '../components/PushOptInBanner'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
+import { isReusedMedia } from '../lib/media'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -54,6 +55,7 @@ export default function EvenementDetailPage() {
         <EventMedia
           src={event.image_url}
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
+          badge={isReusedMedia(event) ? '*' : undefined}
         />
       ) : (
         <div className="flex aspect-[4/3] w-full items-center justify-center bg-ink px-6 lg:rounded-2xl">
@@ -80,6 +82,10 @@ export default function EvenementDetailPage() {
 
         {event.description && (
           <p className="whitespace-pre-line text-fg-muted">{event.description}</p>
+        )}
+
+        {isReusedMedia(event) && (
+          <p className="-mt-2 text-xs text-fg-subtle">* Images de l'édition précédente</p>
         )}
 
         <div className="flex flex-col gap-2">
