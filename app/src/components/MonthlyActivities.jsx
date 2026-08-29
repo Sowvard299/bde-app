@@ -1,5 +1,3 @@
-import runningPhoto from '../assets/activities/running.jpg'
-import culturePhoto from '../assets/activities/culture.jpg'
 import matchsPhoto from '../assets/activities/matchs.jpg'
 
 const BASE =
@@ -19,12 +17,12 @@ const ACTIVITIES = [
   {
     title: 'Sorties culturelles',
     description: 'Théâtre, festivals, cinéma, musées…',
-    photo: culturePhoto,
+    photo: BASE + 'culture.jpeg',
   },
   {
     title: 'Team running',
     description: 'Run en groupe, challenges, courses organisées (Ekiden, Marathon de Paris)…',
-    photo: runningPhoto,
+    photo: BASE + 'running.jpeg',
   },
   {
     title: 'Escalade',
