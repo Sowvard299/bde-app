@@ -1,0 +1,5 @@
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+
+/OneSignalSDKWorker.js
+  Cache-Control: no-cache
