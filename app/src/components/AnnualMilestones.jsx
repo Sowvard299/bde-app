@@ -36,8 +36,8 @@ const MILESTONES = [
   },
 ]
 
-const AUTO_SCROLL_DELAY = 3800
-const PAUSE_AFTER_MANUAL_MS = 5000
+const PIXELS_PER_SECOND = 28
+const PAUSE_AFTER_MANUAL_MS = 2500
 
 export default function AnnualMilestones() {
   const scrollRef = useRef(null)
@@ -49,16 +49,27 @@ export default function AnnualMilestones() {
     if (!el) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const interval = setInterval(() => {
-      if (pausedRef.current) return
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8
-      el.scrollTo({
-        left: atEnd ? 0 : el.scrollLeft + el.clientWidth * 0.8,
-        behavior: 'smooth',
-      })
-    }, AUTO_SCROLL_DELAY)
+    let rafId
+    let lastTime = null
 
-    return () => clearInterval(interval)
+    function step(time) {
+      if (lastTime === null) lastTime = time
+      const dt = time - lastTime
+      lastTime = time
+
+      if (!pausedRef.current) {
+        const maxScroll = el.scrollWidth - el.clientWidth
+        if (maxScroll > 0) {
+          const next = el.scrollLeft + (PIXELS_PER_SECOND * dt) / 1000
+          el.scrollLeft = next >= maxScroll ? 0 : next
+        }
+      }
+
+      rafId = requestAnimationFrame(step)
+    }
+
+    rafId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(rafId)
   }, [])
 
   function pauseAutoScroll() {
@@ -74,7 +85,7 @@ export default function AnnualMilestones() {
       ref={scrollRef}
       onPointerDown={pauseAutoScroll}
       onWheel={pauseAutoScroll}
-      className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2"
+      className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
     >
       {MILESTONES.map((milestone) => {
         const Tag = milestone.href ? 'a' : 'div'
@@ -84,7 +95,7 @@ export default function AnnualMilestones() {
             {...(milestone.href
               ? { href: milestone.href, target: '_blank', rel: 'noreferrer' }
               : {})}
-            className="flex w-56 shrink-0 snap-start flex-col gap-2 rounded-2xl bg-ink p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="flex w-56 shrink-0 flex-col gap-2 rounded-2xl bg-ink p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <p className="text-xs font-bold uppercase italic tracking-wide text-accent">
               {milestone.date}
