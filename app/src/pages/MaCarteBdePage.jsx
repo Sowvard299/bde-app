@@ -4,14 +4,12 @@ import AppFooter from '../components/AppFooter'
 
 const HELLOASSO_URL =
   'https://www.helloasso.com/associations/nouveau-bureau-des-etudiants-de-l-institut-d-administration-des-entreprises-de-paris/evenements/carte-partenariats-2026-2027'
-// TODO: renseigner le prix dès qu'il est connu.
-const CARD_PRICE = null // ex: '15 €'
+const CARD_PRICE = '5 €'
 
 const AVANTAGES = [
   "Accès aux soirées Sorbonne Night, au WEI et au Gala",
   "Réductions chez tous les partenaires du BDE",
   "Tarifs réduits sur les événements payants de l'année",
-  "Accès aux concours et activités inter-IAE",
 ]
 
 export default function MaCarteBdePage() {
