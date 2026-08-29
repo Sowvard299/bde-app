@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatEventDateShort, formatEventTime, getParisDateParts } from '../lib/formatDate'
+import EventMedia from './EventMedia'
 
 const MONTH_LABEL = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
 
@@ -51,9 +52,8 @@ export default function EventTimeline({ events }) {
                   </div>
 
                   {event.image_url ? (
-                    <img
+                    <EventMedia
                       src={event.image_url}
-                      alt=""
                       className="h-16 w-16 shrink-0 rounded-lg object-cover"
                     />
                   ) : (

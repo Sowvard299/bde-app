@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatEventDateShort, formatEventTime } from '../lib/formatDate'
+import EventMedia from './EventMedia'
 
 export default function EventsSideScroll({ events }) {
   return (
@@ -8,12 +9,12 @@ export default function EventsSideScroll({ events }) {
         <Link
           key={event.id}
           to={`/evenements/${event.id}`}
-          className="flex w-40 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-line bg-surface transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="flex w-44 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-line bg-surface transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {event.image_url ? (
-            <img src={event.image_url} alt="" className="h-24 w-full object-cover" />
+            <EventMedia src={event.image_url} className="h-28 w-full object-cover" />
           ) : (
-            <div className="flex h-24 w-full items-center justify-center bg-ink">
+            <div className="flex h-28 w-full items-center justify-center bg-ink">
               <span className="text-xs font-semibold text-white/70">BDE</span>
             </div>
           )}

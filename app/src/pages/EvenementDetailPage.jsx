@@ -5,6 +5,7 @@ import { formatEventDateTime } from '../lib/formatDate'
 import { downloadEventIcs } from '../lib/ics'
 import { markEventViewed } from '../components/PushOptInBanner'
 import AppFooter from '../components/AppFooter'
+import EventMedia from '../components/EventMedia'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -50,9 +51,8 @@ export default function EvenementDetailPage() {
   return (
     <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 pb-24 lg:max-w-2xl lg:pb-16 lg:pt-12">
       {event.image_url ? (
-        <img
+        <EventMedia
           src={event.image_url}
-          alt=""
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
         />
       ) : (
