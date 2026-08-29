@@ -13,7 +13,7 @@ export default function EventMedia({ src, alt = '', className }) {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
       />
     )
   }
