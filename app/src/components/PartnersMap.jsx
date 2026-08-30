@@ -2,9 +2,15 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import '../lib/leafletIcons'
+import { bdeIcon } from '../lib/leafletIcons'
 
 const PARIS_CENTER = [48.8566, 2.3522]
+
+// IAE Paris Sorbonne — Rue Ponscarme, 75013 Paris.
+const SCHOOL = {
+  name: 'IAE Paris Sorbonne',
+  position: [48.8266031, 2.367821],
+}
 
 export default function PartnersMap({ partners }) {
   const navigate = useNavigate()
@@ -21,6 +27,13 @@ export default function PartnersMap({ partners }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        <Marker position={SCHOOL.position} icon={bdeIcon}>
+          <Popup>
+            <span className="font-semibold">{SCHOOL.name}</span>
+          </Popup>
+        </Marker>
+
         {located.map((partner) => (
           <Marker
             key={partner.id}
