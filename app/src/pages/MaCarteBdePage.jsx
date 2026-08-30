@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import logoWhite from '../assets/logo-mark-white.png'
-import NotificationSettings from '../components/NotificationSettings'
 import PartenairesContent from '../components/PartenairesContent'
 import ViewToggle from '../components/ViewToggle'
 import AppFooter from '../components/AppFooter'
@@ -70,11 +69,6 @@ export default function MaCarteBdePage() {
             Sur HelloAsso, une contribution volontaire à l'association sera proposée au moment du
             paiement — elle n'est pas obligatoire, tu peux la mettre à 0 €.
           </p>
-
-          {/* iOS/Android only — push notifications aren't meaningful on desktop. */}
-          <div className="lg:hidden">
-            <NotificationSettings />
-          </div>
         </>
       ) : (
         <PartenairesContent />

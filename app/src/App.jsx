@@ -10,6 +10,7 @@ import ConfidentialitePage from './pages/ConfidentialitePage'
 import BottomNav from './components/BottomNav'
 import Sidebar from './components/Sidebar'
 import WelcomeSheet from './components/WelcomeSheet'
+import StandalonePushPrompt from './components/StandalonePushPrompt'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Sidebar />
       <div className="min-w-0 flex-1">
         <WelcomeSheet />
+        <StandalonePushPrompt />
         <Routes>
           <Route path="/" element={<Navigate to="/accueil" replace />} />
           <Route path="/accueil" element={<AccueilPage />} />
