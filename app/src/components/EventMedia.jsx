@@ -90,18 +90,25 @@ export default function EventMedia({ src, alt = '', className, badge }) {
 
   function freezeFrame() {
     const video = videoRef.current
-    try {
-      if (!video || !video.videoWidth) throw new Error('no frame yet')
-      const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-      setStillFrame(canvas.toDataURL('image/jpeg', 0.82))
-    } catch {
-      // Couldn't grab a frame (nothing decoded yet, CORS, etc.) — fall back
-      // to a manual tap-to-play button instead.
-      setShowTapHint(true)
+    // readyState >= 2 (HAVE_CURRENT_DATA) means a real decoded frame exists —
+    // below that, videoWidth can already be set from metadata alone and
+    // drawImage() would silently capture a blank black frame instead of
+    // throwing, which looked like "nothing shows up" rather than a visible
+    // fallback.
+    if (video && video.readyState >= 2 && video.videoWidth) {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82)
+        setStillFrame(dataUrl)
+        return
+      } catch {
+        // CORS-tainted canvas or similar — fall through to the tap button.
+      }
     }
+    setShowTapHint(true)
   }
 
   function tryPlay() {

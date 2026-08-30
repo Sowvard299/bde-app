@@ -30,7 +30,7 @@ const MILESTONES = [
   {
     title: 'Coupe de France des IAE',
     date: 'Avril 2027',
-    media: BASE + 'CDF%20recap%202024%20carrousel%20.mp4',
+    media: BASE + 'CDF%20recap%202024%20carrousel%20.mov',
   },
   {
     title: 'Gala IAE',
