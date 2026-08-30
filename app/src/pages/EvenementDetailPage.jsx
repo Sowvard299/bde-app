@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchEventById } from '../lib/events'
 import { formatEventDateTime } from '../lib/formatDate'
-import { downloadEventIcs } from '../lib/ics'
+import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import { markEventViewed } from '../components/PushOptInBanner'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
@@ -89,13 +89,23 @@ export default function EvenementDetailPage() {
         )}
 
         <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => downloadEventIcs(event)}
-            className="rounded-full border border-line px-4 py-3 text-center text-sm font-semibold text-fg transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Ajouter à mon agenda
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <a
+              href={buildGoogleCalendarUrl(event)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 rounded-full border border-line px-4 py-3 text-center text-sm font-semibold text-fg transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Ajouter à Google Agenda
+            </a>
+            <button
+              type="button"
+              onClick={() => downloadEventIcs(event)}
+              className="flex-1 rounded-full border border-line px-4 py-3 text-center text-sm font-semibold text-fg transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Ajouter à Apple / Outlook
+            </button>
+          </div>
 
           {event.ticket_url && (
             <a

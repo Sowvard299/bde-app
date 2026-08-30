@@ -8,8 +8,7 @@ const MILESTONES = [
   {
     title: 'WEICUP — Latino Edition',
     date: '25-27 septembre 2026',
-    note: 'Prepararse...',
-    href: 'https://weicup.netlify.app/',
+    note: 'Place bientôt disponible',
     media: BASE + 'logo%20WEI%20CUP%202027.png',
     isLogo: true,
   },
