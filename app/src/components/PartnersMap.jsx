@@ -35,15 +35,19 @@ export default function PartnersMap({ partners }) {
         </Marker>
 
         {located.map((partner) => (
-          <Marker
-            key={partner.id}
-            position={[partner.latitude, partner.longitude]}
-            eventHandlers={{ click: () => navigate(`/partenaires/${partner.id}`) }}
-          >
+          <Marker key={partner.id} position={[partner.latitude, partner.longitude]}>
             <Popup>
-              <span className="font-semibold">{partner.name}</span>
-              <br />
-              {partner.benefit}
+              <div className="flex flex-col gap-1">
+                <span className="font-semibold">{partner.name}</span>
+                <span>{partner.benefit}</span>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/partenaires/${partner.id}`)}
+                  className="mt-1 self-start rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white"
+                >
+                  Voir la fiche
+                </button>
+              </div>
             </Popup>
           </Marker>
         ))}
