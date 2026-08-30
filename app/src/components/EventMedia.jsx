@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { isVideoUrl } from '../lib/media'
 
-// Videos whose autoplay was refused by the browser. iOS Safari blocks all
-// autoplay while the phone is in Low Power Mode (and in a few other cases),
-// even for muted inline video — but it allows playback once the user has
-// interacted with the page. So we keep the blocked ones here and retry them
-// all on the first tap anywhere on the site.
+// Videos whose autoplay was refused by the browser (iOS Low Power Mode blocks
+// it outright, even for muted inline video). We keep them here and retry on
+// the next tap/scroll anywhere on the site — a cheap opportunistic recovery,
+// on top of the explicit play button each video shows while it's stuck.
 const pendingPlayback = new Set()
 let retryListenerAttached = false
 
@@ -13,7 +12,6 @@ function retryPendingPlayback() {
   for (const video of pendingPlayback) {
     video.play().catch(() => {})
   }
-  pendingPlayback.clear()
 }
 
 function attachRetryListener() {
@@ -21,6 +19,7 @@ function attachRetryListener() {
   retryListenerAttached = true
   const options = { passive: true }
   window.addEventListener('touchstart', retryPendingPlayback, options)
+  window.addEventListener('touchmove', retryPendingPlayback, options)
   window.addEventListener('pointerdown', retryPendingPlayback, options)
   window.addEventListener('scroll', retryPendingPlayback, options)
 }
@@ -46,6 +45,7 @@ export default function EventMedia({ src, alt = '', className, badge }) {
   const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const [activated, setActivated] = useState(false)
+  const [needsTap, setNeedsTap] = useState(false)
   const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
   const mediaStyle = {
     display: 'block',
@@ -79,12 +79,21 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     playPromise.catch(() => {
       pendingPlayback.add(video)
       attachRetryListener()
+      setNeedsTap(true)
     })
   }
 
+  function handleTap() {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    video.play().catch(() => {})
+  }
+
   useEffect(() => {
+    const video = videoRef.current
     return () => {
-      if (videoRef.current) pendingPlayback.delete(videoRef.current)
+      if (video) pendingPlayback.delete(video)
     }
   }, [])
 
@@ -93,6 +102,7 @@ export default function EventMedia({ src, alt = '', className, badge }) {
       ref={wrapperRef}
       className={className}
       style={{ position: 'relative', overflow: 'hidden' }}
+      onClick={needsTap ? handleTap : undefined}
     >
       {isVideo ? (
         <video
@@ -108,9 +118,19 @@ export default function EventMedia({ src, alt = '', className, badge }) {
           preload={activated ? 'auto' : 'none'}
           onLoadedData={tryPlay}
           onCanPlay={tryPlay}
+          onPlaying={() => setNeedsTap(false)}
         />
       ) : (
         <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
+      )}
+      {needsTap && (
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="white" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </span>
       )}
       {badge && (
         <span className="absolute bottom-1 right-1 rounded bg-black/30 px-1.5 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-sm">
