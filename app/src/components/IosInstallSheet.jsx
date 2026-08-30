@@ -1,6 +1,6 @@
 export default function IosInstallSheet({ onClose }) {
   return (
-    <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
       <div
         role="dialog"
         aria-label="Comment installer l'application"
@@ -11,7 +11,7 @@ export default function IosInstallSheet({ onClose }) {
         <h2 className="font-display text-lg font-semibold text-fg">Installer l'application</h2>
         <ol className="mt-4 flex flex-col gap-4">
           <Step number={1}>
-            Appuie sur l'icône <ShareIcon /> <strong>Partager</strong> dans la barre Safari
+            Appuie sur l'icône <ShareIcon /> <strong>Partager</strong> de ton navigateur
           </Step>
           <Step number={2}>
             Fais défiler et choisis <strong>"Sur l'écran d'accueil"</strong>
