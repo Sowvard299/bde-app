@@ -71,7 +71,8 @@ export default function MaCarteBdePage() {
             paiement — elle n'est pas obligatoire, tu peux la mettre à 0 €.
           </p>
 
-          <div className="lg:max-w-xl">
+          {/* iOS/Android only — push notifications aren't meaningful on desktop. */}
+          <div className="lg:hidden">
             <NotificationSettings />
           </div>
         </>
