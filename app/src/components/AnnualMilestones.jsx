@@ -38,7 +38,7 @@ const MILESTONES = [
     poster: cdfPoster,
   },
   {
-    title: 'Gala IAE',
+    title: 'Gala IAE Paris Sorbonne',
     date: 'Mai 2027',
     media: BASE + 'gala.mov',
     poster: galaPoster,
