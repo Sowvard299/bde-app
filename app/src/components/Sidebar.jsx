@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import logoWhite from '../assets/logo-mark-white.png'
 
 const TABS = [
@@ -10,14 +10,17 @@ const TABS = [
 export default function Sidebar() {
   return (
     <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col gap-8 border-r border-line px-6 py-8 lg:flex">
-      <div className="flex items-center gap-2">
+      <Link
+        to="/accueil"
+        className="flex items-center gap-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
         <img src={logoWhite} alt="" className="h-8 w-8" />
         <span className="font-display text-sm font-semibold leading-tight text-fg">
           BDE IAE
           <br />
           Paris Sorbonne
         </span>
-      </div>
+      </Link>
 
       <nav aria-label="Navigation principale" className="flex flex-col gap-1">
         {TABS.map((tab) => (
