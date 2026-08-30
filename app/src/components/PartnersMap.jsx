@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { bdeIcon } from '../lib/leafletIcons'
+import { bdeIcon, bonPlanIcon, partenaireIcon } from '../lib/leafletIcons'
 
 const PARIS_CENTER = [48.8566, 2.3522]
 
@@ -34,10 +34,22 @@ export default function PartnersMap({ partners }) {
           </Popup>
         </Marker>
 
-        {located.map((partner) => (
-          <Marker key={partner.id} position={[partner.latitude, partner.longitude]}>
+        {located.map((partner) => {
+          const isPartenaire = partner.kind === 'partenaire'
+          return (
+          <Marker
+            key={partner.id}
+            position={[partner.latitude, partner.longitude]}
+            icon={isPartenaire ? partenaireIcon : bonPlanIcon}
+          >
             <Popup>
               <div className="flex flex-col gap-1">
+                <span
+                  className="self-start rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"
+                  style={{ background: isPartenaire ? '#ff4214' : '#ffc300', color: isPartenaire ? '#fff' : '#1a1a1a' }}
+                >
+                  {isPartenaire ? 'Partenaire' : 'Bon plan'}
+                </span>
                 <span className="font-semibold">{partner.name}</span>
                 <span>{partner.benefit}</span>
                 <button
@@ -50,7 +62,8 @@ export default function PartnersMap({ partners }) {
               </div>
             </Popup>
           </Marker>
-        ))}
+          )
+        })}
       </MapContainer>
 
       {located.length === 0 && (

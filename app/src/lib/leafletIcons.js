@@ -34,3 +34,27 @@ export const bdeIcon = L.divIcon({
   iconAnchor: [20, 40],
   popupAnchor: [0, -36],
 })
+
+function makePinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `
+      <div style="
+        width: 28px; height: 28px;
+        background: ${color};
+        border: 2px solid #fff;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      "></div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -26],
+  })
+}
+
+// Partenaires (accord officiel) vs bons plans (adresses repérées par le BDE) —
+// distinguished by pin color, matching the same split used in the list.
+export const partenaireIcon = makePinIcon('#ff4214')
+export const bonPlanIcon = makePinIcon('#ffc300')
