@@ -40,6 +40,12 @@ export default function PartenairesContent() {
     })
   }, [partners, search, activeSlug])
 
+  const partenaires = useMemo(() => filtered.filter((p) => p.kind === 'partenaire'), [filtered])
+  const bonsPlans = useMemo(
+    () => filtered.filter((p) => p.kind !== 'partenaire'),
+    [filtered]
+  )
+
   return (
     <div className="flex flex-col gap-4">
       <ViewToggle
@@ -80,11 +86,33 @@ export default function PartenairesContent() {
       )}
 
       {!error && filtered.length > 0 && view === 'liste' && (
-        <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
-          {filtered.map((partner) => (
-            <PartnerRow key={partner.id} partner={partner} />
-          ))}
-        </ul>
+        <div className="flex flex-col gap-6">
+          {partenaires.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
+                Partenaires
+              </h3>
+              <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+                {partenaires.map((partner) => (
+                  <PartnerRow key={partner.id} partner={partner} />
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {bonsPlans.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
+                Bons plans
+              </h3>
+              <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+                {bonsPlans.map((partner) => (
+                  <PartnerRow key={partner.id} partner={partner} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
 
       {!error && filtered.length > 0 && view === 'carte' && <PartnersMap partners={filtered} />}
