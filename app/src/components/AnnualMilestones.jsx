@@ -84,7 +84,7 @@ export default function AnnualMilestones() {
       ref={scrollRef}
       onPointerDown={pauseAutoScroll}
       onWheel={pauseAutoScroll}
-      className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
+      className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
     >
       {MILESTONES.map((milestone) => {
         const Tag = milestone.href ? 'a' : 'div'

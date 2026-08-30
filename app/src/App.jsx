@@ -9,16 +9,14 @@ import MentionsLegalesPage from './pages/MentionsLegalesPage'
 import ConfidentialitePage from './pages/ConfidentialitePage'
 import BottomNav from './components/BottomNav'
 import Sidebar from './components/Sidebar'
-import InstallBanner from './components/InstallBanner'
-import PushOptInBanner from './components/PushOptInBanner'
+import WelcomeSheet from './components/WelcomeSheet'
 
 function App() {
   return (
     <div className="lg:flex">
       <Sidebar />
       <div className="min-w-0 flex-1">
-        <InstallBanner />
-        <PushOptInBanner />
+        <WelcomeSheet />
         <Routes>
           <Route path="/" element={<Navigate to="/accueil" replace />} />
           <Route path="/accueil" element={<AccueilPage />} />

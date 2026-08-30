@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import { fetchEventById } from '../lib/events'
 import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
-import { markEventViewed } from '../components/PushOptInBanner'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
 import { isReusedMedia } from '../lib/media'
@@ -19,7 +18,6 @@ export default function EvenementDetailPage() {
       .then((data) => {
         setEvent(data)
         setStatus('ok')
-        markEventViewed()
       })
       .catch((err) => {
         console.error(err)
