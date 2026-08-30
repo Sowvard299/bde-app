@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { usePushSubscription } from '../hooks/usePushSubscription'
-import { isIosSafari, isMobileOrTablet, isStandalone } from '../lib/platform'
+import { isIos, isMobileOrTablet, isStandalone } from '../lib/platform'
 import IosInstallSheet from './IosInstallSheet'
 import logoWhite from '../assets/logo-mark-white.png'
 
@@ -38,11 +38,13 @@ export default function WelcomeSheet() {
     }
   }
 
-  const iosSafari = isIosSafari()
+  // Any iOS browser, not just Safari — people often open the link from
+  // WhatsApp/Instagram, and the "add to home screen" steps still apply.
+  const ios = isIos()
   // On iOS, push only works from the installed app, so we point people at the
   // install step instead of offering a button that would silently do nothing.
-  const canOfferPush = ready && !iosSafari && !permission && !optedIn && !pushDone
-  const canOfferInstall = canInstall || iosSafari
+  const canOfferPush = ready && !ios && !permission && !optedIn && !pushDone
+  const canOfferInstall = canInstall || ios
 
   // Nothing to propose (browser refuses the install prompt and push is
   // unavailable) — better no popup at all than one with only "Plus tard".
@@ -80,7 +82,7 @@ export default function WelcomeSheet() {
             {canOfferInstall && (
               <button
                 type="button"
-                onClick={iosSafari ? () => setShowIosSteps(true) : promptInstall}
+                onClick={ios ? () => setShowIosSteps(true) : promptInstall}
                 className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 Ajouter à mon écran d'accueil
@@ -103,7 +105,7 @@ export default function WelcomeSheet() {
               </p>
             )}
 
-            {iosSafari && (
+            {ios && (
               <p className="px-1 text-xs text-fg-subtle">
                 Sur iPhone, les notifications ne sont disponibles qu'une fois l'app ajoutée
                 à l'écran d'accueil.

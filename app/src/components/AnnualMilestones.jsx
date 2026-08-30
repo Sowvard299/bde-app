@@ -42,6 +42,7 @@ export default function AnnualMilestones() {
   const scrollRef = useRef(null)
   const pausedRef = useRef(false)
   const resumeTimeoutRef = useRef(null)
+  const directionRef = useRef(1)
 
   useEffect(() => {
     const el = scrollRef.current
@@ -59,8 +60,20 @@ export default function AnnualMilestones() {
       if (!pausedRef.current) {
         const maxScroll = el.scrollWidth - el.clientWidth
         if (maxScroll > 0) {
-          const next = el.scrollLeft + (PIXELS_PER_SECOND * dt) / 1000
-          el.scrollLeft = next >= maxScroll ? 0 : next
+          // Bounce back and forth rather than snapping to the start, which
+          // read as a glitch.
+          const next =
+            el.scrollLeft + (directionRef.current * PIXELS_PER_SECOND * dt) / 1000
+
+          if (next >= maxScroll) {
+            el.scrollLeft = maxScroll
+            directionRef.current = -1
+          } else if (next <= 0) {
+            el.scrollLeft = 0
+            directionRef.current = 1
+          } else {
+            el.scrollLeft = next
+          }
         }
       }
 

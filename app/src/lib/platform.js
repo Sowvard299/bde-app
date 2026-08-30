@@ -1,3 +1,10 @@
+export function isIos() {
+  const ua = window.navigator.userAgent
+  if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return true
+  // iPadOS 13+ reports a desktop Safari user agent.
+  return /Macintosh/.test(ua) && navigator.maxTouchPoints > 1
+}
+
 export function isIosSafari() {
   const ua = window.navigator.userAgent
   const isIos = /iPad|iPhone|iPod/.test(ua) && !window.MSStream
