@@ -24,7 +24,10 @@ function attachRetryListener() {
   window.addEventListener('scroll', retryPendingPlayback, options)
 }
 
-const TAP_HINT_DELAY_MS = 1200
+// How long to show a loading spinner before giving up and offering a manual
+// tap-to-play button instead — generous, since a slow connection can take a
+// while to buffer a 20-40MB video.
+const TAP_HINT_DELAY_MS = 6000
 
 // Renders an event's image_url as a video (autoplay, muted, looping) when
 // it points at a video file, or as a plain image otherwise — same field,
@@ -114,6 +117,7 @@ export default function EventMedia({ src, alt = '', className, badge }) {
   }, [])
 
   const needsTap = isVideo && showTapHint && !isPlaying
+  const isLoading = isVideo && activated && !isPlaying && !showTapHint
 
   return (
     <div
@@ -148,6 +152,11 @@ export default function EventMedia({ src, alt = '', className, badge }) {
         />
       ) : (
         <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
+      )}
+      {isLoading && (
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span className="h-6 w-6 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+        </span>
       )}
       {needsTap && (
         <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
