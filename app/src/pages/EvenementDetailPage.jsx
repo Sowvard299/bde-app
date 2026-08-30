@@ -6,6 +6,7 @@ import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
 import { isReusedMedia, isWeicup, WEICUP_PICTOGRAM } from '../lib/media'
+import weicupVideoPoster from '../assets/video-posters/weicup.jpg'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -63,6 +64,7 @@ export default function EvenementDetailPage() {
       {event.image_url ? (
         <EventMedia
           src={event.image_url}
+          poster={weicup ? weicupVideoPoster : undefined}
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
           badge={isReusedMedia(event) ? '*' : undefined}
         />

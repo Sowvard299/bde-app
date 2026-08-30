@@ -2,6 +2,9 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
 import { WEICUP_EVENT_ID, WEICUP_LOGO } from '../lib/media'
+import pullsPoster from '../assets/video-posters/pulls.jpg'
+import cdfPoster from '../assets/video-posters/cdf.jpg'
+import galaPoster from '../assets/video-posters/gala.jpg'
 
 const BASE =
   'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
@@ -20,6 +23,7 @@ const MILESTONES = [
     title: 'Pull de promo',
     date: 'Février / mars 2027',
     media: BASE + 'video%20coloris%20pulls%20bde%202026.mp4',
+    poster: pullsPoster,
   },
   {
     title: "Concours Inter-IAE d'éloquence",
@@ -31,11 +35,13 @@ const MILESTONES = [
     title: 'Coupe de France des IAE',
     date: 'Avril 2027',
     media: BASE + 'CDF%20recap%202024%20carrousel%20.mov',
+    poster: cdfPoster,
   },
   {
     title: 'Gala IAE',
     date: 'Mai 2027',
     media: BASE + 'gala.mov',
+    poster: galaPoster,
   },
 ]
 
@@ -129,7 +135,11 @@ export default function AnnualMilestones() {
               </div>
             ) : (
               <div className="aspect-square w-full overflow-hidden rounded-xl">
-                <EventMedia src={milestone.media} className="h-full w-full object-cover" />
+                <EventMedia
+                  src={milestone.media}
+                  poster={milestone.poster}
+                  className="h-full w-full object-cover"
+                />
               </div>
             )}
 

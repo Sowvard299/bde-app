@@ -3,8 +3,9 @@ import { isVideoUrl } from '../lib/media'
 
 // Videos whose autoplay was refused by the browser (iOS Low Power Mode blocks
 // it outright, even for muted inline video). We keep them here and retry on
-// the next tap/scroll anywhere on the site — a cheap opportunistic recovery,
-// on top of the still frame each video falls back to while it's stuck.
+// the next tap/scroll anywhere on the site — an opportunistic bonus on top
+// of the poster image, which is what actually guarantees something correct
+// is always visible.
 const pendingPlayback = new Set()
 let retryListenerAttached = false
 
@@ -24,16 +25,9 @@ function attachRetryListener() {
   window.addEventListener('scroll', retryPendingPlayback, options)
 }
 
-// How long to wait for playback to actually start before giving up on the
-// live video and freezing it as a still image instead — iOS in particular
-// can refuse muted autoplay outright (Low Power Mode, etc.), and a video
-// stuck on a spinner or a "tap to play" button reads as broken. A calm still
-// frame reads as intentional.
-const FALLBACK_DELAY_MS = 5000
-
-// Renders an event's image_url as a video (autoplay, muted, looping) when
-// it points at a video file, or as a plain image otherwise — same field,
-// same callers, no schema change needed.
+// Renders an event's image_url as a video (autoplay, muted, looping) when it
+// points at a video file, or as a plain image otherwise — same field, same
+// callers, no schema change needed.
 //
 // The size/shape className (h-16 w-16, aspect-[4/3], rounded-xl, etc.) goes
 // on a wrapper div, and the media itself always fills that wrapper at
@@ -45,16 +39,25 @@ const FALLBACK_DELAY_MS = 5000
 // event videos weigh 20-40MB; loading them all at once overwhelmed iOS
 // Safari and made playback fail outright.
 //
+// `poster` is a pre-generated still frame (bundled build asset, not
+// generated at runtime) rendered natively by the <video> element itself
+// until playback actually starts. This is the real fix for "nothing/a black
+// box shows on iOS when autoplay is blocked" — earlier attempts tried to
+// capture a frame from the live video via canvas, which only works once the
+// browser has actually decoded a frame, and iOS often just never bothers
+// buffering a video whose autoplay it already refused. A poster has no such
+// dependency: it's a normal image, so it is *guaranteed* to render.
+// Pass one for any video used somewhere prominent; without it, this falls
+// back to a plain tap-to-play button on a filled background.
+//
 // `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
 // cases like reused footage from a previous edition.
-export default function EventMedia({ src, alt = '', className, badge }) {
+export default function EventMedia({ src, alt = '', className, badge, poster }) {
   const isVideo = isVideoUrl(src)
   const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const [activated, setActivated] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [showTapHint, setShowTapHint] = useState(false)
-  const [stillFrame, setStillFrame] = useState(null)
   const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
   const mediaStyle = {
     display: 'block',
@@ -78,38 +81,6 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     observer.observe(el)
     return () => observer.disconnect()
   }, [isVideo, activated])
-
-  // Grace period after activation — if playback still hasn't started by
-  // then, freeze the current frame as a still image (or fall back to a tap
-  // button if we can't grab one).
-  useEffect(() => {
-    if (!activated || isPlaying || stillFrame) return
-    const timer = setTimeout(() => freezeFrame(), FALLBACK_DELAY_MS)
-    return () => clearTimeout(timer)
-  }, [activated, isPlaying, stillFrame])
-
-  function freezeFrame() {
-    const video = videoRef.current
-    // readyState >= 2 (HAVE_CURRENT_DATA) means a real decoded frame exists —
-    // below that, videoWidth can already be set from metadata alone and
-    // drawImage() would silently capture a blank black frame instead of
-    // throwing, which looked like "nothing shows up" rather than a visible
-    // fallback.
-    if (video && video.readyState >= 2 && video.videoWidth) {
-      try {
-        const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82)
-        setStillFrame(dataUrl)
-        return
-      } catch {
-        // CORS-tainted canvas or similar — fall through to the tap button.
-      }
-    }
-    setShowTapHint(true)
-  }
 
   function tryPlay() {
     const video = videoRef.current
@@ -137,8 +108,10 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     }
   }, [])
 
-  const needsTap = isVideo && showTapHint && !isPlaying && !stillFrame
-  const isLoading = isVideo && activated && !isPlaying && !showTapHint && !stillFrame
+  // Only offer a manual tap-to-play affordance when there's no poster to
+  // fall back on — with a poster, a stuck video just quietly stays on its
+  // still frame, which already looks intentional.
+  const needsTap = isVideo && !poster && !isPlaying && activated
 
   return (
     <div
@@ -147,46 +120,30 @@ export default function EventMedia({ src, alt = '', className, badge }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: isVideo ? '#1e1e2a' : undefined,
+        backgroundColor: isVideo && !poster ? '#1e1e2a' : undefined,
       }}
-      onClick={needsTap || stillFrame ? handleTap : undefined}
+      onClick={isVideo && !isPlaying ? handleTap : undefined}
     >
       {isVideo ? (
         <video
           ref={videoRef}
           src={activated ? src : undefined}
-          style={{ ...mediaStyle, visibility: stillFrame ? 'hidden' : 'visible' }}
+          poster={poster}
+          style={mediaStyle}
           muted
           loop
           autoPlay
           playsInline
           webkit-playsinline="true"
           disablePictureInPicture
-          crossOrigin="anonymous"
           preload={activated ? 'auto' : 'none'}
           onLoadedData={tryPlay}
           onCanPlay={tryPlay}
-          onPlaying={() => {
-            setIsPlaying(true)
-            setShowTapHint(false)
-            setStillFrame(null)
-          }}
+          onPlaying={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
       ) : (
         <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
-      )}
-      {stillFrame && (
-        <img
-          src={stillFrame}
-          alt={alt}
-          style={{ ...mediaStyle, position: 'absolute', inset: 0 }}
-        />
-      )}
-      {isLoading && (
-        <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="h-6 w-6 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-        </span>
       )}
       {needsTap && (
         <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
