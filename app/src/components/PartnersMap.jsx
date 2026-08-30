@@ -4,8 +4,6 @@ import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { bdeIcon, bonPlanIcon, partenaireIcon } from '../lib/leafletIcons'
 
-const PARIS_CENTER = [48.8566, 2.3522]
-
 // IAE Paris Sorbonne — Rue Ponscarme, 75013 Paris.
 const SCHOOL = {
   name: 'IAE Paris Sorbonne',
@@ -22,7 +20,7 @@ export default function PartnersMap({ partners }) {
 
   return (
     <div className="relative h-[60svh] min-h-80 w-full overflow-hidden rounded-2xl">
-      <MapContainer center={PARIS_CENTER} zoom={13} className="h-full w-full">
+      <MapContainer center={SCHOOL.position} zoom={15} className="h-full w-full">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

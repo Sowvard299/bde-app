@@ -24,6 +24,8 @@ function attachRetryListener() {
   window.addEventListener('scroll', retryPendingPlayback, options)
 }
 
+const TAP_HINT_DELAY_MS = 1200
+
 // Renders an event's image_url as a video (autoplay, muted, looping) when
 // it points at a video file, or as a plain image otherwise — same field,
 // same callers, no schema change needed.
@@ -38,6 +40,11 @@ function attachRetryListener() {
 // event videos weigh 20-40MB; loading them all at once overwhelmed iOS
 // Safari and made playback fail outright.
 //
+// A video that hasn't started playing shortly after becoming visible (blocked
+// autoplay, or just still buffering) shows a tap-to-play button on a filled
+// background instead of an empty black box — always something concrete to
+// look at or act on, never a blank tile.
+//
 // `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
 // cases like reused footage from a previous edition.
 export default function EventMedia({ src, alt = '', className, badge }) {
@@ -45,7 +52,8 @@ export default function EventMedia({ src, alt = '', className, badge }) {
   const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const [activated, setActivated] = useState(false)
-  const [needsTap, setNeedsTap] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [showTapHint, setShowTapHint] = useState(false)
   const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
   const mediaStyle = {
     display: 'block',
@@ -70,6 +78,14 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     return () => observer.disconnect()
   }, [isVideo, activated])
 
+  // Grace period after activation — if playback hasn't started by then, show
+  // the tap hint instead of waiting on a failed autoplay attempt.
+  useEffect(() => {
+    if (!activated || isPlaying) return
+    const timer = setTimeout(() => setShowTapHint(true), TAP_HINT_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [activated, isPlaying])
+
   function tryPlay() {
     const video = videoRef.current
     if (!video) return
@@ -79,7 +95,7 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     playPromise.catch(() => {
       pendingPlayback.add(video)
       attachRetryListener()
-      setNeedsTap(true)
+      setShowTapHint(true)
     })
   }
 
@@ -97,11 +113,17 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     }
   }, [])
 
+  const needsTap = isVideo && showTapHint && !isPlaying
+
   return (
     <div
       ref={wrapperRef}
       className={className}
-      style={{ position: 'relative', overflow: 'hidden' }}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundColor: isVideo ? '#1e1e2a' : undefined,
+      }}
       onClick={needsTap ? handleTap : undefined}
     >
       {isVideo ? (
@@ -118,7 +140,11 @@ export default function EventMedia({ src, alt = '', className, badge }) {
           preload={activated ? 'auto' : 'none'}
           onLoadedData={tryPlay}
           onCanPlay={tryPlay}
-          onPlaying={() => setNeedsTap(false)}
+          onPlaying={() => {
+            setIsPlaying(true)
+            setShowTapHint(false)
+          }}
+          onPause={() => setIsPlaying(false)}
         />
       ) : (
         <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
