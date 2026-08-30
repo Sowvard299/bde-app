@@ -35,7 +35,7 @@ const MILESTONES = [
   {
     title: 'Gala IAE',
     date: 'Mai 2027',
-    media: BASE + 'GALA.mp4',
+    media: BASE + 'gala.mov',
   },
 ]
 
