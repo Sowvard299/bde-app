@@ -24,3 +24,4 @@ const ASSET_BASE =
 // per-event styling, since this is the only event with a dedicated look.
 export const WEICUP_LOGO = ASSET_BASE + 'logo%20wei%20jaune%20et%20rouge.png'
 export const WEICUP_PICTOGRAM = ASSET_BASE + 'pictogramme%20wei%20beige%20sans%20fond.png'
+export const WEICUP_EVENT_ID = '8e66e3b4-918d-4370-bc14-bcf52c86f0d6'

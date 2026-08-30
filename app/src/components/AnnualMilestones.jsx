@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
-import { WEICUP_LOGO } from '../lib/media'
+import { WEICUP_EVENT_ID, WEICUP_LOGO } from '../lib/media'
 
 const BASE =
   'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
@@ -12,6 +13,7 @@ const MILESTONES = [
     note: 'Place bientôt disponible',
     media: WEICUP_LOGO,
     isLogo: true,
+    to: `/evenements/${WEICUP_EVENT_ID}`,
   },
   {
     title: 'Pull de promo',
@@ -101,13 +103,16 @@ export default function AnnualMilestones() {
       className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
     >
       {MILESTONES.map((milestone) => {
-        const Tag = milestone.href ? 'a' : 'div'
+        const Tag = milestone.to ? Link : milestone.href ? 'a' : 'div'
+        const linkProps = milestone.to
+          ? { to: milestone.to }
+          : milestone.href
+            ? { href: milestone.href, target: '_blank', rel: 'noreferrer' }
+            : {}
         return (
           <Tag
             key={milestone.title}
-            {...(milestone.href
-              ? { href: milestone.href, target: '_blank', rel: 'noreferrer' }
-              : {})}
+            {...linkProps}
             className="flex w-56 shrink-0 flex-col gap-2 rounded-2xl bg-ink p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <p className="text-xs font-bold uppercase italic tracking-wide text-accent">

@@ -5,7 +5,7 @@ import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
-import { isReusedMedia, isWeicup, WEICUP_LOGO, WEICUP_PICTOGRAM } from '../lib/media'
+import { isReusedMedia, isWeicup, WEICUP_PICTOGRAM } from '../lib/media'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -56,15 +56,11 @@ export default function EvenementDetailPage() {
           src={WEICUP_PICTOGRAM}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute -right-24 top-16 w-96 max-w-none opacity-10"
+          className="pointer-events-none absolute -right-10 top-20 w-48 max-w-none opacity-10"
         />
       )}
 
-      {weicup ? (
-        <div className="flex aspect-[4/3] w-full items-center justify-center bg-ink p-10 lg:rounded-2xl">
-          <img src={WEICUP_LOGO} alt={event.title} className="h-full w-full object-contain" />
-        </div>
-      ) : event.image_url ? (
+      {event.image_url ? (
         <EventMedia
           src={event.image_url}
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
@@ -93,11 +89,17 @@ export default function EvenementDetailPage() {
           )}
         </div>
 
+        {weicup && (
+          <p className="rounded-lg bg-surface px-4 py-3 text-sm font-semibold text-accent">
+            Préparez-vous : mise en vente le 4 septembre à 18h pile !
+          </p>
+        )}
+
         {event.description && (
           <p className="whitespace-pre-line text-fg-muted">{event.description}</p>
         )}
 
-        {!weicup && isReusedMedia(event) && (
+        {isReusedMedia(event) && (
           <p className="-mt-2 text-xs text-fg-subtle">* Images de l'édition précédente</p>
         )}
 
