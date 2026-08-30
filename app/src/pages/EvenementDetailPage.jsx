@@ -5,7 +5,7 @@ import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
-import { isReusedMedia } from '../lib/media'
+import { isReusedMedia, isWeicup, WEICUP_LOGO, WEICUP_PICTOGRAM } from '../lib/media'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -47,9 +47,24 @@ export default function EvenementDetailPage() {
     )
   }
 
+  const weicup = isWeicup(event)
+
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 pb-24 lg:max-w-2xl lg:pb-16 lg:pt-12">
-      {event.image_url ? (
+    <main className="relative mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 overflow-hidden pb-24 lg:max-w-2xl lg:pb-16 lg:pt-12">
+      {weicup && (
+        <img
+          src={WEICUP_PICTOGRAM}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 top-16 w-96 max-w-none opacity-10"
+        />
+      )}
+
+      {weicup ? (
+        <div className="flex aspect-[4/3] w-full items-center justify-center bg-ink p-10 lg:rounded-2xl">
+          <img src={WEICUP_LOGO} alt={event.title} className="h-full w-full object-contain" />
+        </div>
+      ) : event.image_url ? (
         <EventMedia
           src={event.image_url}
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
@@ -61,7 +76,7 @@ export default function EvenementDetailPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4 px-4 lg:px-0">
+      <div className="relative flex flex-col gap-4 px-4 lg:px-0">
         <Link to="/evenements" className="text-sm font-medium text-accent">
           ‹ Retour aux événements
         </Link>
@@ -82,7 +97,7 @@ export default function EvenementDetailPage() {
           <p className="whitespace-pre-line text-fg-muted">{event.description}</p>
         )}
 
-        {isReusedMedia(event) && (
+        {!weicup && isReusedMedia(event) && (
           <p className="-mt-2 text-xs text-fg-subtle">* Images de l'édition précédente</p>
         )}
 

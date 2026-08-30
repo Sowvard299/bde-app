@@ -11,3 +11,16 @@ export function isVideoUrl(url) {
 export function isReusedMedia(event) {
   return Boolean(event?.title?.includes('WEICUP'))
 }
+
+export function isWeicup(event) {
+  return Boolean(event?.title?.includes('WEICUP'))
+}
+
+const ASSET_BASE =
+  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
+
+// The WEICUP hero logo and the faint background pictogram used to re-skin
+// its event detail page — swapped in instead of the DB's image_url/no
+// per-event styling, since this is the only event with a dedicated look.
+export const WEICUP_LOGO = ASSET_BASE + 'logo%20wei%20jaune%20et%20rouge.png'
+export const WEICUP_PICTOGRAM = ASSET_BASE + 'pictogramme%20wei%20beige%20sans%20fond.png'

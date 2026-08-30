@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import EventMedia from './EventMedia'
+import { WEICUP_LOGO } from '../lib/media'
 
 const BASE =
   'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
@@ -9,7 +10,7 @@ const MILESTONES = [
     title: 'WEICUP — Latino Edition',
     date: '25-27 septembre 2026',
     note: 'Place bientôt disponible',
-    media: BASE + 'logo%20WEI%20CUP%202027.png',
+    media: WEICUP_LOGO,
     isLogo: true,
   },
   {
