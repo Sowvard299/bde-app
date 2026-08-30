@@ -4,7 +4,7 @@ import { isVideoUrl } from '../lib/media'
 // Videos whose autoplay was refused by the browser (iOS Low Power Mode blocks
 // it outright, even for muted inline video). We keep them here and retry on
 // the next tap/scroll anywhere on the site — a cheap opportunistic recovery,
-// on top of the explicit play button each video shows while it's stuck.
+// on top of the still frame each video falls back to while it's stuck.
 const pendingPlayback = new Set()
 let retryListenerAttached = false
 
@@ -24,10 +24,12 @@ function attachRetryListener() {
   window.addEventListener('scroll', retryPendingPlayback, options)
 }
 
-// How long to show a loading spinner before giving up and offering a manual
-// tap-to-play button instead — generous, since a slow connection can take a
-// while to buffer a 20-40MB video.
-const TAP_HINT_DELAY_MS = 6000
+// How long to wait for playback to actually start before giving up on the
+// live video and freezing it as a still image instead — iOS in particular
+// can refuse muted autoplay outright (Low Power Mode, etc.), and a video
+// stuck on a spinner or a "tap to play" button reads as broken. A calm still
+// frame reads as intentional.
+const FALLBACK_DELAY_MS = 5000
 
 // Renders an event's image_url as a video (autoplay, muted, looping) when
 // it points at a video file, or as a plain image otherwise — same field,
@@ -43,11 +45,6 @@ const TAP_HINT_DELAY_MS = 6000
 // event videos weigh 20-40MB; loading them all at once overwhelmed iOS
 // Safari and made playback fail outright.
 //
-// A video that hasn't started playing shortly after becoming visible (blocked
-// autoplay, or just still buffering) shows a tap-to-play button on a filled
-// background instead of an empty black box — always something concrete to
-// look at or act on, never a blank tile.
-//
 // `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
 // cases like reused footage from a previous edition.
 export default function EventMedia({ src, alt = '', className, badge }) {
@@ -57,6 +54,7 @@ export default function EventMedia({ src, alt = '', className, badge }) {
   const [activated, setActivated] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [showTapHint, setShowTapHint] = useState(false)
+  const [stillFrame, setStillFrame] = useState(null)
   const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
   const mediaStyle = {
     display: 'block',
@@ -81,13 +79,30 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     return () => observer.disconnect()
   }, [isVideo, activated])
 
-  // Grace period after activation — if playback hasn't started by then, show
-  // the tap hint instead of waiting on a failed autoplay attempt.
+  // Grace period after activation — if playback still hasn't started by
+  // then, freeze the current frame as a still image (or fall back to a tap
+  // button if we can't grab one).
   useEffect(() => {
-    if (!activated || isPlaying) return
-    const timer = setTimeout(() => setShowTapHint(true), TAP_HINT_DELAY_MS)
+    if (!activated || isPlaying || stillFrame) return
+    const timer = setTimeout(() => freezeFrame(), FALLBACK_DELAY_MS)
     return () => clearTimeout(timer)
-  }, [activated, isPlaying])
+  }, [activated, isPlaying, stillFrame])
+
+  function freezeFrame() {
+    const video = videoRef.current
+    try {
+      if (!video || !video.videoWidth) throw new Error('no frame yet')
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+      setStillFrame(canvas.toDataURL('image/jpeg', 0.82))
+    } catch {
+      // Couldn't grab a frame (nothing decoded yet, CORS, etc.) — fall back
+      // to a manual tap-to-play button instead.
+      setShowTapHint(true)
+    }
+  }
 
   function tryPlay() {
     const video = videoRef.current
@@ -98,7 +113,6 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     playPromise.catch(() => {
       pendingPlayback.add(video)
       attachRetryListener()
-      setShowTapHint(true)
     })
   }
 
@@ -116,8 +130,8 @@ export default function EventMedia({ src, alt = '', className, badge }) {
     }
   }, [])
 
-  const needsTap = isVideo && showTapHint && !isPlaying
-  const isLoading = isVideo && activated && !isPlaying && !showTapHint
+  const needsTap = isVideo && showTapHint && !isPlaying && !stillFrame
+  const isLoading = isVideo && activated && !isPlaying && !showTapHint && !stillFrame
 
   return (
     <div
@@ -128,30 +142,39 @@ export default function EventMedia({ src, alt = '', className, badge }) {
         overflow: 'hidden',
         backgroundColor: isVideo ? '#1e1e2a' : undefined,
       }}
-      onClick={needsTap ? handleTap : undefined}
+      onClick={needsTap || stillFrame ? handleTap : undefined}
     >
       {isVideo ? (
         <video
           ref={videoRef}
           src={activated ? src : undefined}
-          style={mediaStyle}
+          style={{ ...mediaStyle, visibility: stillFrame ? 'hidden' : 'visible' }}
           muted
           loop
           autoPlay
           playsInline
           webkit-playsinline="true"
           disablePictureInPicture
+          crossOrigin="anonymous"
           preload={activated ? 'auto' : 'none'}
           onLoadedData={tryPlay}
           onCanPlay={tryPlay}
           onPlaying={() => {
             setIsPlaying(true)
             setShowTapHint(false)
+            setStillFrame(null)
           }}
           onPause={() => setIsPlaying(false)}
         />
       ) : (
         <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
+      )}
+      {stillFrame && (
+        <img
+          src={stillFrame}
+          alt={alt}
+          style={{ ...mediaStyle, position: 'absolute', inset: 0 }}
+        />
       )}
       {isLoading && (
         <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
