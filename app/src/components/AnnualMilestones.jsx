@@ -13,6 +13,7 @@ const MILESTONES = [
     note: 'Place bientôt disponible',
     media: WEICUP_LOGO,
     isLogo: true,
+    logoBg: '#f7b422',
     to: `/evenements/${WEICUP_EVENT_ID}`,
   },
   {
@@ -32,7 +33,7 @@ const MILESTONES = [
     media: BASE + 'CDF%20recap%202024%20carrousel%20.mp4',
   },
   {
-    title: 'Gala BDE',
+    title: 'Gala IAE',
     date: 'Mai 2027',
     media: BASE + 'GALA.mp4',
   },
@@ -120,7 +121,10 @@ export default function AnnualMilestones() {
             </p>
 
             {milestone.isLogo ? (
-              <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-6">
+              <div
+                className="flex aspect-square w-full items-center justify-center rounded-xl p-1"
+                style={{ backgroundColor: milestone.logoBg || '#ffffff' }}
+              >
                 <EventMedia src={milestone.media} className="h-full w-full object-contain" />
               </div>
             ) : (
