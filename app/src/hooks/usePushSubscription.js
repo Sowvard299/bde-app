@@ -62,7 +62,11 @@ export function usePushSubscription() {
   }, [])
 
   const subscribe = useCallback(async () => {
-    await initOneSignal()
+    // No `await initOneSignal()` here on purpose: this function is only
+    // ever called once `ready` is true, meaning init already finished — and
+    // on iOS Safari, an extra await before requestPermission() burns the
+    // "real tap" activation window, so the native prompt never appears and
+    // permission silently comes back denied.
     const granted = await OneSignal.Notifications.requestPermission()
     if (!granted) {
       throw new Error('Permission refusée par le système')
