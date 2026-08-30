@@ -16,6 +16,9 @@ export function initOneSignal() {
       // merges OneSignal's push handlers in via importScripts.
       serviceWorkerParam: { scope: '/' },
       serviceWorkerPath: 'OneSignalSDKWorker.js',
+      // Kill the floating bell widget — we only ever ask for permission
+      // through our own buttons/popups.
+      notifyButton: { enable: false },
       // Never show OneSignal's own automatic prompt — permission is only
       // ever requested from our own button, after a real tap.
       promptOptions: {
