@@ -16,6 +16,16 @@ export function isWeicup(event) {
   return Boolean(event?.title?.includes('WEICUP'))
 }
 
+// Vector/wide "wordmark" logos (transparent background, not a square photo
+// crop) need to be shown whole via object-contain on a neutral background —
+// object-cover would crop them illegibly. Photo-style avatars (jpg/jpeg/webp)
+// are fine cropped into a circle as-is.
+export function isLogoFile(url) {
+  if (!url) return false
+  const clean = url.split('?')[0].toLowerCase()
+  return clean.endsWith('.svg') || clean.endsWith('.png')
+}
+
 const ASSET_BASE =
   'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
 

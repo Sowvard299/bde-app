@@ -39,8 +39,9 @@ export default function ConfidentialitePage() {
           Si tu actives les notifications, on utilise le service OneSignal (OneSignal, Inc.,
           États-Unis) pour t'envoyer des alertes sur les nouveaux événements. Cela crée un
           identifiant technique lié à ton navigateur, sans nom ni email associé. Tu peux
-          désactiver les notifications à tout moment depuis la page "Ma carte BDE", ce qui
-          supprime cet identifiant chez OneSignal.
+          désactiver les notifications à tout moment depuis les réglages de notifications de ton
+          téléphone (dans les réglages de l'app installée), ce qui supprime cet identifiant chez
+          OneSignal.
         </p>
       </Section>
 

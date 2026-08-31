@@ -26,6 +26,14 @@ export default function EvenementsPage() {
       })
   }, [])
 
+  // Jump the calendar to the month of the next event once loaded — opening
+  // on today's real calendar month (often empty) looked broken.
+  useEffect(() => {
+    if (!events || events.length === 0) return
+    const parts = getParisDateParts(events[0].starts_at)
+    setCursor({ year: parts.year, month: parts.month - 1 })
+  }, [events])
+
   const eventsByDay = useMemo(() => {
     const map = new Map()
     if (!events) return map

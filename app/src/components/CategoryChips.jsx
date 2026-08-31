@@ -1,15 +1,23 @@
 export default function CategoryChips({ categories, activeSlug, onSelect }) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filtrer par catégorie">
-      <Chip label="Toutes" active={activeSlug === null} onClick={() => onSelect(null)} />
-      {categories.map((category) => (
-        <Chip
-          key={category.id}
-          label={category.name}
-          active={activeSlug === category.slug}
-          onClick={() => onSelect(category.slug)}
-        />
-      ))}
+    <div className="relative">
+      <div
+        className="flex gap-2 overflow-x-auto pb-1"
+        role="group"
+        aria-label="Filtrer par catégorie"
+      >
+        <Chip label="Toutes" active={activeSlug === null} onClick={() => onSelect(null)} />
+        {categories.map((category) => (
+          <Chip
+            key={category.id}
+            label={category.name}
+            active={activeSlug === category.slug}
+            onClick={() => onSelect(category.slug)}
+          />
+        ))}
+      </div>
+      {/* Hints that the chip row scrolls further — easy to miss otherwise. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-canvas to-transparent" />
     </div>
   )
 }

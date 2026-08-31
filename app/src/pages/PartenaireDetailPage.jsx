@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchPartnerById } from '../lib/partners'
+import { isLogoFile } from '../lib/media'
 import PartnerMiniMap from '../components/PartnerMiniMap'
 import AppFooter from '../components/AppFooter'
 
@@ -50,11 +51,17 @@ export default function PartenaireDetailPage() {
 
       <div className="flex items-center gap-4">
         {partner.logo_url ? (
-          <img
-            src={partner.logo_url}
-            alt=""
-            className="h-16 w-16 shrink-0 rounded-full object-cover"
-          />
+          isLogoFile(partner.logo_url) ? (
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2">
+              <img src={partner.logo_url} alt="" className="h-full w-full object-contain" />
+            </span>
+          ) : (
+            <img
+              src={partner.logo_url}
+              alt=""
+              className="h-16 w-16 shrink-0 rounded-full object-cover"
+            />
+          )
         ) : (
           <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-surface-muted text-lg font-semibold text-fg-faint">
             {partner.name
