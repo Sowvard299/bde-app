@@ -89,6 +89,10 @@ export default function PartenaireDetailPage() {
         <p className="whitespace-pre-line text-fg-muted">{partner.description}</p>
       )}
 
+      {partner.fine_print && (
+        <p className="whitespace-pre-line text-xs text-fg-subtle">{partner.fine_print}</p>
+      )}
+
       {partner.latitude && partner.longitude && (
         <PartnerMiniMap latitude={partner.latitude} longitude={partner.longitude} />
       )}
