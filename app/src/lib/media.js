@@ -6,14 +6,21 @@ export function isVideoUrl(url) {
   return VIDEO_EXTENSIONS.some((ext) => clean.endsWith(ext))
 }
 
-// The WEICUP event currently reuses last year's WEI footage as a teaser —
-// flag it so the UI can mark it with a small "*" note.
-export function isReusedMedia(event) {
-  return Boolean(event?.title?.includes('WEICUP'))
+const ASSET_BASE =
+  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
+
+export const WEICUP_EVENT_ID = '8e66e3b4-918d-4370-bc14-bcf52c86f0d6'
+
+// Matched by id, not title — the display title is just teaser copy for now
+// ("WEI — Édition ?") and shouldn't be relied on for detection.
+export function isWeicup(event) {
+  return event?.id === WEICUP_EVENT_ID
 }
 
-export function isWeicup(event) {
-  return Boolean(event?.title?.includes('WEICUP'))
+// The WEI event currently reuses last year's footage as a teaser — flag it
+// so the UI can mark it with a small "*" note.
+export function isReusedMedia(event) {
+  return isWeicup(event)
 }
 
 // Vector/wide "wordmark" logos (transparent background, not a square photo
@@ -26,12 +33,6 @@ export function isLogoFile(url) {
   return clean.endsWith('.svg') || clean.endsWith('.png')
 }
 
-const ASSET_BASE =
-  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
-
-// The WEICUP hero logo and the faint background pictogram used to re-skin
-// its event detail page — swapped in instead of the DB's image_url/no
-// per-event styling, since this is the only event with a dedicated look.
-export const WEICUP_LOGO = ASSET_BASE + 'logo%20wei%20jaune%20et%20rouge.png'
+// Faint background pictogram used to re-skin the WEI event detail page while
+// no real logo exists yet (see WeiWordmark for the "logo" itself).
 export const WEICUP_PICTOGRAM = ASSET_BASE + 'pictogramme%20wei%20beige%20sans%20fond.png'
-export const WEICUP_EVENT_ID = '8e66e3b4-918d-4370-bc14-bcf52c86f0d6'

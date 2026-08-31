@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatEventDateTime } from '../lib/formatDate'
 import EventMedia from './EventMedia'
-import { isReusedMedia, isWeicup, WEICUP_LOGO } from '../lib/media'
+import WeiWordmark from './WeiWordmark'
+import { isReusedMedia, isWeicup } from '../lib/media'
 
 export default function EventCard({ event }) {
   const weicup = isWeicup(event)
@@ -15,7 +16,9 @@ export default function EventCard({ event }) {
         {event.image_url ? (
           <EventMedia
             src={event.image_url}
-            logoFallback={weicup ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
+            logoFallback={
+              weicup ? { content: <WeiWordmark className="text-4xl" />, background: '#0f1564' } : undefined
+            }
             className="aspect-[4/3] w-full object-cover"
             badge={isReusedMedia(event) ? '*' : undefined}
           />

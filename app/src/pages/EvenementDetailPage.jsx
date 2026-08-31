@@ -5,7 +5,8 @@ import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
-import { isReusedMedia, isWeicup, WEICUP_LOGO, WEICUP_PICTOGRAM } from '../lib/media'
+import WeiWordmark from '../components/WeiWordmark'
+import { isReusedMedia, isWeicup, WEICUP_PICTOGRAM } from '../lib/media'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -63,7 +64,9 @@ export default function EvenementDetailPage() {
       {event.image_url ? (
         <EventMedia
           src={event.image_url}
-          logoFallback={weicup ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
+          logoFallback={
+            weicup ? { content: <WeiWordmark className="text-7xl" />, background: '#0f1564' } : undefined
+          }
           className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
           badge={isReusedMedia(event) ? '*' : undefined}
         />

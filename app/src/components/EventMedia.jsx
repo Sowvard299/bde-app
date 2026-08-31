@@ -50,11 +50,12 @@ function attachRetryListener() {
 // Pass one for any video used somewhere prominent; without it, this falls
 // back to a plain tap-to-play button on a filled background.
 //
-// `logoFallback` ({ src, background }) is an alternative to `poster` for
-// cases where a cropped video frame wouldn't make sense as a fallback (e.g.
-// WEICUP's hero, which reuses last year's footage) — instead of a still
-// frame, shows the given logo centered (never cropped) over a solid
-// background until the video actually starts playing.
+// `logoFallback` ({ content, background } or { src, background }) is an
+// alternative to `poster` for cases where a cropped video frame wouldn't
+// make sense as a fallback (e.g. WEICUP's hero, which reuses last year's
+// footage) — instead of a still frame, shows the given content centered
+// over a solid background until the video actually starts playing. Pass
+// `content` for arbitrary React content (e.g. text), or `src` for an image.
 //
 // `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
 // cases like reused footage from a previous edition.
@@ -158,7 +159,9 @@ export default function EventMedia({ src, alt = '', className, badge, poster, lo
           className="absolute inset-0 flex items-center justify-center p-6"
           style={{ backgroundColor: logoFallback.background }}
         >
-          <img src={logoFallback.src} alt={alt} className="h-full w-full object-contain" />
+          {logoFallback.content ?? (
+            <img src={logoFallback.src} alt={alt} className="h-full w-full object-contain" />
+          )}
         </div>
       )}
       {needsTap && (

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatEventDateShort, formatEventTime, getParisDateParts } from '../lib/formatDate'
 import EventMedia from './EventMedia'
-import { isReusedMedia, isWeicup, WEICUP_LOGO } from '../lib/media'
+import WeiWordmark from './WeiWordmark'
+import { isReusedMedia, isWeicup } from '../lib/media'
 
 const MONTH_LABEL = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
 
@@ -56,7 +57,9 @@ export default function EventTimeline({ events }) {
                     <EventMedia
                       src={event.image_url}
                       logoFallback={
-                        isWeicup(event) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined
+                        isWeicup(event)
+                          ? { content: <WeiWordmark className="text-2xl" />, background: '#0f1564' }
+                          : undefined
                       }
                       className="h-16 w-16 shrink-0 rounded-lg object-cover"
                       badge={isReusedMedia(event) ? '*' : undefined}

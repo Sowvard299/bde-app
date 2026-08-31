@@ -42,6 +42,7 @@
 
   --font-display: "Advercase", ui-serif, Georgia, serif;
   --font-sans: "Neue Montreal", system-ui, sans-serif;
+  --font-handwritten: "Permanent Marker", cursive;
 }
 
 html {

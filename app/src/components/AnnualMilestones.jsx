@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
-import { WEICUP_EVENT_ID, WEICUP_LOGO } from '../lib/media'
+import WeiWordmark from './WeiWordmark'
+import { WEICUP_EVENT_ID } from '../lib/media'
 import pullsPoster from '../assets/video-posters/pulls.jpg'
 import cdfPoster from '../assets/video-posters/cdf.jpg'
 import galaPoster from '../assets/video-posters/gala.jpg'
@@ -11,12 +12,11 @@ const BASE =
 
 const MILESTONES = [
   {
-    title: 'WEICUP — Latino Edition',
+    title: 'WEI — Édition ?',
     date: '25-27 septembre 2026',
-    note: 'Place bientôt disponible',
-    media: WEICUP_LOGO,
-    isLogo: true,
-    logoBg: '#f7b422',
+    note: 'Chut… on prépare quelque chose 👀',
+    custom: true,
+    logoBg: '#0f1564',
     to: `/evenements/${WEICUP_EVENT_ID}`,
   },
   {
@@ -126,7 +126,14 @@ export default function AnnualMilestones() {
               {milestone.date}
             </p>
 
-            {milestone.isLogo ? (
+            {milestone.custom ? (
+              <div
+                className="flex aspect-square w-full items-center justify-center rounded-xl"
+                style={{ backgroundColor: milestone.logoBg }}
+              >
+                <WeiWordmark className="text-6xl" />
+              </div>
+            ) : milestone.isLogo ? (
               <div
                 className="flex aspect-square w-full items-center justify-center rounded-xl p-1"
                 style={{ backgroundColor: milestone.logoBg || '#ffffff' }}
