@@ -53,14 +53,6 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="Carte BDE (HelloAsso)">
-        <p>
-          L'achat de la carte BDE se fait sur HelloAsso, un site indépendant. Les informations que
-          tu fournis à ce moment-là (paiement, coordonnées) sont gérées par HelloAsso selon sa
-          propre politique de confidentialité, pas par nous.
-        </p>
-      </Section>
-
       <Section title="Cookies">
         <p>
           L'application n'utilise pas de cookies de suivi publicitaire ni d'outils d'analyse

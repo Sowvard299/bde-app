@@ -17,7 +17,7 @@ export default function AccueilPage() {
       </section>
 
       <Link
-        to="/carte-bde"
+        to="/partenaires"
         className="relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl bg-ink p-5 text-white transition hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <img
@@ -26,8 +26,8 @@ export default function AccueilPage() {
           className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 opacity-20"
         />
         <div>
-          <p className="font-display text-lg font-semibold">Ma carte BDE</p>
-          <p className="text-sm text-white/70">Réductions, accès aux soirées, et plus</p>
+          <p className="font-display text-lg font-semibold">Partenaires</p>
+          <p className="text-sm text-white/70">Toutes les réductions près de toi</p>
         </div>
         <span className="shrink-0 rounded-full bg-accent px-3 py-1.5 text-sm font-semibold">
           Voir
@@ -38,17 +38,6 @@ export default function AccueilPage() {
         <h2 className="font-display text-lg font-semibold text-fg">Chaque mois</h2>
         <MonthlyActivities />
       </section>
-
-      <Link
-        to="/partenaires"
-        className="flex items-center justify-between gap-3 rounded-2xl border border-line p-4 transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        <div>
-          <p className="font-display text-base font-semibold text-fg">Partenaires</p>
-          <p className="text-sm text-fg-faint">Toutes les réductions près de toi</p>
-        </div>
-        <span className="text-accent">›</span>
-      </Link>
 
       <AppFooter />
     </main>
