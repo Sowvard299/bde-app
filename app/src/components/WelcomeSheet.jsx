@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { usePushSubscription } from '../hooks/usePushSubscription'
-import { isIos, isMobileOrTablet, isStandalone } from '../lib/platform'
+import { isIos, isInAppBrowser, isMobileOrTablet, isStandalone } from '../lib/platform'
 import IosInstallSheet from './IosInstallSheet'
 import logoWhite from '../assets/logo-mark-white.png'
 
@@ -21,6 +21,9 @@ export default function WelcomeSheet() {
     if (localStorage.getItem(SEEN_KEY) === 'true') return
     if (!isMobileOrTablet()) return
     if (isStandalone()) return
+    // Its install/notification steps don't work from an in-app browser —
+    // InAppBrowserNotice tells people to open the link properly instead.
+    if (isInAppBrowser()) return
     setFirstVisit(true)
   }, [])
 

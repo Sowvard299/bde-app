@@ -28,3 +28,16 @@ export function isMobileOrTablet() {
   const isIpadOs = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1
   return isIpadOs
 }
+
+// The mini-browser embedded inside Instagram/Facebook/TikTok/etc. — on both
+// iOS and Android, these webviews either refuse "Add to Home Screen"
+// entirely or silently produce a broken shortcut, and push notifications
+// never work from inside them. The only fix is opening the link in the
+// device's real browser first, so we detect this to show that instruction
+// instead of our normal (here, broken) install/notification prompts.
+export function isInAppBrowser() {
+  const ua = window.navigator.userAgent
+  return /Instagram|FBAN|FBAV|FB_IAB|Line\/|Snapchat|TikTok|BytedanceWebview|Twitter|WhatsApp|Messenger|Pinterest|LinkedInApp/i.test(
+    ua
+  )
+}
