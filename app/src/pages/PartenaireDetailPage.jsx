@@ -97,7 +97,14 @@ export default function PartenaireDetailPage() {
         <PartnerMiniMap latitude={partner.latitude} longitude={partner.longitude} />
       )}
 
-      {partner.address && <p className="text-fg-muted">{partner.address}</p>}
+      {partner.address && (
+        <div>
+          <p className="text-fg-muted">{partner.address}</p>
+          {partner.address_note && (
+            <p className="text-sm text-fg-faint">{partner.address_note}</p>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {partner.phone && (
@@ -116,7 +123,7 @@ export default function PartenaireDetailPage() {
             rel="noreferrer"
             className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            Voir le site
+            {partner.website_url.includes('helloasso.com') ? 'Acheter un billet' : 'Voir le site'}
           </a>
         )}
       </div>
