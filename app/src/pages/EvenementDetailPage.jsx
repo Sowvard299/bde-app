@@ -126,15 +126,21 @@ export default function EvenementDetailPage() {
             </button>
           </div>
 
-          {event.ticket_url && (
-            <a
-              href={event.ticket_url}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              Réserver ma place
-            </a>
+          {weicup ? (
+            <p className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white">
+              Prépare-toi... Les places c'est ce dimanche à 12h.
+            </p>
+          ) : (
+            event.ticket_url && (
+              <a
+                href={event.ticket_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                Réserver ma place
+              </a>
+            )
           )}
         </div>
 
