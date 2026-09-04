@@ -7,10 +7,27 @@ import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
 import { isReusedMedia, isWeicup, WEICUP_LOGO, WEICUP_PICTOGRAM } from '../lib/media'
 
+// Dimanche 6 septembre 2026, 12h00 heure de Paris (+02:00 en septembre).
+const WEICUP_SALE_OPENS_AT = new Date('2026-09-06T12:00:00+02:00')
+
 export default function EvenementDetailPage() {
   const { id } = useParams()
   const [event, setEvent] = useState(null)
   const [status, setStatus] = useState('loading')
+  // Re-checked every 30s so a page left open switches over on its own right
+  // at 12h, instead of only updating on the next full reload.
+  const [saleIsLive, setSaleIsLive] = useState(() => Date.now() >= WEICUP_SALE_OPENS_AT.getTime())
+
+  useEffect(() => {
+    if (saleIsLive) return
+    const interval = setInterval(() => {
+      if (Date.now() >= WEICUP_SALE_OPENS_AT.getTime()) {
+        setSaleIsLive(true)
+        clearInterval(interval)
+      }
+    }, 30_000)
+    return () => clearInterval(interval)
+  }, [saleIsLive])
 
   useEffect(() => {
     setStatus('loading')
@@ -90,7 +107,7 @@ export default function EvenementDetailPage() {
           )}
         </div>
 
-        {weicup && (
+        {weicup && !saleIsLive && (
           <p className="rounded-lg bg-surface px-4 py-3 text-sm font-semibold text-accent">
             Préparez-vous : mise en vente dimanche 6 septembre à 12h pile !
           </p>
@@ -123,7 +140,7 @@ export default function EvenementDetailPage() {
             </button>
           </div>
 
-          {weicup ? (
+          {weicup && !saleIsLive ? (
             <p className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white">
               Prépare-toi... Les places c'est ce dimanche à 12h.
             </p>
@@ -135,7 +152,7 @@ export default function EvenementDetailPage() {
                 rel="noreferrer"
                 className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                Réserver ma place
+                {weicup ? 'Acheter un billet' : 'Réserver ma place'}
               </a>
             )
           )}
