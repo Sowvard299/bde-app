@@ -16,8 +16,7 @@ export const R2_MEDIA_BASE = 'https://pub-d05e7299e5fd4b1dbe11ede3faa31bb3.r2.de
 
 export const WEICUP_EVENT_ID = '8e66e3b4-918d-4370-bc14-bcf52c86f0d6'
 
-// Matched by id, not title — the display title is just teaser copy for now
-// ("WEI — Édition ?") and shouldn't be relied on for detection.
+// Matched by id, not title, so this keeps working regardless of title text.
 export function isWeicup(event) {
   return event?.id === WEICUP_EVENT_ID
 }
@@ -38,6 +37,7 @@ export function isLogoFile(url) {
   return clean.endsWith('.svg') || clean.endsWith('.png')
 }
 
-// Faint background pictogram used to re-skin the WEI event detail page while
-// no real logo exists yet (see WeiWordmark for the "logo" itself).
+// The WEICUP logo and the faint background pictogram used to re-skin its
+// event detail page.
+export const WEICUP_LOGO = ASSET_BASE + 'logo%20wei%20jaune%20et%20rouge.png'
 export const WEICUP_PICTOGRAM = ASSET_BASE + 'pictogramme%20wei%20beige%20sans%20fond.png'
