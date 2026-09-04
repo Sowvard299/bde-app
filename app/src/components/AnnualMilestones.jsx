@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
 import WeiWordmark from './WeiWordmark'
-import { WEICUP_EVENT_ID } from '../lib/media'
+import { R2_MEDIA_BASE, WEICUP_EVENT_ID } from '../lib/media'
 import pullsPoster from '../assets/video-posters/pulls.jpg'
 import cdfPoster from '../assets/video-posters/cdf.jpg'
 import galaPoster from '../assets/video-posters/gala.jpg'
@@ -22,7 +22,7 @@ const MILESTONES = [
   {
     title: 'Pull de promo',
     date: 'Février / mars 2027',
-    media: BASE + 'video%20coloris%20pulls%20bde%202026.mp4',
+    media: R2_MEDIA_BASE + 'pulls.mp4',
     poster: pullsPoster,
   },
   {
@@ -34,13 +34,13 @@ const MILESTONES = [
   {
     title: 'Coupe de France des IAE',
     date: 'Avril 2027',
-    media: BASE + 'CDF%20recap%202024%20carrousel%20.mov',
+    media: R2_MEDIA_BASE + 'cdf.mov',
     poster: cdfPoster,
   },
   {
     title: 'Gala IAE Paris Sorbonne',
     date: 'Mai 2027',
-    media: BASE + 'gala.mov',
+    media: R2_MEDIA_BASE + 'gala.mov',
     poster: galaPoster,
   },
 ]

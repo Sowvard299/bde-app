@@ -9,6 +9,11 @@ export function isVideoUrl(url) {
 const ASSET_BASE =
   'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
 
+// Videos live on Cloudflare R2 instead of Supabase Storage — Supabase's free
+// tier bandwidth (5.5GB/month) got blown through fast by a handful of
+// 20-40MB clips on repeat views, and R2 has no egress fees at all.
+export const R2_MEDIA_BASE = 'https://pub-d05e7299e5fd4b1dbe11ede3faa31bb3.r2.dev/'
+
 export const WEICUP_EVENT_ID = '8e66e3b4-918d-4370-bc14-bcf52c86f0d6'
 
 // Matched by id, not title — the display title is just teaser copy for now
