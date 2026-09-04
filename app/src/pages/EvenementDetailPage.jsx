@@ -117,6 +117,25 @@ export default function EvenementDetailPage() {
           <p className="whitespace-pre-line text-fg-muted">{event.description}</p>
         )}
 
+        {weicup && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-surface p-4">
+              <p className="font-display text-lg font-bold text-fg">Compétition</p>
+              <p className="text-xs italic text-fg-subtle">Prepárense.</p>
+            </div>
+            <div className="rounded-xl bg-surface p-4">
+              <p className="font-display text-lg font-bold text-fg">15 équipes représentées</p>
+              <p className="text-xs italic text-fg-subtle">¡Vámonos!</p>
+            </div>
+          </div>
+        )}
+
+        {weicup && (
+          <p className="text-center font-display text-base font-semibold text-accent">
+            ¿Estás listo para representar a tu equipo?
+          </p>
+        )}
+
         {isReusedMedia(event) && (
           <p className="-mt-2 text-xs text-fg-subtle">* Images de l'édition précédente</p>
         )}
