@@ -92,7 +92,7 @@ export default function EvenementDetailPage() {
 
         {weicup && (
           <p className="rounded-lg bg-surface px-4 py-3 text-sm font-semibold text-accent">
-            Préparez-vous : mise en vente le 6 septembre à 18h pile !
+            Préparez-vous : mise en vente dimanche 6 septembre à 12h pile !
           </p>
         )}
 
