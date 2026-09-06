@@ -1,4 +1,5 @@
 import OneSignal from 'react-onesignal'
+import { canReceivePush } from './platform'
 
 const appId = import.meta.env.VITE_ONESIGNAL_APP_ID
 
@@ -6,6 +7,9 @@ let initPromise = null
 
 export function initOneSignal() {
   if (!appId) return Promise.resolve(false)
+  // Never load the SDK on desktop — without init there is no subscription to
+  // register, so a computer can never end up receiving push notifications.
+  if (!canReceivePush()) return Promise.resolve(false)
 
   if (!initPromise) {
     initPromise = OneSignal.init({

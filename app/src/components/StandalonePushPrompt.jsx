@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { usePushSubscription } from '../hooks/usePushSubscription'
-import { isStandalone } from '../lib/platform'
+import { canReceivePush, isStandalone } from '../lib/platform'
 
 const SEEN_KEY = 'bde-standalone-push-seen'
 
@@ -16,6 +16,8 @@ export default function StandalonePushPrompt() {
   useEffect(() => {
     if (localStorage.getItem(SEEN_KEY) === 'true') return
     if (!isStandalone()) return
+    // The app can be installed on a desktop too — never offer push there.
+    if (!canReceivePush()) return
     setOpen(true)
   }, [])
 

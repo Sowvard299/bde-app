@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { OneSignal, initOneSignal } from '../lib/onesignal'
+import { canReceivePush } from '../lib/platform'
 
 function envSupport() {
   return {
@@ -19,6 +20,13 @@ export function usePushSubscription() {
   useEffect(() => {
     let cancelled = false
     let cleanup = () => {}
+
+    // Desktop is deliberately out of scope for push — bail before touching
+    // the SDK so nothing ever subscribes from a computer.
+    if (!canReceivePush()) {
+      setStatus('unavailable')
+      return
+    }
 
     initOneSignal()
       .then((available) => {

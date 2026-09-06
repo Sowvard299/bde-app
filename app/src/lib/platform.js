@@ -29,6 +29,15 @@ export function isMobileOrTablet() {
   return isIpadOs
 }
 
+// Push notifications are phone/tablet only, on purpose: a notification that
+// pops up on a laptop during a lecture is noise, and the whole point of the
+// installed app is to reach people where they actually are. Desktop browsers
+// never initialise OneSignal at all, so no desktop subscription can even be
+// created.
+export function canReceivePush() {
+  return isMobileOrTablet()
+}
+
 // The mini-browser embedded inside Instagram/Facebook/TikTok/etc. — on both
 // iOS and Android, these webviews either refuse "Add to Home Screen"
 // entirely or silently produce a broken shortcut, and push notifications
