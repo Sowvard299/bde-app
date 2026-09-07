@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
-import { R2_MEDIA_BASE, WEICUP_EVENT_ID, WEICUP_LOGO } from '../lib/media'
+import { R2_MEDIA_BASE, WEICUP_EVENT_ID, WEICUP_LOGO, weicupSaleIsLive } from '../lib/media'
 import pullsPoster from '../assets/video-posters/pulls.jpg'
 import cdfPoster from '../assets/video-posters/cdf.jpg'
 import galaPoster from '../assets/video-posters/gala.jpg'
@@ -13,7 +13,7 @@ const MILESTONES = [
   {
     title: 'WEICUP — Latino Edition',
     date: '25-27 septembre 2026',
-    note: 'Place bientôt disponible',
+    note: weicupSaleIsLive() ? 'Billetterie ouverte' : 'Place bientôt disponible',
     media: WEICUP_LOGO,
     isLogo: true,
     logoBg: '#f7b422',

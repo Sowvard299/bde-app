@@ -5,10 +5,14 @@ import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
 import EventMedia from '../components/EventMedia'
-import { isReusedMedia, isWeicup, WEICUP_LOGO, WEICUP_PICTOGRAM } from '../lib/media'
-
-// Dimanche 6 septembre 2026, 12h00 heure de Paris (+02:00 en septembre).
-const WEICUP_SALE_OPENS_AT = new Date('2026-09-06T12:00:00+02:00')
+import {
+  isReusedMedia,
+  isWeicup,
+  WEICUP_LOGO,
+  WEICUP_SALE_OPENS_AT,
+  WEICUP_TICKET_URL,
+  weicupSaleIsLive,
+} from '../lib/media'
 
 export default function EvenementDetailPage() {
   const { id } = useParams()
@@ -16,7 +20,7 @@ export default function EvenementDetailPage() {
   const [status, setStatus] = useState('loading')
   // Re-checked every 30s so a page left open switches over on its own right
   // at 12h, instead of only updating on the next full reload.
-  const [saleIsLive, setSaleIsLive] = useState(() => Date.now() >= WEICUP_SALE_OPENS_AT.getTime())
+  const [saleIsLive, setSaleIsLive] = useState(weicupSaleIsLive)
 
   useEffect(() => {
     if (saleIsLive) return
@@ -68,15 +72,6 @@ export default function EvenementDetailPage() {
 
   return (
     <main className="relative mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 overflow-hidden pb-24 lg:max-w-2xl lg:pb-16 lg:pt-12">
-      {weicup && (
-        <img
-          src={WEICUP_PICTOGRAM}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-10 top-20 w-48 max-w-none opacity-10"
-        />
-      )}
-
       {event.image_url ? (
         <EventMedia
           src={event.image_url}
@@ -164,9 +159,9 @@ export default function EvenementDetailPage() {
               Prépare-toi... Les places c'est ce dimanche à 12h.
             </p>
           ) : (
-            event.ticket_url && (
+            (weicup ? WEICUP_TICKET_URL : event.ticket_url) && (
               <a
-                href={event.ticket_url}
+                href={weicup ? WEICUP_TICKET_URL : event.ticket_url}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

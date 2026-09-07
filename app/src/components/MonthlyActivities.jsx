@@ -47,12 +47,17 @@ export default function MonthlyActivities() {
           <Tag
             key={activity.title}
             {...(activity.to ? { to: activity.to } : {})}
-            className="relative aspect-[4/5] overflow-hidden rounded-xl"
+            className="relative aspect-[4/5] overflow-hidden rounded-xl bg-ink"
           >
             <img
               src={activity.photo}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
+              onError={(event) => {
+                // Photo unreachable (offline, storage outage): drop it and let
+                // the branded tile show through instead of a broken-image icon.
+                event.currentTarget.style.display = 'none'
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-3">

@@ -152,7 +152,17 @@ export default function EventMedia({ src, alt = '', className, badge, poster, lo
           onPause={() => setIsPlaying(false)}
         />
       ) : (
-        <img src={src} alt={alt} style={mediaStyle} loading="lazy" />
+        <img
+          src={src}
+          alt={alt}
+          style={mediaStyle}
+          loading="lazy"
+          onError={(event) => {
+            // Unreachable image (offline, storage outage) — hide it rather
+            // than leaving a broken-image icon in the layout.
+            event.currentTarget.style.visibility = 'hidden'
+          }}
+        />
       )}
       {showLogoFallback && (
         <div

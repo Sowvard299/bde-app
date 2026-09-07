@@ -1,3 +1,5 @@
+import weicupLogo from '../assets/weicup-logo.png'
+
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm', '.m4v']
 
 export function isVideoUrl(url) {
@@ -5,9 +7,6 @@ export function isVideoUrl(url) {
   const clean = url.split('?')[0].toLowerCase()
   return VIDEO_EXTENSIONS.some((ext) => clean.endsWith(ext))
 }
-
-const ASSET_BASE =
-  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
 
 // Videos live on Cloudflare R2 instead of Supabase Storage — Supabase's free
 // tier bandwidth (5.5GB/month) got blown through fast by a handful of
@@ -37,7 +36,20 @@ export function isLogoFile(url) {
   return clean.endsWith('.svg') || clean.endsWith('.png')
 }
 
-// The WEICUP logo and the faint background pictogram used to re-skin its
-// event detail page.
-export const WEICUP_LOGO = ASSET_BASE + 'logo%20wei%20jaune%20et%20rouge.png'
-export const WEICUP_PICTOGRAM = ASSET_BASE + 'pictogramme%20wei%20beige%20sans%20fond.png'
+// Bundled with the app rather than served from Supabase Storage: the WEI is
+// the one page that absolutely has to render even if the backend is down.
+export const WEICUP_LOGO = weicupLogo
+
+// Canonical ticketing link, kept in code rather than in the database so the
+// most business-critical link on the site can't be wrong or unreachable.
+export const WEICUP_TICKET_URL =
+  'https://www.helloasso.com/associations/nouveau-bureau-des-etudiants-de-l-institut-d-administration-des-entreprises-de-paris/evenements/weicup-edition-latino-billetterie-wei-iae-paris-sorbonne-2026'
+
+// Mise en vente des places WEI : dimanche 6 septembre 2026, 12h00 (Paris).
+// Partagé par la page evenement et la frise d'accueil pour qu'elles basculent
+// exactement au meme moment, sans intervention manuelle.
+export const WEICUP_SALE_OPENS_AT = new Date('2026-09-06T12:00:00+02:00')
+
+export function weicupSaleIsLive() {
+  return Date.now() >= WEICUP_SALE_OPENS_AT.getTime()
+}
