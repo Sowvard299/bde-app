@@ -1,19 +1,19 @@
 import { Link } from 'react-router-dom'
 import matchsPhoto from '../assets/activities/matchs.jpg'
+import { R2_MEDIA_BASE } from '../lib/media'
 
-const BASE =
-  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
+const BASE = R2_MEDIA_BASE + 'activities/'
 
 const ACTIVITIES = [
   {
     title: 'Sorbonne Night',
     description: 'La soirée mensuelle du BDE, tous les mois.',
-    photo: BASE + 'sorbonne%20night%20(2).jpeg',
+    photo: BASE + 'sorbonne-night.jpeg',
   },
   {
     title: 'Sorbonne Game',
     description: 'Jeux de société, FIFA…',
-    photo: BASE + 'sorbonne%20game.png',
+    photo: BASE + 'sorbonne-game.png',
   },
   {
     title: 'Sorties culturelles',

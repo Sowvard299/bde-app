@@ -1,2 +1,11 @@
 # Local Netlify folder
 .netlify
+
+# Raw media dropped locally for R2/Supabase uploads (large binaries, never committed)
+contenue/
+Fichier 29mdpi.png
+wei_large/
+wei_squares/
+
+# Cloudflare Workers local dev state
+app/.wrangler/

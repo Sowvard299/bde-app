@@ -6,8 +6,7 @@ import pullsPoster from '../assets/video-posters/pulls.jpg'
 import cdfPoster from '../assets/video-posters/cdf.jpg'
 import galaPoster from '../assets/video-posters/gala.jpg'
 
-const BASE =
-  'https://qsaqxynxiwcbvxfndweb.supabase.co/storage/v1/object/public/event-images/'
+const ACTIVITIES_BASE = R2_MEDIA_BASE + 'activities/'
 
 const MILESTONES = [
   {
@@ -28,7 +27,7 @@ const MILESTONES = [
   {
     title: "Concours Inter-IAE d'éloquence",
     date: 'Mars 2027',
-    media: BASE + "Logoconcours%20d%27eloquence.jpeg",
+    media: ACTIVITIES_BASE + "concours-eloquence.jpeg",
     isLogo: true,
   },
   {
