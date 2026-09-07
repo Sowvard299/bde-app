@@ -14,6 +14,23 @@ import {
   weicupSaleIsLive,
 } from '../lib/media'
 
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+      <path d="M12.004 2C6.477 2 2 6.477 2 12.004c0 2.118.618 4.09 1.688 5.752L2.05 22.5l4.891-1.605a9.955 9.955 0 0 0 5.063 1.372c5.527 0 10.004-4.477 10.004-10.004C21.999 6.477 17.522 2 12.004 2zm0 18.184a8.15 8.15 0 0 1-4.16-1.138l-.298-.176-2.9.952.965-2.827-.194-.29a8.156 8.156 0 0 1-1.264-4.401c0-4.508 3.668-8.176 8.176-8.176 4.508 0 8.176 3.668 8.176 8.176s-3.668 8.176-8.176 8.176z" />
+    </svg>
+  )
+}
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.805.249 2.227.415.56.217.96.477 1.38.896.42.42.679.82.896 1.38.166.422.36 1.057.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.25 1.805-.415 2.227a3.717 3.717 0 0 1-.896 1.38 3.717 3.717 0 0 1-1.38.896c-.422.166-1.057.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.805-.25-2.227-.415a3.717 3.717 0 0 1-1.38-.896 3.717 3.717 0 0 1-.896-1.38c-.166-.422-.36-1.057-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.17.249-1.805.415-2.227.217-.56.477-.96.896-1.38a3.717 3.717 0 0 1 1.38-.896c.422-.166 1.057-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 8.162a5.838 5.838 0 1 0 0 11.676 5.838 5.838 0 0 0 0-11.676zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+    </svg>
+  )
+}
+
 export default function EvenementDetailPage() {
   const { id } = useParams()
   const [event, setEvent] = useState(null)
@@ -110,6 +127,45 @@ export default function EvenementDetailPage() {
 
         {event.description && (
           <p className="whitespace-pre-line text-fg-muted">{event.description}</p>
+        )}
+
+        {(event.whatsapp_url || event.instagram_url) && (
+          <div className="rounded-xl border border-line bg-surface p-4">
+            <p className="font-display text-sm font-bold uppercase tracking-wide text-fg">
+              Toutes les infos ici
+            </p>
+            <p className="mt-1 text-xs text-fg-faint">
+              Rejoins-nous pour ne rien rater des prochaines sorties.
+            </p>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              {event.whatsapp_url && (
+                <a
+                  href={event.whatsapp_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <WhatsAppIcon />
+                  WhatsApp
+                </a>
+              )}
+              {event.instagram_url && (
+                <a
+                  href={event.instagram_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  style={{
+                    background:
+                      'linear-gradient(45deg, #f9ce34, #ee2a7b 45%, #6228d7 90%)',
+                  }}
+                >
+                  <InstagramIcon />
+                  Instagram
+                </a>
+              )}
+            </div>
+          </div>
         )}
 
         {weicup && (
