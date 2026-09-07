@@ -142,7 +142,7 @@ export default function AnnualMilestones() {
               </div>
             )}
 
-            <p className="font-sans text-base font-bold uppercase leading-tight text-white">
+            <p className="font-display text-base font-bold uppercase leading-tight text-white">
               {milestone.title}
             </p>
             {milestone.note && (
