@@ -1,7 +1,7 @@
 import { clientsClaim } from 'workbox-core'
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
-import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
+import { CacheFirst, NetworkFirst } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 
 // Merges OneSignal's push handlers into this same service worker/scope
@@ -15,10 +15,16 @@ cleanupOutdatedCaches()
 // App shell (JS/CSS/HTML/icons) so the app opens instantly, even offline.
 precacheAndRoute(self.__WB_MANIFEST)
 
-// Supabase data (events, partners) already fetched once stays available offline.
+// Supabase data (events, partners): always prefer a fresh network response
+// so an edited row (a corrected logo, a fixed date) shows up immediately.
+// The cache is only a fallback for when the network genuinely fails
+// (offline, or Supabase itself down) — StaleWhileRevalidate used to serve
+// yesterday's cached response first and silently fail to refresh it in the
+// background whenever Supabase returned an error, so an update could stay
+// invisible indefinitely. Cache name bumped to drop those stale entries.
 registerRoute(
   ({ url }) => url.hostname.endsWith('.supabase.co'),
-  new StaleWhileRevalidate({ cacheName: 'supabase-api' })
+  new NetworkFirst({ cacheName: 'supabase-api-v2', networkTimeoutSeconds: 6 })
 )
 
 // Event/partner images already viewed stay available offline.

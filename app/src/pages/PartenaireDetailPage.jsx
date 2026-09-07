@@ -9,6 +9,9 @@ export default function PartenaireDetailPage() {
   const { id } = useParams()
   const [partner, setPartner] = useState(null)
   const [status, setStatus] = useState('loading')
+  // A logo can point at an unreachable host (storage quota, offline, a
+  // stale cached URL) — fall back to initials instead of a broken-image icon.
+  const [logoFailed, setLogoFailed] = useState(false)
 
   useEffect(() => {
     setStatus('loading')
@@ -50,16 +53,22 @@ export default function PartenaireDetailPage() {
       </Link>
 
       <div className="flex items-center gap-4">
-        {partner.logo_url ? (
+        {partner.logo_url && !logoFailed ? (
           isLogoFile(partner.logo_url) ? (
             <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2">
-              <img src={partner.logo_url} alt="" className="h-full w-full object-contain" />
+              <img
+                src={partner.logo_url}
+                alt=""
+                className="h-full w-full object-contain"
+                onError={() => setLogoFailed(true)}
+              />
             </span>
           ) : (
             <img
               src={partner.logo_url}
               alt=""
               className="h-16 w-16 shrink-0 rounded-full object-cover"
+              onError={() => setLogoFailed(true)}
             />
           )
         ) : (
