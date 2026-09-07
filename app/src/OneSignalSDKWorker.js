@@ -3,6 +3,7 @@ import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { CacheFirst, NetworkFirst } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
+import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 
 // Merges OneSignal's push handlers into this same service worker/scope
 // instead of registering a second worker, which would collide with this one.
@@ -22,9 +23,19 @@ precacheAndRoute(self.__WB_MANIFEST)
 // yesterday's cached response first and silently fail to refresh it in the
 // background whenever Supabase returned an error, so an update could stay
 // invisible indefinitely. Cache name bumped to drop those stale entries.
+//
+// CacheableResponsePlugin is required here: Supabase's egress-quota block
+// answers with HTTP 402, which is still a "successful" fetch as far as the
+// service worker is concerned. Without this plugin NetworkFirst would
+// happily cache that 402 error body, and the offline fallback would then
+// serve an error forever instead of the last good response.
 registerRoute(
   ({ url }) => url.hostname.endsWith('.supabase.co'),
-  new NetworkFirst({ cacheName: 'supabase-api-v2', networkTimeoutSeconds: 6 })
+  new NetworkFirst({
+    cacheName: 'supabase-api-v2',
+    networkTimeoutSeconds: 6,
+    plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
+  })
 )
 
 // Event/partner images already viewed stay available offline.
