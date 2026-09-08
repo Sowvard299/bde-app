@@ -52,47 +52,72 @@ export default function PartenaireDetailPage() {
         ‹ Retour aux partenaires
       </Link>
 
-      <div className="flex items-center gap-4">
-        {partner.logo_url && !logoFailed ? (
-          isLogoFile(partner.logo_url) ? (
-            <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2">
+      {/* Bandeau d'identité : logo, nom, catégorie sur fond de charte, avec
+          le même halo que le reste du site pour ne pas casser le fil visuel. */}
+      <div className="grain relative overflow-hidden rounded-2xl bg-ink p-5">
+        <div
+          className="aurora aurora-slow -right-12 -top-16 h-48 w-48"
+          style={{ background: 'radial-gradient(circle, #ff4214 0%, transparent 70%)' }}
+        />
+
+        <div className="relative flex items-center gap-4">
+          {partner.logo_url && !logoFailed ? (
+            isLogoFile(partner.logo_url) ? (
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-2.5">
+                <img
+                  src={partner.logo_url}
+                  alt=""
+                  className="h-full w-full object-contain"
+                  onError={() => setLogoFailed(true)}
+                />
+              </span>
+            ) : (
               <img
                 src={partner.logo_url}
                 alt=""
-                className="h-full w-full object-contain"
+                className="h-20 w-20 shrink-0 rounded-2xl object-cover"
                 onError={() => setLogoFailed(true)}
               />
-            </span>
+            )
           ) : (
-            <img
-              src={partner.logo_url}
-              alt=""
-              className="h-16 w-16 shrink-0 rounded-full object-cover"
-              onError={() => setLogoFailed(true)}
-            />
-          )
-        ) : (
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-surface-muted text-lg font-semibold text-fg-faint">
-            {partner.name
-              .split(' ')
-              .slice(0, 2)
-              .map((w) => w[0])
-              .join('')
-              .toUpperCase()}
-          </span>
-        )}
-
-        <div className="min-w-0">
-          <h1 className="font-display text-xl font-semibold text-fg">{partner.name}</h1>
-          {partner.partner_categories && (
-            <p className="text-sm text-fg-faint">{partner.partner_categories.name}</p>
+            <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white/10 font-display text-xl font-bold text-white/80">
+              {partner.name
+                .split(' ')
+                .slice(0, 2)
+                .map((w) => w[0])
+                .join('')
+                .toUpperCase()}
+            </span>
           )}
+
+          <div className="min-w-0">
+            {partner.partner_categories && (
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
+                {partner.partner_categories.name}
+              </p>
+            )}
+            <h1 className="mt-1 font-display text-2xl font-semibold leading-tight text-white">
+              {partner.name}
+            </h1>
+            {partner.kind === 'partenaire' && (
+              <span className="mt-1.5 inline-block rounded-full bg-accent-gold px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
+                Partenaire officiel
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      <p className="rounded-lg bg-accent/15 px-4 py-3 text-lg font-bold text-accent">
-        {partner.benefit}
-      </p>
+      {/* L'offre est la raison d'être de la page : elle est traitée comme un
+          bloc à part entière, pas comme un simple paragraphe coloré. */}
+      <div className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-4">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+          Ton avantage
+        </p>
+        <p className="mt-1.5 font-display text-xl font-bold leading-snug text-fg">
+          {partner.benefit}
+        </p>
+      </div>
 
       {partner.description && (
         <p className="whitespace-pre-line text-fg-muted">{partner.description}</p>
