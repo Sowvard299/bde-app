@@ -4,7 +4,6 @@ import AnnualMilestones from '../components/AnnualMilestones'
 import MonthlyActivities from '../components/MonthlyActivities'
 import AppFooter from '../components/AppFooter'
 import HomeHero from '../components/HomeHero'
-import Marquee from '../components/Marquee'
 import Reveal from '../components/Reveal'
 import SectionHeading from '../components/SectionHeading'
 import { fetchUpcomingEvents } from '../lib/events'
@@ -39,9 +38,7 @@ export default function AccueilPage() {
 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-10 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-6xl lg:px-10 lg:pb-16 lg:pt-12">
-      <HomeHero nextEvent={nextEvent} />
-
-      <Marquee items={MARQUEE_ITEMS} className="-mx-4 lg:-mx-10" />
+      <HomeHero nextEvent={nextEvent} marqueeItems={MARQUEE_ITEMS} />
 
       <Reveal as="section" className="flex flex-col gap-4">
         <SectionHeading eyebrow="Toute l'année" title="L'année en un coup d'œil" />

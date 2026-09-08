@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Countdown from './Countdown'
+import Marquee from './Marquee'
 import { formatEventDateTime } from '../lib/formatDate'
 import logoWhite from '../assets/logo-mark-white.png'
 
@@ -11,7 +12,7 @@ import logoWhite from '../assets/logo-mark-white.png'
 // `nextEvent` est facultatif : sans lui (base injoignable, plus aucun
 // événement à venir) le bloc compte à rebours disparaît simplement et
 // l'affiche reste correcte.
-export default function HomeHero({ nextEvent }) {
+export default function HomeHero({ nextEvent, marqueeItems }) {
   return (
     <section className="grain relative -mx-4 overflow-hidden px-4 pb-8 pt-10 sm:rounded-3xl lg:-mx-0 lg:rounded-3xl lg:px-10 lg:pb-12 lg:pt-14">
       <div className="absolute inset-0 -z-10 bg-ink" />
@@ -88,6 +89,13 @@ export default function HomeHero({ nextEvent }) {
             Les bons plans
           </Link>
         </div>
+      </div>
+
+      {/* Collee aux bords de l'affiche : les marges negatives annulent le
+          padding de la section, et l'overflow-hidden du parent la rogne
+          proprement dans les angles arrondis. */}
+      <div className="relative -mx-4 -mb-8 mt-9 lg:-mx-10 lg:-mb-12">
+        <Marquee items={marqueeItems} />
       </div>
     </section>
   )
