@@ -72,6 +72,135 @@ h1, h2, h3 {
   display: none;
 }
 
+/* =====================================================================
+   Boîte à outils visuelle
+   Le site est un BDE : l'ambiance visée est l'affiche de soirée
+   étudiante — encre profonde, halos de couleur, grain d'impression et
+   typo surdimensionnée. Tout est en CSS pur, aucun asset à télécharger.
+   ===================================================================== */
+
+/* Grain d'impression posé par-dessus un bloc. Le parent doit être en
+   position: relative. Purement décoratif, jamais cliquable. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Halos de couleur qui dérivent lentement derrière le contenu. Le flou
+   est ce qui fait tout le travail : sans lui ce sont des ronds moches. */
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  opacity: 0.55;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -8%, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-5%, 6%, 0) scale(0.94);
+  }
+}
+
+.aurora-slow {
+  animation: aurora-drift 26s ease-in-out infinite;
+}
+
+.aurora-slower {
+  animation: aurora-drift 34s ease-in-out infinite reverse;
+}
+
+/* Bandeau défilant façon affiche de festival. Le contenu est dupliqué
+   deux fois dans le JSX, d'où le -50% : la boucle est invisible. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 32s linear infinite;
+  will-change: transform;
+}
+
+/* Apparition au défilement, déclenchée par IntersectionObserver. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  opacity: 0;
+}
+
+.reveal.is-visible {
+  animation: reveal-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Les cartes se soulèvent au survol et l'image zoome légèrement. */
+.lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+}
+
+.zoom-media img,
+.zoom-media video {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift:hover .zoom-media img,
+.lift:hover .zoom-media video {
+  transform: scale(1.06);
+}
+
+/* Mot mis en avant dans un titre, dégradé de la charte. */
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-accent-gold), var(--color-accent) 55%, var(--color-accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .aurora-slow,
+  .aurora-slower {
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

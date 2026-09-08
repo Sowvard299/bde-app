@@ -88,11 +88,13 @@ export default function PartenairesContent() {
       {!error && filtered.length > 0 && view === 'liste' && (
         <div className="flex flex-col gap-6">
           {partenaires.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
+            <div className="flex flex-col gap-3">
+              <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
+                <span className="h-px w-6 bg-accent-gold" />
                 Partenaires
+                <span className="font-sans text-fg-subtle">({partenaires.length})</span>
               </h3>
-              <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+              <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
                 {partenaires.map((partner) => (
                   <PartnerRow key={partner.id} partner={partner} />
                 ))}
@@ -101,11 +103,13 @@ export default function PartenairesContent() {
           )}
 
           {bonsPlans.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
+            <div className="flex flex-col gap-3">
+              <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-fg-faint">
+                <span className="h-px w-6 bg-line" />
                 Bons plans
+                <span className="text-fg-subtle">({bonsPlans.length})</span>
               </h3>
-              <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+              <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
                 {bonsPlans.map((partner) => (
                   <PartnerRow key={partner.id} partner={partner} />
                 ))}

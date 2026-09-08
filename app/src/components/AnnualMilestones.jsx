@@ -119,7 +119,7 @@ export default function AnnualMilestones() {
           <Tag
             key={milestone.title}
             {...linkProps}
-            className="flex w-56 shrink-0 flex-col gap-2 rounded-2xl bg-ink p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="lift zoom-media flex w-56 shrink-0 flex-col gap-2 rounded-2xl bg-ink p-3 ring-1 ring-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <p className="text-xs font-bold uppercase italic tracking-wide text-accent">
               {milestone.date}

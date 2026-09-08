@@ -47,7 +47,7 @@ export default function MonthlyActivities() {
           <Tag
             key={activity.title}
             {...(activity.to ? { to: activity.to } : {})}
-            className="relative aspect-[4/5] overflow-hidden rounded-xl bg-ink"
+            className="lift zoom-media group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink ring-1 ring-white/10"
           >
             <img
               src={activity.photo}
@@ -59,12 +59,21 @@ export default function MonthlyActivities() {
                 event.currentTarget.style.display = 'none'
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+            {/* Deux voiles superposés : un noir pour la lisibilité du texte,
+                un orange très léger qui réchauffe la photo et raccroche la
+                vignette à la charte. */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
+            <div className="absolute inset-0 bg-accent/10 mix-blend-overlay" />
             <div className="absolute inset-x-0 bottom-0 p-3">
               <p className="font-display text-sm font-bold uppercase leading-tight text-white">
                 {activity.title}
               </p>
-              <p className="mt-0.5 text-xs text-white/75">{activity.description}</p>
+              <p className="mt-0.5 text-xs leading-snug text-white/75">{activity.description}</p>
+              {activity.to && (
+                <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-accent-gold">
+                  Découvrir →
+                </span>
+              )}
             </div>
           </Tag>
         )

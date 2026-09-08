@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom'
-import { formatEventDateShort, formatEventTime, getParisDateParts } from '../lib/formatDate'
+import { formatEventTime, getParisDateParts } from '../lib/formatDate'
 import EventMedia from './EventMedia'
+import Reveal from './Reveal'
 import { isReusedMedia, isWeicup, WEICUP_LOGO } from '../lib/media'
 
+const TIMEZONE = 'Europe/Paris'
 const MONTH_LABEL = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' })
+const WEEKDAY_SHORT = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', timeZone: TIMEZONE })
+const MONTH_SHORT = new Intl.DateTimeFormat('fr-FR', { month: 'short', timeZone: TIMEZONE })
 
 function groupByMonth(events) {
   const groups = []
@@ -22,33 +26,63 @@ function groupByMonth(events) {
   return groups
 }
 
+// Pavé de date façon souche de billet, à gauche de chaque ligne. Le jour en
+// gros chiffre donne un point d'accroche visuel fort quand on parcourt la
+// liste en diagonale, ce qu'une date écrite en toutes lettres ne fait pas.
+function DateStub({ isoString }) {
+  const date = new Date(isoString)
+  const { day } = getParisDateParts(isoString)
+
+  return (
+    <div className="flex w-14 shrink-0 flex-col items-center overflow-hidden rounded-xl border border-line bg-surface text-center">
+      <span className="w-full bg-accent py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+        {WEEKDAY_SHORT.format(date).replace('.', '')}
+      </span>
+      <span className="mt-1 font-display text-2xl font-bold leading-none text-fg">{day}</span>
+      <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-fg-faint">
+        {MONTH_SHORT.format(date).replace('.', '')}
+      </span>
+    </div>
+  )
+}
+
 export default function EventTimeline({ events }) {
   const groups = groupByMonth(events)
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       {groups.map((group) => (
         <div key={group.key}>
-          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wide text-fg-faint">
-            {MONTH_LABEL.format(new Date(group.year, group.month - 1, 1))}
-          </h2>
+          <div className="mb-4 flex items-center gap-3">
+            <h2 className="font-display text-lg font-semibold capitalize text-fg">
+              {MONTH_LABEL.format(new Date(group.year, group.month - 1, 1))}
+            </h2>
+            <span className="h-px flex-1 bg-line" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-fg-subtle">
+              {group.events.length} {group.events.length > 1 ? 'dates' : 'date'}
+            </span>
+          </div>
 
-          <ol className="relative flex flex-col gap-6 border-l-2 border-line pl-6">
-            {group.events.map((event) => (
-              <li key={event.id} className="relative">
-                <span className="absolute top-1.5 -left-[29px] h-3 w-3 rounded-full border-2 border-canvas bg-accent" />
-
+          <ol className="flex flex-col gap-3">
+            {group.events.map((event, index) => (
+              <Reveal as="li" key={event.id} delay={index * 60}>
                 <Link
                   to={`/evenements/${event.id}`}
-                  className="flex items-center gap-3 rounded-xl transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  className="lift zoom-media flex items-center gap-3 rounded-2xl border border-line bg-surface p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
-                  <div className="min-w-0 flex-1 py-1">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-accent">
-                      {formatEventDateShort(event.starts_at)} · {formatEventTime(event.starts_at)}
+                  <DateStub isoString={event.starts_at} />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold uppercase tracking-widest text-accent">
+                      {formatEventTime(event.starts_at)}
                     </p>
-                    <p className="font-display text-lg font-semibold text-fg">{event.title}</p>
+                    <p className="mt-0.5 font-display text-lg font-semibold leading-tight text-fg">
+                      {event.title}
+                    </p>
                     {event.location_name && (
-                      <p className="truncate text-sm text-fg-faint">{event.location_name}</p>
+                      <p className="mt-0.5 truncate text-sm text-fg-faint">
+                        {event.location_name}
+                      </p>
                     )}
                   </div>
 
@@ -58,16 +92,16 @@ export default function EventTimeline({ events }) {
                       logoFallback={
                         isWeicup(event) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined
                       }
-                      className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                      className="h-20 w-20 shrink-0 overflow-hidden rounded-xl object-cover"
                       badge={isReusedMedia(event) ? '*' : undefined}
                     />
                   ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-ink">
-                      <span className="text-xs font-semibold text-white/70">BDE</span>
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-ink">
+                      <span className="font-display text-xs font-bold text-white/70">BDE</span>
                     </div>
                   )}
                 </Link>
-              </li>
+              </Reveal>
             ))}
           </ol>
         </div>

@@ -89,35 +89,50 @@ export default function EvenementDetailPage() {
 
   return (
     <main className="relative mx-auto flex min-h-svh max-w-[480px] flex-col gap-4 overflow-hidden pb-24 lg:max-w-2xl lg:pb-16 lg:pt-12">
-      {event.image_url ? (
-        <EventMedia
-          src={event.image_url}
-          logoFallback={weicup ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
-          className="aspect-[4/3] w-full object-cover lg:rounded-2xl"
-          badge={isReusedMedia(event) ? '*' : undefined}
-        />
-      ) : (
-        <div className="flex aspect-[4/3] w-full items-center justify-center bg-ink px-6 lg:rounded-2xl">
-          <span className="font-display text-2xl font-semibold text-white">{event.title}</span>
-        </div>
-      )}
+      {/* Héros plein cadre : le visuel occupe tout le haut de l'écran et le
+          titre est posé dessus, sur un dégradé qui fond vers le fond de page.
+          Le dégradé va jusqu'à l'opaque en bas, ce qui garantit la lisibilité
+          du titre quelle que soit la photo (ou la vidéo) derrière. */}
+      <div className="relative">
+        {event.image_url ? (
+          <EventMedia
+            src={event.image_url}
+            logoFallback={weicup ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
+            className="aspect-[4/5] w-full object-cover sm:aspect-[16/10] lg:rounded-2xl"
+            badge={isReusedMedia(event) ? '*' : undefined}
+          />
+        ) : (
+          <div className="flex aspect-[4/5] w-full items-center justify-center bg-ink px-6 sm:aspect-[16/10] lg:rounded-2xl">
+            <span className="font-display text-2xl font-semibold text-white">{event.title}</span>
+          </div>
+        )}
 
-      <div className="relative flex flex-col gap-4 px-4 lg:px-0">
-        <Link to="/evenements" className="text-sm font-medium text-accent">
-          ‹ Retour aux événements
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas via-canvas/50 to-transparent lg:rounded-2xl" />
+
+        <Link
+          to="/evenements"
+          className="absolute left-4 top-4 rounded-full bg-black/50 px-3.5 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-black/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          ‹ Retour
         </Link>
 
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">
+        <div className="absolute inset-x-0 bottom-0 p-4 lg:p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-gold">
             {formatEventDateTime(event.starts_at)}
           </p>
-          <h1 className="font-display text-2xl font-semibold text-fg">{event.title}</h1>
+          <h1 className="mt-1.5 font-display text-3xl font-semibold leading-tight text-white lg:text-4xl">
+            {event.title}
+          </h1>
           {(event.location_name || event.location_address) && (
-            <p className="mt-1 text-fg-faint">
+            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white/85 backdrop-blur-sm">
+              <span aria-hidden="true">📍</span>
               {[event.location_name, event.location_address].filter(Boolean).join(' — ')}
             </p>
           )}
         </div>
+      </div>
+
+      <div className="relative flex flex-col gap-4 px-4 lg:px-0">
 
         {weicup && !saleIsLive && (
           <p className="rounded-lg bg-surface px-4 py-3 text-sm font-semibold text-accent">

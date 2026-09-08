@@ -6,6 +6,7 @@ import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
 import ViewToggle from '../components/ViewToggle'
 import AppFooter from '../components/AppFooter'
+import PageHeader from '../components/PageHeader'
 
 const todayParts = getParisDateParts(new Date().toISOString())
 const todayKey = `${todayParts.year}-${String(todayParts.month).padStart(2, '0')}-${String(todayParts.day).padStart(2, '0')}`
@@ -59,7 +60,11 @@ export default function EvenementsPage() {
 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl lg:px-10 lg:pb-16 lg:pt-12">
-      <h1 className="font-display text-2xl font-semibold text-fg lg:text-3xl">Événements</h1>
+      <PageHeader
+        eyebrow="Agenda du BDE"
+        title="Événements"
+        subtitle="Soirées, sport, sorties : tout ce qui arrive, dans l'ordre."
+      />
 
       <ViewToggle
         options={[
