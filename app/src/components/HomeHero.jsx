@@ -2,6 +2,16 @@ import { Link } from 'react-router-dom'
 import Countdown from './Countdown'
 import { formatEventDateTime } from '../lib/formatDate'
 import logoWhite from '../assets/logo-mark-white.png'
+import weicupLogo from '../assets/weicup-logo.png'
+
+// Couleurs prises directement dans le logo WEICUP (rouge et jaune de
+// l'édition Latino), pour que le bloc compte à rebours porte la charte de
+// l'événement plutôt que la charte générique du site quand il s'agit du WEI.
+const WEICUP_COUNTDOWN_CLASSES = {
+  cell: 'flex min-w-[52px] flex-col items-center rounded-xl bg-black/20 px-2 py-2',
+  value: 'font-display text-2xl font-bold leading-none tabular-nums text-[#F9B513]',
+  label: 'mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/70',
+}
 
 // Affiche d'ouverture du site. Trois couches empilées : les halos de
 // couleur tout au fond, le phénix en filigrane par-dessus, le texte
@@ -54,13 +64,49 @@ export default function HomeHero({ nextEvent, isWeicup = false }) {
           Soirées, sport, sorties et réductions étudiantes. Tout ce que fait le BDE, réuni ici.
         </p>
 
-        {nextEvent && (
+        {nextEvent && isWeicup && (
+          // Bloc à la charte du WEI : rouge et jaune de l'affiche, palmier
+          // en filigrane, plutôt que le bloc générique navy du reste du
+          // site — c'est LE rendez-vous de l'année, il a sa propre identité.
+          <Link
+            to={`/evenements/${nextEvent.id}`}
+            className="group mt-7 block overflow-hidden rounded-2xl border border-[#F9B513]/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F9B513] lg:max-w-lg"
+            style={{ background: 'linear-gradient(150deg, #C21414 0%, #8E0F0F 100%)' }}
+          >
+            <div className="relative flex items-center gap-4 p-4">
+              <img
+                src={weicupLogo}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-8 -top-10 w-40 rotate-6 opacity-25"
+              />
+              <img
+                src={weicupLogo}
+                alt="WEICUP"
+                className="relative h-16 w-16 shrink-0 rounded-xl object-cover shadow-lg"
+              />
+              <div className="relative min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#F9B513]">
+                  Le rendez-vous de l'année
+                </p>
+                <p className="mt-0.5 truncate font-display text-xl font-semibold text-white transition group-hover:text-[#F9B513] lg:text-2xl">
+                  {nextEvent.title}
+                </p>
+                <p className="mt-0.5 text-sm capitalize text-white/70">
+                  {formatEventDateTime(nextEvent.starts_at)}
+                </p>
+              </div>
+            </div>
+            <div className="relative px-4 pb-4">
+              <Countdown target={nextEvent.starts_at} classes={WEICUP_COUNTDOWN_CLASSES} />
+            </div>
+          </Link>
+        )}
+
+        {nextEvent && !isWeicup && (
           <div className="mt-7 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm lg:max-w-lg">
-            {/* Le compte a rebours vise le WEI, qui n'est pas forcement le
-                prochain evenement du calendrier : le libelle doit suivre,
-                sinon il annonce une date fausse. */}
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
-              {isWeicup ? "Le rendez-vous de l'année" : 'Prochain événement'}
+              Prochain événement
             </p>
             <Link
               to={`/evenements/${nextEvent.id}`}

@@ -10,25 +10,32 @@ function parts(msLeft) {
   }
 }
 
-function Cell({ value, label }) {
+function Cell({ value, label, cellClassName, valueClassName, labelClassName }) {
   return (
-    <div className="flex min-w-[52px] flex-col items-center rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm">
-      <span className="font-display text-2xl font-bold leading-none tabular-nums text-white">
-        {String(value).padStart(2, '0')}
-      </span>
-      <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/60">
-        {label}
-      </span>
+    <div className={cellClassName}>
+      <span className={valueClassName}>{String(value).padStart(2, '0')}</span>
+      <span className={labelClassName}>{label}</span>
     </div>
   )
+}
+
+const DEFAULT_CLASSES = {
+  cell: 'flex min-w-[52px] flex-col items-center rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm',
+  value: 'font-display text-2xl font-bold leading-none tabular-nums text-white',
+  label: 'mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/60',
 }
 
 // Compte à rebours vers une date. Isolé dans son propre composant pour que
 // le tic de chaque seconde ne re-rende que ces quatre cases, et pas toute
 // la page d'accueil autour.
-export default function Countdown({ target }) {
+//
+// `classes` permet à un événement avec sa propre charte (le WEI, rouge et
+// jaune plutôt que la charte générique du site) d'imposer ses couleurs sans
+// dupliquer tout le composant.
+export default function Countdown({ target, classes }) {
   const targetMs = new Date(target).getTime()
   const [left, setLeft] = useState(() => targetMs - Date.now())
+  const c = { ...DEFAULT_CLASSES, ...classes }
 
   useEffect(() => {
     const id = setInterval(() => setLeft(targetMs - Date.now()), 1000)
@@ -41,10 +48,10 @@ export default function Countdown({ target }) {
 
   return (
     <div className="flex gap-2" role="timer" aria-live="off">
-      <Cell value={days} label="jours" />
-      <Cell value={hours} label="h" />
-      <Cell value={minutes} label="min" />
-      <Cell value={seconds} label="sec" />
+      <Cell value={days} label="jours" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
+      <Cell value={hours} label="h" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
+      <Cell value={minutes} label="min" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
+      <Cell value={seconds} label="sec" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
     </div>
   )
 }
