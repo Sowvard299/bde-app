@@ -59,12 +59,26 @@ function attachRetryListener() {
 //
 // `badge` renders a small marker (e.g. "*") in the bottom-right corner, for
 // cases like reused footage from a previous edition.
-export default function EventMedia({ src, alt = '', className, badge, poster, logoFallback }) {
+// `fallbackLabel` is shown, centered on a branded dark background, if the
+// image fails to load at runtime (storage outage, dead link, offline). It
+// mirrors the placeholder already used for events with no image_url at
+// all, so a broken link degrades to the exact same look as no image
+// instead of leaving an empty void the size of the wrapper.
+export default function EventMedia({
+  src,
+  alt = '',
+  className,
+  badge,
+  poster,
+  logoFallback,
+  fallbackLabel,
+}) {
   const isVideo = isVideoUrl(src)
   const wrapperRef = useRef(null)
   const videoRef = useRef(null)
   const [activated, setActivated] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
   const objectFit = className?.includes('object-contain') ? 'contain' : 'cover'
   const mediaStyle = {
     display: 'block',
@@ -151,17 +165,21 @@ export default function EventMedia({ src, alt = '', className, badge, poster, lo
           onPlaying={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
+      ) : imgFailed ? (
+        <div className="flex h-full w-full items-center justify-center bg-ink px-4">
+          {fallbackLabel && (
+            <span className="text-center font-display text-base font-semibold leading-tight text-white/80">
+              {fallbackLabel}
+            </span>
+          )}
+        </div>
       ) : (
         <img
           src={src}
           alt={alt}
           style={mediaStyle}
           loading="lazy"
-          onError={(event) => {
-            // Unreachable image (offline, storage outage) — hide it rather
-            // than leaving a broken-image icon in the layout.
-            event.currentTarget.style.visibility = 'hidden'
-          }}
+          onError={() => setImgFailed(true)}
         />
       )}
       {showLogoFallback && (

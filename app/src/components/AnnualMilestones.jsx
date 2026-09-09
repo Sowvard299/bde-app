@@ -138,6 +138,7 @@ export default function AnnualMilestones() {
                   src={milestone.media}
                   poster={milestone.poster}
                   className="h-full w-full object-cover"
+                  fallbackLabel={milestone.title}
                 />
               </div>
             )}

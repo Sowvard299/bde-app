@@ -103,6 +103,7 @@ export default function EvenementDetailPage() {
             logoFallback={weicup ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
             className="aspect-[4/5] w-full object-cover sm:aspect-[16/10] lg:rounded-2xl"
             badge={isReusedMedia(event) ? '*' : undefined}
+            fallbackLabel={event.title}
           />
         ) : (
           <div className="flex aspect-[4/5] w-full items-center justify-center bg-ink px-6 sm:aspect-[16/10] lg:rounded-2xl">
