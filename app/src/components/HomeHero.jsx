@@ -3,6 +3,7 @@ import Countdown from './Countdown'
 import { formatEventDateTime } from '../lib/formatDate'
 import logoWhite from '../assets/logo-mark-white.png'
 import weicupLogo from '../assets/weicup-logo.png'
+import weicupPalm from '../assets/weicup-palm.png'
 
 // Couleurs prises directement dans le logo WEICUP (rouge et jaune de
 // l'édition Latino), pour que le bloc compte à rebours porte la charte de
@@ -75,10 +76,10 @@ export default function HomeHero({ nextEvent, isWeicup = false }) {
           >
             <div className="relative flex items-center gap-4 p-4">
               <img
-                src={weicupLogo}
+                src={weicupPalm}
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-8 -top-10 w-40 rotate-6 opacity-25"
+                className="pointer-events-none absolute -right-4 -top-8 w-32 rotate-6 opacity-30"
               />
               <img
                 src={weicupLogo}
