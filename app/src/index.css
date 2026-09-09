@@ -123,22 +123,6 @@ h1, h2, h3 {
   animation: aurora-drift 34s ease-in-out infinite reverse;
 }
 
-/* Bandeau défilant façon affiche de festival. Le contenu est dupliqué
-   deux fois dans le JSX, d'où le -50% : la boucle est invisible. */
-@keyframes marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-track {
-  animation: marquee-scroll 32s linear infinite;
-  will-change: transform;
-}
-
 /* Apparition au défilement, déclenchée par IntersectionObserver. */
 @keyframes reveal-up {
   from {
@@ -190,7 +174,6 @@ h1, h2, h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track,
   .aurora-slow,
   .aurora-slower {
     animation: none !important;

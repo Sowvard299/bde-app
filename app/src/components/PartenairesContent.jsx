@@ -47,7 +47,7 @@ export default function PartenairesContent() {
   )
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <ViewToggle
         options={[
           { value: 'liste', label: 'Liste' },
@@ -62,7 +62,7 @@ export default function PartenairesContent() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Rechercher un partenaire"
-        className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-base text-fg placeholder:text-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:max-w-sm"
+        className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-fg placeholder:text-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:max-w-sm"
       />
 
       {categories.length > 0 && (
@@ -86,15 +86,15 @@ export default function PartenairesContent() {
       )}
 
       {!error && filtered.length > 0 && view === 'liste' && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-9">
           {partenaires.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
                 <span className="h-px w-6 bg-accent-gold" />
                 Partenaires
                 <span className="font-sans text-fg-subtle">({partenaires.length})</span>
               </h3>
-              <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+              <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
                 {partenaires.map((partner) => (
                   <PartnerRow key={partner.id} partner={partner} />
                 ))}
@@ -103,13 +103,13 @@ export default function PartenairesContent() {
           )}
 
           {bonsPlans.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-fg-faint">
                 <span className="h-px w-6 bg-line" />
                 Bons plans
                 <span className="text-fg-subtle">({bonsPlans.length})</span>
               </h3>
-              <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
+              <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
                 {bonsPlans.map((partner) => (
                   <PartnerRow key={partner.id} partner={partner} />
                 ))}

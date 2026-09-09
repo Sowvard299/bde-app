@@ -7,20 +7,13 @@ import HomeHero from '../components/HomeHero'
 import Reveal from '../components/Reveal'
 import SectionHeading from '../components/SectionHeading'
 import { fetchUpcomingEvents } from '../lib/events'
+import { WEICUP_EVENT_ID } from '../lib/media'
 import logoWhite from '../assets/logo-mark-white.png'
 
-const MARQUEE_ITEMS = [
-  'Sorbonne Night',
-  'WEICUP',
-  'Sorbonne Running',
-  'Escalade',
-  'Gala',
-  'Coupe de France des IAE',
-  'Bons plans',
-]
 
 export default function AccueilPage() {
-  const [nextEvent, setNextEvent] = useState(null)
+  const [heroEvent, setHeroEvent] = useState(null)
+  const [heroIsWeicup, setHeroIsWeicup] = useState(false)
 
   // Sert uniquement au compte à rebours de l'affiche. Un échec n'a aucune
   // conséquence visible : l'affiche s'affiche simplement sans le bloc.
@@ -28,7 +21,13 @@ export default function AccueilPage() {
     let cancelled = false
     fetchUpcomingEvents()
       .then((events) => {
-        if (!cancelled) setNextEvent(events?.[0] ?? null)
+        if (cancelled) return
+        // Le compte a rebours vise le WEI, qui est LE rendez-vous de
+        // l'annee. On retombe sur le prochain evenement seulement si le
+        // WEI est passe ou absent, pour ne jamais afficher un bloc vide.
+        const weicup = events?.find((event) => event.id === WEICUP_EVENT_ID)
+        setHeroEvent(weicup ?? events?.[0] ?? null)
+        setHeroIsWeicup(Boolean(weicup))
       })
       .catch(() => {})
     return () => {
@@ -38,7 +37,7 @@ export default function AccueilPage() {
 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-10 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-6xl lg:px-10 lg:pb-16 lg:pt-12">
-      <HomeHero nextEvent={nextEvent} marqueeItems={MARQUEE_ITEMS} />
+      <HomeHero nextEvent={heroEvent} isWeicup={heroIsWeicup} />
 
       <Reveal as="section" className="flex flex-col gap-4">
         <SectionHeading eyebrow="Toute l'année" title="L'année en un coup d'œil" />

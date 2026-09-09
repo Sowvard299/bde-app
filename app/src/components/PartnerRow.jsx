@@ -11,72 +11,74 @@ function initials(name) {
     .toUpperCase()
 }
 
+// Carte d'un partenaire dans la liste.
+//
+// L'avantage occupe sa propre ligne pleine largeur plutôt que d'être tassé
+// à côté du logo : c'est l'information que l'étudiant cherche, elle a
+// besoin de place. Elle est posée sur un fond légèrement plus clair, ce
+// qui la fait ressortir sans avoir à la crier en orange saturé sur trois
+// lignes comme dans la version précédente.
 export default function PartnerRow({ partner }) {
-  // A logo can point at an unreachable host (storage quota, offline, a
-  // stale cached URL) — fall back to initials instead of a broken-image
-  // icon rather than trusting logo_url blindly.
+  // Un logo peut pointer vers un hôte injoignable (quota, hors ligne, URL
+  // périmée) : on retombe sur les initiales plutôt que sur l'icône d'image
+  // cassée du navigateur.
   const [logoFailed, setLogoFailed] = useState(false)
   const showLogo = partner.logo_url && !logoFailed
-
-  // Les partenaires négociés portent un liseré doré et un fond légèrement
-  // plus riche : c'est ce qui les distingue au premier coup d'œil des bons
-  // plans, qui sont de simples bonnes adresses.
   const isPartenaire = partner.kind === 'partenaire'
 
   return (
     <li>
       <Link
         to={`/partenaires/${partner.id}`}
-        className={`lift zoom-media relative flex h-full w-full items-start gap-3 overflow-hidden rounded-2xl border p-3.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-          isPartenaire
-            ? 'border-accent-gold/35 bg-surface'
-            : 'border-line bg-surface'
+        className={`lift flex h-full flex-col gap-4 rounded-2xl border bg-surface p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+          isPartenaire ? 'border-accent-gold/30' : 'border-line'
         }`}
       >
-        {isPartenaire && <span className="absolute inset-y-0 left-0 w-1 bg-accent-gold" />}
-
-        {showLogo ? (
-          isLogoFile(partner.logo_url) ? (
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-2">
+        <div className="flex items-center gap-4">
+          {showLogo ? (
+            <span
+              className={`flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${
+                isLogoFile(partner.logo_url) ? 'bg-white p-2.5' : ''
+              }`}
+            >
               <img
                 src={partner.logo_url}
                 alt=""
-                className="h-full w-full object-contain"
+                className={`h-full w-full ${
+                  isLogoFile(partner.logo_url) ? 'object-contain' : 'rounded-2xl object-cover'
+                }`}
                 onError={() => setLogoFailed(true)}
               />
             </span>
           ) : (
-            <span className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-              <img
-                src={partner.logo_url}
-                alt=""
-                className="h-full w-full object-cover"
-                onError={() => setLogoFailed(true)}
-              />
-            </span>
-          )
-        ) : (
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-surface-muted font-display text-base font-bold text-fg-faint">
-            {initials(partner.name)}
-          </span>
-        )}
-
-        <span className="min-w-0 flex-1">
-          <span className="flex items-center gap-2">
-            <span className="truncate font-display text-base font-semibold text-fg">
-              {partner.name}
-            </span>
-          </span>
-
-          {partner.partner_categories?.name && (
-            <span className="mt-1 inline-block rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-fg-faint">
-              {partner.partner_categories.name}
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-surface-muted font-display text-lg font-bold text-fg-faint">
+              {initials(partner.name)}
             </span>
           )}
 
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-display text-lg font-semibold leading-tight text-fg">
+              {partner.name}
+            </span>
+            {partner.partner_categories?.name && (
+              <span className="mt-1 block text-xs font-semibold uppercase tracking-wider text-fg-subtle">
+                {partner.partner_categories.name}
+              </span>
+            )}
+          </span>
+
+          <span aria-hidden="true" className="shrink-0 text-lg text-fg-subtle">
+            ›
+          </span>
+        </div>
+
+        <span className="rounded-xl bg-surface-muted/70 px-4 py-3">
+          <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-accent-gold">
+            Ton avantage
+          </span>
           {/* Pas de `block` ici : line-clamp impose son propre display et la
               classe d'affichage l'écraserait, ce qui annulerait la coupure. */}
-          <span className="mt-2 line-clamp-2 text-sm font-bold leading-snug text-accent">
+          <span className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-fg">
             {partner.benefit}
           </span>
         </span>
