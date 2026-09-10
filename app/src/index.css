@@ -27,7 +27,6 @@
 @theme {
   --color-ink: #0f1564;
   --color-accent: #ff4214;
-  --color-accent-pink: #ff66c4;
   --color-accent-gold: #ffc300;
 
   /* Dark theme surfaces/text, near-black with a faint navy tint. */
@@ -165,9 +164,12 @@ h1, h2, h3 {
   transform: scale(1.06);
 }
 
-/* Mot mis en avant dans un titre, dégradé de la charte. */
+/* Mot mis en avant dans un titre : un seul dégradé à deux teintes, doré
+   vers orange, repris partout où le site utilise un texte en dégradé —
+   trois couleurs (avec un rose qui n'apparaît nulle part ailleurs sur le
+   site) rendait le titre d'accueil criard plutôt qu'élégant. */
 .text-gradient {
-  background: linear-gradient(100deg, var(--color-accent-gold), var(--color-accent) 55%, var(--color-accent-pink));
+  background: linear-gradient(100deg, var(--color-accent-gold), var(--color-accent));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

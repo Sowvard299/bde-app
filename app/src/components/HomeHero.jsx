@@ -27,16 +27,16 @@ export default function HomeHero({ nextEvent, isWeicup = false }) {
     <section className="grain relative -mx-4 overflow-hidden px-4 pb-8 pt-10 sm:rounded-3xl lg:-mx-0 lg:rounded-3xl lg:px-10 lg:pb-12 lg:pt-14">
       <div className="absolute inset-0 -z-10 bg-ink" />
 
+      {/* Deux halos, pas trois : la version précédente ajoutait un rose qui
+          n'appartient à aucune autre partie du site et qui, combiné à
+          l'orange et au doré déjà là, faisait criard dès l'ouverture de
+          l'app. Orange et doré suffisent à donner du relief. */}
       <div
-        className="aurora aurora-slow -left-24 -top-32 h-80 w-80"
+        className="aurora aurora-slow -left-24 -top-32 h-96 w-96"
         style={{ background: 'radial-gradient(circle, #ff4214 0%, transparent 70%)' }}
       />
       <div
-        className="aurora aurora-slower -right-20 top-10 h-96 w-96"
-        style={{ background: 'radial-gradient(circle, #ff66c4 0%, transparent 70%)' }}
-      />
-      <div
-        className="aurora aurora-slow -bottom-32 left-1/3 h-72 w-72"
+        className="aurora aurora-slower -right-24 -bottom-24 h-96 w-96"
         style={{ background: 'radial-gradient(circle, #ffc300 0%, transparent 70%)' }}
       />
 
