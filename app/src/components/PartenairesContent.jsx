@@ -5,6 +5,15 @@ import CategoryChips from './CategoryChips'
 import PartnersMap from './PartnersMap'
 import ViewToggle from './ViewToggle'
 
+// Plusieurs cartes partagent une ligne ici, contrairement à la frise des
+// événements (un seul par ligne) : un délai croissant sans limite ferait
+// arriver la dixième carte visiblement après les trois premières alors
+// qu'elles sont toutes déjà à l'écran. Le plafond fait lire l'apparition
+// comme un balayage rapide de la grille plutôt qu'un défilé un par un.
+function revealDelay(index) {
+  return Math.min(index, 9) * 45
+}
+
 export default function PartenairesContent() {
   const [partners, setPartners] = useState(null)
   const [categories, setCategories] = useState([])
@@ -95,8 +104,8 @@ export default function PartenairesContent() {
                 <span className="font-sans text-fg-subtle">({partenaires.length})</span>
               </h3>
               <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
-                {partenaires.map((partner) => (
-                  <PartnerRow key={partner.id} partner={partner} />
+                {partenaires.map((partner, index) => (
+                  <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
                 ))}
               </ul>
             </div>
@@ -110,8 +119,8 @@ export default function PartenairesContent() {
                 <span className="text-fg-subtle">({bonsPlans.length})</span>
               </h3>
               <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
-                {bonsPlans.map((partner) => (
-                  <PartnerRow key={partner.id} partner={partner} />
+                {bonsPlans.map((partner, index) => (
+                  <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
                 ))}
               </ul>
             </div>

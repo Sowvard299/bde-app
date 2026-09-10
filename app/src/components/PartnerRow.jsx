@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isLogoFile } from '../lib/media'
+import Reveal from './Reveal'
 
 function initials(name) {
   return name
@@ -18,7 +19,9 @@ function initials(name) {
 // besoin de place. Elle est posée sur un fond légèrement plus clair, ce
 // qui la fait ressortir sans avoir à la crier en orange saturé sur trois
 // lignes comme dans la version précédente.
-export default function PartnerRow({ partner }) {
+// `delay` place la carte dans l'apparition en cascade de la grille : voir
+// la note dans PartenairesContent sur le choix de sa valeur.
+export default function PartnerRow({ partner, delay = 0 }) {
   // Un logo peut pointer vers un hôte injoignable (quota, hors ligne, URL
   // périmée) : on retombe sur les initiales plutôt que sur l'icône d'image
   // cassée du navigateur.
@@ -27,7 +30,7 @@ export default function PartnerRow({ partner }) {
   const isPartenaire = partner.kind === 'partenaire'
 
   return (
-    <li>
+    <Reveal as="li" delay={delay} className="h-full">
       <Link
         to={`/partenaires/${partner.id}`}
         className={`lift flex h-full flex-col gap-4 rounded-2xl border bg-surface p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
@@ -83,6 +86,6 @@ export default function PartnerRow({ partner }) {
           </span>
         </span>
       </Link>
-    </li>
+    </Reveal>
   )
 }
