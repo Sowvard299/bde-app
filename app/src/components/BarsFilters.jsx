@@ -54,6 +54,10 @@ function Puce({ label, actif, onClick, titre }) {
       onClick={onClick}
       aria-pressed={actif}
       title={titre}
+      // Sans ca, le `title` prend la place du libelle dans le nom
+      // annonce par un lecteur d'ecran : on entendrait la note de bas de
+      // page au lieu du nom du filtre.
+      aria-label={label}
       className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
         actif
           ? 'border-accent bg-accent text-white'

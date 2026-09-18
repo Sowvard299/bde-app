@@ -10,6 +10,10 @@ import logoWhite from '../assets/logo-mark-white.png'
 
 const CENTRE_PARIS = [48.8566, 2.3522]
 
+function avecSurvol() {
+  return window.matchMedia('(hover: hover)').matches
+}
+
 function echapper(texte) {
   return String(texte).replace(
     /[&<>"']/g,
@@ -78,7 +82,12 @@ function CoucheLieux({ lieux, selectionId, onSelect }) {
         barType: lieu.type,
         keyboard: false,
       })
-      marqueur.bindTooltip(infobulle(lieu), { direction: 'top', offset: [0, -12] })
+      // Seulement la ou on peut survoler : au doigt, Leaflet ouvre
+      // l'infobulle au clic, et elle resterait affichee derriere la fiche
+      // que ce meme clic vient d'ouvrir.
+      if (avecSurvol()) {
+        marqueur.bindTooltip(infobulle(lieu), { direction: 'top', offset: [0, -12] })
+      }
       marqueur.on('click', () => onSelectRef.current(lieu.id))
       marqueursRef.current.set(lieu.id, marqueur)
       return marqueur

@@ -86,10 +86,18 @@ export default function BarsContent() {
     )
   }, [])
 
+  // L'heure n'entre dans le calcul que si un filtre s'en sert. Sinon le
+  // tic de la minute reconstruirait une liste identique, et avec elle les
+  // 193 marqueurs de la carte — pour rien.
+  const horlogeFiltre = filtres.meilleurPrix ? maintenant : null
+
   const resultats = useMemo(() => {
     if (!donnees) return []
-    return filtrerEtTrier(donnees.lieux, filtres, { maintenant, position })
-  }, [donnees, filtres, maintenant, position])
+    return filtrerEtTrier(donnees.lieux, filtres, {
+      maintenant: horlogeFiltre ?? undefined,
+      position,
+    })
+  }, [donnees, filtres, horlogeFiltre, position])
 
   // La carte ne veut que les lieux : lui passer les paires {lieu, km}
   // reconstruirait la couche de marqueurs à chaque tic d'horloge.
