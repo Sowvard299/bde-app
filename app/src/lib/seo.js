@@ -120,6 +120,17 @@ function filAriane(etapes) {
   }
 }
 
+// Les affiches d'événement sont parfois des vidéos : la carte de partage
+// du WEICUP pointait sur un .mov, que ni WhatsApp ni Instagram ni
+// LinkedIn ne savent afficher — le lien le plus partagé de l'année
+// sortait donc sans image du tout. Faute de vignette, on retombe sur
+// l'image du site, qui est au moins aux bonnes dimensions.
+const IMAGE_FIXE = /\.(png|jpe?g|webp|gif|avif)(\?|$)/i
+
+export function imagePartageable(url) {
+  return url && IMAGE_FIXE.test(url) ? url : null
+}
+
 function dateFr(iso) {
   try {
     return new Intl.DateTimeFormat('fr-FR', {
@@ -184,7 +195,7 @@ export function metaEvenement(evenement) {
 
   const chemin = `/evenements/${evenement.id}`
   const quand = dateFr(evenement.starts_at)
-  const image = evenement.image_url || IMAGE_PARTAGE
+  const affiche = imagePartageable(evenement.image_url)
 
   const lieu = evenement.location_name
     ? {
@@ -213,7 +224,7 @@ export function metaEvenement(evenement) {
         }. Un événement du BDE de l'IAE Paris-Sorbonne.`
     ),
     canonical: `${SITE}${chemin}`,
-    image,
+    image: affiche ?? IMAGE_PARTAGE,
     typeOg: 'article',
     indexable: true,
     jsonLd: {
@@ -234,7 +245,7 @@ export function metaEvenement(evenement) {
           eventStatus: 'https://schema.org/EventScheduled',
           eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
           ...(evenement.description && { description: resumer(evenement.description, 500) }),
-          ...(evenement.image_url && { image: evenement.image_url }),
+          ...(affiche && { image: affiche }),
           ...(lieu && { location: lieu }),
           organizer: organisation(),
           url: `${SITE}${chemin}`,
@@ -275,7 +286,7 @@ export function metaPartenaire(partenaire) {
       }. ${partenaire.description || ''}`
     ),
     canonical: `${SITE}${chemin}`,
-    image: partenaire.logo_url || IMAGE_PARTAGE,
+    image: imagePartageable(partenaire.logo_url) ?? IMAGE_PARTAGE,
     indexable: true,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -284,7 +295,7 @@ export function metaPartenaire(partenaire) {
           '@type': 'LocalBusiness',
           name: partenaire.name,
           ...(partenaire.description && { description: resumer(partenaire.description, 500) }),
-          ...(partenaire.logo_url && { image: partenaire.logo_url }),
+          ...(imagePartageable(partenaire.logo_url) && { image: partenaire.logo_url }),
           ...(partenaire.address && {
             address: { '@type': 'PostalAddress', streetAddress: partenaire.address },
           }),
