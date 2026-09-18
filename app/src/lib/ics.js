@@ -48,15 +48,51 @@ function buildIcs(event) {
   return lines.join('\r\n')
 }
 
-// On mobile (iOS Safari en tete), naviguer directement vers une data: URI
-// declenche l'ouverture native de l'appli Calendrier / la fiche "Ajouter
-// l'evenement", au lieu d'un simple telechargement de fichier .ics.
-// Sur desktop, le navigateur telecharge le fichier, que Calendrier (macOS)
-// ou Outlook peuvent ensuite importer normalement.
+function slugify(title) {
+  return (
+    title
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || 'evenement'
+  )
+}
+
+// Deux mecanismes bien differents selon la plateforme, parce qu'aucun des
+// deux ne marche partout :
+//
+// - iOS (Safari comme la PWA installee sur l'ecran d'accueil) ignore le
+//   telechargement d'un blob via <a download> : ca se contente d'ouvrir le
+//   contenu texte brut dans l'onglet au lieu de proposer l'ajout au
+//   calendrier. La seule methode fiable est une data: URI text/calendar,
+//   mais il faut l'ouvrir avec window.open plutot que window.location.href
+//   — depuis une PWA en mode standalone, une navigation same-page vers une
+//   data: URI ne declenche rien, alors qu'un window.open relaie l'ouverture
+//   a Safari, qui gere alors correctement la fiche "Ajouter l'evenement".
+//
+// - Partout ailleurs (Android, desktop), Chrome bloque la navigation
+//   top-level vers une data: URI (ecran "adresse non valide"), mais un
+//   blob: telecharge via un <a download> fonctionne normalement.
 export function downloadEventIcs(event) {
   const content = buildIcs(event)
-  const dataUrl = `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`
-  window.location.href = dataUrl
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+
+  if (isIos) {
+    const dataUrl = `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`
+    window.open(dataUrl, '_blank')
+    return
+  }
+
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${slugify(event.title)}.ics`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 export function buildGoogleCalendarUrl(event) {
