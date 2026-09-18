@@ -245,3 +245,190 @@ h1, h2, h3 {
     animation: none;
   }
 }
+
+/* =====================================================================
+   Carte des bars
+   Leaflet dessine ses couches avec ses propres styles : tout ce qui suit
+   sert a les raccorder a la charte sombre du site, et a habiller les
+   pastilles posees par barIcons.js.
+   ===================================================================== */
+
+.bars-map .leaflet-container {
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+}
+
+/* Les tuiles OpenStreetMap sont claires : inversees puis reteintees,
+   elles donnent un fond sombre sans dependre d'un fournisseur a cle
+   d'API. Le filtre ne porte que sur le calque des tuiles — les pastilles
+   et les amas vivent dans d'autres calques et gardent leurs couleurs. */
+.bars-map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.86) saturate(0.6);
+}
+
+/* Boutons de zoom : ceux de Leaflet sont blancs a bord gris clair, une
+   tache lumineuse en haut a gauche d'une carte sombre. */
+.bars-map .leaflet-bar a,
+.bars-map .leaflet-bar a:hover {
+  background: var(--color-surface);
+  border-bottom-color: var(--color-line);
+  color: var(--color-fg-muted);
+}
+
+.bars-map .leaflet-bar a:hover {
+  color: var(--color-fg);
+}
+
+/* Zoom arriere au niveau minimum : Leaflet repasse le bouton en gris
+   clair, une tache blanche sur la carte sombre. */
+.bars-map .leaflet-bar a.leaflet-disabled,
+.bars-map .leaflet-bar a.leaflet-disabled:hover {
+  background: var(--color-surface);
+  color: var(--color-fg-subtle);
+}
+
+.bars-map .leaflet-bar {
+  border: 1px solid var(--color-line);
+  box-shadow: 0 6px 18px -10px rgb(0 0 0 / 0.9);
+}
+
+.bars-map .leaflet-control-attribution {
+  background: rgb(10 10 18 / 0.75);
+  color: var(--color-fg-subtle);
+  font-size: 10px;
+}
+
+.bars-map .leaflet-control-attribution a {
+  color: var(--color-fg-faint);
+}
+
+/* Infobulle de survol : celle de Leaflet est blanche avec une fleche
+   blanche, illisible sur un fond de carte sombre. */
+.bars-map .leaflet-tooltip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -12px rgb(0 0 0 / 0.9);
+  color: var(--color-fg);
+  font-size: 12px;
+  padding: 6px 9px;
+}
+
+.bars-map .leaflet-tooltip-top::before {
+  border-top-color: var(--color-line);
+}
+
+.bars-map .leaflet-tooltip em {
+  color: #6ee7b7;
+  font-style: normal;
+}
+
+/* Pastilles. Le conteneur est un divIcon nu : c'est le <span> interieur
+   qui porte la forme, pour que l'agrandissement de la selection parte du
+   centre du point et non de son coin. */
+.bar-pin {
+  background: none;
+  border: none;
+}
+
+.bar-pin__dot,
+.bar-cluster__ring,
+.bar-pin__iae,
+.bar-pin__moi {
+  display: block;
+  border-radius: 9999px;
+  box-sizing: border-box;
+}
+
+.bar-pin__dot {
+  border: 2px solid rgb(10 10 18 / 0.85);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bar-pin__dot--actif {
+  border-color: #fff;
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 0.18),
+    0 4px 12px rgb(0 0 0 / 0.7);
+}
+
+.bar-pin__iae {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ink);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.6);
+}
+
+.bar-pin__iae img {
+  width: 18px;
+  height: 18px;
+}
+
+/* Position de l'utilisateur : le point bleu que tout le monde reconnait,
+   volontairement hors charte pour ne pas passer pour un bar. */
+.bar-pin__moi {
+  width: 18px;
+  height: 18px;
+  background: #3b82f6;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgb(59 130 246 / 0.25);
+}
+
+/* Amas : un anneau colore selon ce qu'il contient (voir iconeAmas), et un
+   disque sombre au centre qui porte le compte. */
+.bar-cluster {
+  background: none;
+  border: none;
+}
+
+.bar-cluster__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.55);
+}
+
+.bar-cluster__count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--color-canvas);
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* La fiche monte du bas sur telephone, apparait au centre sur grand
+   ecran. Deux mouvements pour un meme composant, parce que ce n'est pas
+   le meme geste : on pousse une feuille vers le haut au pouce, on ouvre
+   une boite au milieu de l'ecran a la souris. */
+@keyframes bar-sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.bar-sheet {
+  animation: bar-sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-sheet {
+    animation: none;
+  }
+}

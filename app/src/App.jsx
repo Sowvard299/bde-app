@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import AccueilPage from './pages/AccueilPage'
 import PartenairesPage from './pages/PartenairesPage'
 import PartenaireDetailPage from './pages/PartenaireDetailPage'
+import BarsPage from './pages/BarsPage'
 import EvenementsPage from './pages/EvenementsPage'
 import EvenementDetailPage from './pages/EvenementDetailPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
@@ -29,6 +30,7 @@ function App() {
           <Route path="/evenements/:id" element={<EvenementDetailPage />} />
           <Route path="/partenaires" element={<PartenairesPage />} />
           <Route path="/partenaires/:id" element={<PartenaireDetailPage />} />
+          <Route path="/bars" element={<BarsPage />} />
           <Route path="/carte-bde" element={<Navigate to="/partenaires" replace />} />
           <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
           <Route path="/confidentialite" element={<ConfidentialitePage />} />

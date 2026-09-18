@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { CalendarIcon, HomeIcon, TagIcon } from './NavIcons'
+import { CalendarIcon, GlassIcon, HomeIcon, TagIcon } from './NavIcons'
 
 const TABS = [
   { to: '/accueil', label: 'Accueil', Icon: HomeIcon },
   { to: '/evenements', label: 'Événements', Icon: CalendarIcon },
   { to: '/partenaires', label: 'Partenaires', Icon: TagIcon },
+  { to: '/bars', label: 'Bars', Icon: GlassIcon },
 ]
 
 export default function BottomNav() {

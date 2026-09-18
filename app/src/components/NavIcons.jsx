@@ -1,6 +1,6 @@
 // Icônes de navigation, partagées par la barre du bas (mobile) et la
 // colonne latérale (desktop). Dessinées à la main plutôt qu'importées :
-// trois glyphes ne justifient pas une dépendance.
+// quatre glyphes ne justifient pas une dépendance.
 const base = {
   viewBox: '0 0 24 24',
   fill: 'none',
@@ -34,6 +34,17 @@ export function TagIcon({ size = 22 }) {
     <svg {...base} width={size} height={size}>
       <path d="M3.5 12.5V5a1.5 1.5 0 0 1 1.5-1.5h7.5L21 12l-8.5 8.5z" />
       <circle cx="8" cy="8" r="1.4" />
+    </svg>
+  )
+}
+
+// Un verre plutôt qu'une punaise de carte : l'onglet parle de bars, et la
+// punaise se confondrait avec la carte des partenaires.
+export function GlassIcon({ size = 22 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M6 4h12l-1 4.5a5 5 0 0 1-10 0z" />
+      <path d="M12 13v6M8.5 19h7" />
     </svg>
   )
 }
