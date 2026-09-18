@@ -1,6 +1,44 @@
 name = "bde-app"
+main = "worker/index.js"
 compatibility_date = "2026-08-29"
 
+# Ecrit worker/env.generated.js (coordonnees Supabase) avant que wrangler
+# ne compile le Worker. C'est deja fait par `npm run build`, mais ce
+# fichier est ignore par git : si la commande de construction configuree
+# cote Cloudflare changeait un jour, le Worker ne compilerait plus faute
+# de ce module. Wrangler execute cette commande quoi qu'il arrive.
+[build]
+command = "node scripts/generate-worker-env.mjs"
+
+# Le Worker sert les fichiers construits par Vite, mais reecrit d'abord le
+# <head> des pages HTML : sans lui, chaque URL sort avec le titre, la
+# description et le canonique de l'accueil (voir worker/index.js).
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
+
+# Par defaut, une requete qui correspond a un fichier statique est servie
+# sans jamais passer par le Worker. « / » correspond a index.html : la
+# page d'accueil, la plus importante du site, sortait donc avec le titre
+# generique et sans canonique.
+#
+# La liste ci-dessous est donc ecrite a l'envers : tout passe par le
+# Worker, sauf les fichiers. Enumerer les pages une par une aurait marche
+# aussi, mais la premiere route ajoutee ensuite aurait perdu ses
+# metadonnees en silence — alors qu'un fichier oublie ici ne coute qu'une
+# invocation de Worker inutile, qui se voit et se corrige.
+run_worker_first = [
+  "/*",
+  "!/assets/*",
+  "!/*.js",
+  "!/*.css",
+  "!/*.png",
+  "!/*.jpg",
+  "!/*.svg",
+  "!/*.ico",
+  "!/*.woff2",
+  "!/*.otf",
+  "!/*.txt",
+  "!/*.webmanifest",
+]

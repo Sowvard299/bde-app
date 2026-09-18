@@ -25,7 +25,8 @@ export default defineConfig({
         theme_color: '#0A0A12',
         background_color: '#0A0A12',
         display: 'standalone',
-        start_url: '/',
+        // Pointe l'adresse canonique : « / » redirige desormais (301).
+        start_url: '/accueil',
         lang: 'fr',
         icons: [
           { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },

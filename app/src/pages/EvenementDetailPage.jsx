@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchEventById } from '../lib/events'
+import { metaEvenement } from '../lib/seo'
+import { useSeoDonnees } from '../hooks/useSeo'
 import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
@@ -38,6 +40,10 @@ export default function EvenementDetailPage() {
   const { id } = useParams()
   const [event, setEvent] = useState(null)
   const [status, setStatus] = useState('loading')
+  // Titre, description, image de partage et balisage Event : le Worker
+  // les a deja ecrits pour un arrivant direct, mais pas pour quelqu'un
+  // qui a ouvert la fiche depuis la liste sans recharger la page.
+  useSeoDonnees(useMemo(() => metaEvenement(event), [event]))
   // Re-checked every 30s so a page left open switches over on its own right
   // at 12h, instead of only updating on the next full reload.
   const [saleIsLive, setSaleIsLive] = useState(weicupSaleIsLive)

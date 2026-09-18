@@ -13,8 +13,11 @@ import WelcomeSheet from './components/WelcomeSheet'
 import StandalonePushPrompt from './components/StandalonePushPrompt'
 import InAppBrowserNotice from './components/InAppBrowserNotice'
 import IntroSplash from './components/IntroSplash'
+import { useSeoRoute } from './hooks/useSeo'
 
 function App() {
+  useSeoRoute()
+
   return (
     <div className="lg:flex">
       <Sidebar />

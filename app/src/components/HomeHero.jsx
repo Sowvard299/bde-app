@@ -137,6 +137,16 @@ export default function HomeHero({ nextEvent, isWeicup = false }) {
           >
             Les bons plans
           </Link>
+          {/* La carte des bars n'etait accessible que par la barre de
+              navigation. Un lien depuis l'accueil la fait decouvrir, et
+              donne au passage a Google un chemin interne vers la page la
+              plus susceptible d'attirer des visiteurs de l'exterieur. */}
+          <Link
+            to="/bars"
+            className="rounded-full border border-white/25 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Les bars de Paris
+          </Link>
         </div>
       </div>
 

@@ -26,3 +26,6 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
+
+# Genere au build a partir des variables Supabase (voir scripts/).
+worker/env.generated.js

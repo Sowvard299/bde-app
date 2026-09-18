@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchPartnerById } from '../lib/partners'
+import { metaPartenaire } from '../lib/seo'
+import { useSeoDonnees } from '../hooks/useSeo'
 import { isLogoFile } from '../lib/media'
 import PartnerMiniMap from '../components/PartnerMiniMap'
 import PartnerDescription from '../components/PartnerDescription'
@@ -30,6 +32,7 @@ export default function PartenaireDetailPage() {
   const { id } = useParams()
   const [partner, setPartner] = useState(null)
   const [status, setStatus] = useState('loading')
+  useSeoDonnees(useMemo(() => metaPartenaire(partner), [partner]))
   // Un logo peut pointer vers un hôte injoignable (quota, hors ligne, URL
   // périmée) : on retombe sur les initiales plutôt que sur l'icône cassée.
   const [logoFailed, setLogoFailed] = useState(false)
