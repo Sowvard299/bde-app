@@ -1,30 +1,32 @@
 import logoWhite from '../assets/logo-mark-white.png'
 
-// Effet « hyperzoom » : le blason fonce vers l'ecran en boucle continue,
-// avec une aberration chromatique et une deformation liquide.
+// Effet « hyperzoom chrome » : le blason, en metal poli, fonce vers l'ecran
+// en boucle continue pendant que les reflets glissent sur sa surface.
 //
-// La reference (technoparade.fr) le fait avec une video pre-rendue de
-// 3,25s en boucle. Ici c'est refait en CSS + filtre SVG : cette app a une
-// longue histoire de videos qui refusent de demarrer sur iOS (Low Power
-// Mode, autoplay bloque, atome moov mal place), et un element aussi
-// central ne peut pas dependre de ca. Bonus : c'est net a toutes les
-// tailles d'ecran et ca ne pese rien.
+// La reference (technoparade.fr) est un rendu 3D pre-calcule joue en video.
+// Refait ici en direct dans le navigateur, pour deux raisons : cette app a
+// un long passif de videos qui refusent de demarrer sur iOS, et une video
+// ne s'adapte pas aux tailles d'ecran.
+//
+// Le chrome repose sur trois couches qui se completent :
+//
+//  1. Un degrade « rampe chrome » — bandes sombres et claires alternees,
+//     transitions nettes — qui defile lentement en travers de la forme.
+//     C'est ce glissement qui fait lire la surface comme du metal : un
+//     reflet, contrairement a une couleur, bouge quand l'objet bouge.
+//  2. Des transitions franches entre bandes. Un eclairage speculaire SVG
+//     avait ete essaye d'abord : plus juste physiquement, mais il rendait
+//     une surface laiteuse facon verre depoli, et surtout il coutait plus
+//     d'une minute de calcul par image au rendu. Les aretes nettes d'un
+//     degrade font lire le metal bien mieux, pour un cout nul.
 //
 // Le zoom infini repose sur deux exemplaires identiques decales d'une
-// demi-duree : quand le premier disparait en fondu apres avoir depasse
-// l'ecran, le second est deja a mi-parcours, donc le flux ne s'interrompt
-// jamais et la boucle est invisible.
-//
-// L'aberration chromatique empile trois calques du meme blason, colores
-// par `mask-image` plutot que par des filtres de teinte : le masque
-// decoupe la forme et laisse le fond plein la colorer, ce qui donne des
-// aplats exacts de la charte au lieu d'approximations.
+// demi-duree : quand le premier disparait apres avoir depasse l'ecran, le
+// second est deja a mi-parcours, donc la boucle ne montre jamais de couture.
 function ZoomInstance({ delay }) {
   return (
     <div className="hyperzoom__instance" style={{ animationDelay: delay }}>
-      <span className="hyperzoom__layer hyperzoom__layer--accent" />
-      <span className="hyperzoom__layer hyperzoom__layer--gold" />
-      <span className="hyperzoom__layer hyperzoom__layer--core" />
+      <span className="hyperzoom__chrome" />
     </div>
   )
 }
@@ -32,29 +34,29 @@ function ZoomInstance({ delay }) {
 export default function LogoHyperzoom({ className = '' }) {
   return (
     <div className={`hyperzoom ${className}`} aria-hidden="true">
-      {/* Le filtre de deformation vit dans un SVG de taille nulle : il
-          n'est la que pour etre reference par la CSS. */}
+      {/* SVG de taille nulle : il n'existe que pour porter les filtres. */}
       <svg className="hyperzoom__defs" aria-hidden="true" focusable="false">
         <defs>
-          <filter id="bde-hyperzoom-warp" x="-20%" y="-20%" width="140%" height="140%">
+          {/* Deformation liquide, appliquee a l'ensemble de la scene. */}
+          <filter id="bde-warp" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.009 0.018"
+              baseFrequency="0.007 0.014"
               numOctaves="2"
               seed="7"
               result="noise"
             >
               <animate
                 attributeName="baseFrequency"
-                dur="7s"
-                values="0.009 0.018;0.016 0.010;0.009 0.018"
+                dur="9s"
+                values="0.007 0.014;0.013 0.008;0.007 0.014"
                 repeatCount="indefinite"
               />
             </feTurbulence>
             <feDisplacementMap
               in="SourceGraphic"
               in2="noise"
-              scale="22"
+              scale="16"
               xChannelSelector="R"
               yChannelSelector="G"
             />
@@ -67,8 +69,6 @@ export default function LogoHyperzoom({ className = '' }) {
         <ZoomInstance delay="-1.9s" />
       </div>
 
-      {/* Masque le logo dans les coins pour qu'il naisse et meure dans le
-          fond plutot que de heurter les bords du cadre. */}
       <div className="hyperzoom__vignette" />
 
       <img src={logoWhite} alt="" className="hyperzoom__preload" />

@@ -196,16 +196,16 @@ h1, h2, h3 {
 }
 
 /* =====================================================================
-   Hyperzoom du blason
-   Le blason fonce vers l'ecran en boucle, avec aberration chromatique et
-   deformation liquide. Voir LogoHyperzoom.jsx pour le pourquoi du comment.
+   Hyperzoom chrome du blason
+   Le blason en metal poli fonce vers l'ecran en boucle, ses reflets
+   glissant sur sa surface. Voir LogoHyperzoom.jsx pour la mecanique.
    ===================================================================== */
 
 /* Le conteneur se place lui-meme en calque plein cadre : compter sur des
    classes utilitaires passees par l'appelant ne marchait pas, la regle
-   `position: relative` d'ici gagnant sur le `absolute` de Tailwind (meme
-   specificite, declaree plus bas dans le fichier). Le conteneur tombait
-   alors a une hauteur nulle et `overflow: hidden` masquait tout. */
+   `position` d'ici gagnant sur celle de Tailwind (meme specificite,
+   declaree plus bas dans le fichier). Le conteneur tombait alors a une
+   hauteur nulle et `overflow: hidden` masquait tout. */
 .hyperzoom {
   position: absolute;
   inset: 0;
@@ -214,7 +214,6 @@ h1, h2, h3 {
   isolation: isolate;
 }
 
-/* Le SVG ne sert qu'a porter le filtre : il ne doit rien occuper. */
 .hyperzoom__defs {
   position: absolute;
   width: 0;
@@ -233,21 +232,44 @@ h1, h2, h3 {
 .hyperzoom__stage {
   position: absolute;
   inset: 0;
-  filter: url(#bde-hyperzoom-warp);
+  filter: url(#bde-warp);
 }
 
+/* L'element est volontairement enorme (140vmin) et part d'une echelle
+   minuscule, plutot que l'inverse : le masque est rasterise a la taille
+   de base de l'element puis etire par le `scale`, donc partir petit et
+   grossir x8 donnait un blason de plus en plus flou. A l'envers, la
+   rasterisation se fait en haute resolution et le zoom reste net. */
 .hyperzoom__instance {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 46vmin;
-  height: 46vmin;
-  margin: -23vmin 0 0 -23vmin;
-  animation: hyperzoom-rush 3.8s linear infinite;
+  width: 140vmin;
+  height: 140vmin;
+  margin: -70vmin 0 0 -70vmin;
+  animation: hyperzoom-rush 4.2s linear infinite;
   will-change: transform, opacity;
 }
 
-.hyperzoom__layer {
+/* La rampe chrome : des bandes sombres et claires aux transitions nettes,
+   dans les teintes de la charte. Les aplats francs comptent autant que les
+   couleurs — un degrade doux donnerait du plastique, c'est la cassure
+   brutale entre une bande sombre et une bande claire qui lit comme du
+   metal poli. La forme est decoupee par `mask-image` plutot que teintee
+   par un filtre, ce qui garde les couleurs exactes de la charte. */
+/* La rampe chrome. Deux choses font qu'une surface lit comme du metal
+   poli plutot que comme du plastique colore :
+   - des bandes NETTES. Chaque couleur occupe une plage franche et bascule
+     d'un coup a la suivante (stops doubles), parce qu'un reflet sur du
+     metal a des aretes, pas des fondus.
+   - BEAUCOUP de bandes. Le fond est mis a l'echelle avec l'element quand
+     il zoome : avec seulement quelques bandes, le blason grossi n'en
+     montrerait plus qu'une ou deux et redeviendrait un aplat. La rampe
+     se repete donc en boucle serree pour qu'il en traverse toujours une
+     dizaine, quelle que soit la taille.
+   La forme est decoupee par `mask-image` et non teintee par un filtre :
+   les couleurs de la charte restent exactes. */
+.hyperzoom__chrome {
   position: absolute;
   inset: 0;
   -webkit-mask-image: url("./assets/logo-mark-white.png");
@@ -258,26 +280,35 @@ h1, h2, h3 {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
-}
-
-/* Les deux calques teintes sont decales de quelques dixiemes de pourcent
-   de part et d'autre du calque blanc : c'est ce leger desalignement qui
-   fait la frange chromatique, comme une impression mal calee. */
-.hyperzoom__layer--accent {
-  background: var(--color-accent);
-  mix-blend-mode: screen;
-  animation: hyperzoom-split-a 1.6s ease-in-out infinite alternate;
-}
-
-.hyperzoom__layer--gold {
-  background: var(--color-accent-gold);
-  mix-blend-mode: screen;
-  animation: hyperzoom-split-b 1.6s ease-in-out infinite alternate;
-}
-
-.hyperzoom__layer--core {
-  background: #ffffff;
-  opacity: 0.92;
+  background-image: repeating-linear-gradient(
+    100deg,
+    #05070f 0%,
+    #10141f 1.6%,
+    #454f6b 2.6%,
+    #aab3c8 3.4%,
+    #ffffff 4.2%,
+    #ffffff 5%,
+    #c2cadb 5.8%,
+    #5a6480 6.6%,
+    #1b2030 7.6%,
+    #05070f 8.6%,
+    #171d2e 9.4%,
+    #7b869f 10.2%,
+    #ffffff 11%,
+    #ffe9a8 11.8%,
+    #ffc300 12.4%,
+    #ff6a1a 13%,
+    #7a2a08 13.8%,
+    #10141f 14.8%,
+    #3b4560 15.6%,
+    #98a2b8 16.4%,
+    #ffffff 17.2%,
+    #48536f 18.2%,
+    #05070f 19.4%
+  );
+  background-size: 300% 300%;
+  filter: drop-shadow(0 0 18px rgb(255 195 0 / 0.22)) contrast(1.35) brightness(1.05);
+  animation: hyperzoom-sheen 5s linear infinite;
 }
 
 .hyperzoom__vignette {
@@ -286,15 +317,15 @@ h1, h2, h3 {
   pointer-events: none;
   background: radial-gradient(
     circle at center,
-    transparent 38%,
-    color-mix(in srgb, var(--color-ink) 75%, transparent) 78%,
+    transparent 40%,
+    color-mix(in srgb, var(--color-ink) 70%, transparent) 78%,
     var(--color-ink) 100%
   );
 }
 
 @keyframes hyperzoom-rush {
   0% {
-    transform: scale(0.18);
+    transform: scale(0.06);
     opacity: 0;
   }
   14% {
@@ -304,32 +335,24 @@ h1, h2, h3 {
     opacity: 1;
   }
   100% {
-    transform: scale(8);
+    transform: scale(2.6);
     opacity: 0;
   }
 }
 
-@keyframes hyperzoom-split-a {
+/* Le reflet glisse en travers de la surface, independamment du zoom. */
+@keyframes hyperzoom-sheen {
   from {
-    transform: translate(-0.8%, 0.5%);
+    background-position: 0% 50%;
   }
   to {
-    transform: translate(-1.8%, -0.3%);
+    background-position: 260% 50%;
   }
 }
 
-@keyframes hyperzoom-split-b {
-  from {
-    transform: translate(0.9%, -0.4%);
-  }
-  to {
-    transform: translate(1.9%, 0.4%);
-  }
-}
-
-/* Sans animation : un blason pose au centre, sans zoom ni deformation.
-   Le filtre de turbulence est retire aussi, il coute cher a rasteriser
-   pour rien des lors que plus rien ne bouge. */
+/* Sans animation : un blason chrome pose au centre, fige. Les filtres
+   couteux (turbulence, speculaire anime) sont retires, ils n'ont plus
+   d'interet des lors que plus rien ne bouge. */
 @media (prefers-reduced-motion: reduce) {
   .hyperzoom__stage {
     filter: none;
@@ -345,8 +368,7 @@ h1, h2, h3 {
     display: none;
   }
 
-  .hyperzoom__layer--accent,
-  .hyperzoom__layer--gold {
+  .hyperzoom__chrome {
     animation: none;
   }
 }
