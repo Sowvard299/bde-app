@@ -1,31 +1,31 @@
 import { useEffect, useState } from 'react'
-import LogoHyperzoom from './LogoHyperzoom'
+import logoBadge from '../assets/logo-badge-navy.png'
 
 const SEEN_KEY = 'bde-intro-seen'
-const HOLD_MS = 2600
-const FADE_MS = 600
+const HOLD_MS = 1800
+const FADE_MS = 500
 
-// Ecran d'ouverture : le blason fonce vers l'ecran quelques secondes avant
-// de laisser place a l'app.
+// Ecran d'ouverture : le blason grandit a l'ecran, puis laisse la place au
+// site.
 //
-// Une fois par session, pas une fois pour toutes : l'effet perd tout son
-// interet s'il se declenche a chaque navigation interne, mais le revoir en
-// rouvrant l'app le lendemain fait partie du plaisir. sessionStorage donne
-// exactement ce comportement, sans rien demander a personne.
+// Une fois par session, pas une fois pour toutes : l'intro perdrait tout
+// son interet en se declenchant a chaque navigation interne, mais la revoir
+// en rouvrant l'app plus tard fait partie de l'arrivee. sessionStorage
+// donne exactement ce comportement sans rien demander a personne.
 export default function IntroSplash() {
   const [phase, setPhase] = useState(() => {
     if (typeof window === 'undefined') return 'done'
 
     // Respecter le reglage systeme : quelqu'un qui a demande moins
-    // d'animations ne veut certainement pas d'un zoom plein ecran.
+    // d'animations ne veut pas d'un plein ecran anime au demarrage.
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     if (reducedMotion) return 'done'
 
     try {
       if (sessionStorage.getItem(SEEN_KEY) === 'true') return 'done'
     } catch {
-      // sessionStorage inaccessible (navigation privee stricte) : on
-      // montre l'intro, c'est moins grave que de planter au demarrage.
+      // sessionStorage inaccessible (navigation privee stricte) : on joue
+      // l'intro, c'est moins grave que de planter au demarrage.
     }
 
     return 'playing'
@@ -58,12 +58,7 @@ export default function IntroSplash() {
       onClick={() => setPhase('leaving')}
       role="presentation"
     >
-      <LogoHyperzoom className="absolute inset-0" />
-
-      <p className="intro-splash__wordmark">
-        BDE IAE
-        <span className="block">Paris Sorbonne</span>
-      </p>
+      <img src={logoBadge} alt="" className="intro-splash__logo" />
     </div>
   )
 }

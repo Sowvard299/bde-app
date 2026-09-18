@@ -196,192 +196,23 @@ h1, h2, h3 {
 }
 
 /* =====================================================================
-   Hyperzoom chrome du blason
-   Le blason en metal poli fonce vers l'ecran en boucle, ses reflets
-   glissant sur sa surface. Voir LogoHyperzoom.jsx pour la mecanique.
+   Ecran d'ouverture
+   Le blason grandit a l'ecran, puis s'efface pour laisser le site.
    ===================================================================== */
 
-/* Le conteneur se place lui-meme en calque plein cadre : compter sur des
-   classes utilitaires passees par l'appelant ne marchait pas, la regle
-   `position` d'ici gagnant sur celle de Tailwind (meme specificite,
-   declaree plus bas dans le fichier). Le conteneur tombait alors a une
-   hauteur nulle et `overflow: hidden` masquait tout. */
-.hyperzoom {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: var(--color-ink);
-  isolation: isolate;
-}
-
-.hyperzoom__defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.hyperzoom__preload {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.hyperzoom__stage {
-  position: absolute;
-  inset: 0;
-  filter: url(#bde-warp);
-}
-
-/* L'element est volontairement enorme (140vmin) et part d'une echelle
-   minuscule, plutot que l'inverse : le masque est rasterise a la taille
-   de base de l'element puis etire par le `scale`, donc partir petit et
-   grossir x8 donnait un blason de plus en plus flou. A l'envers, la
-   rasterisation se fait en haute resolution et le zoom reste net. */
-.hyperzoom__instance {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 140vmin;
-  height: 140vmin;
-  margin: -70vmin 0 0 -70vmin;
-  animation: hyperzoom-rush 4.2s linear infinite;
-  will-change: transform, opacity;
-}
-
-/* La rampe chrome : des bandes sombres et claires aux transitions nettes,
-   dans les teintes de la charte. Les aplats francs comptent autant que les
-   couleurs — un degrade doux donnerait du plastique, c'est la cassure
-   brutale entre une bande sombre et une bande claire qui lit comme du
-   metal poli. La forme est decoupee par `mask-image` plutot que teintee
-   par un filtre, ce qui garde les couleurs exactes de la charte. */
-/* La rampe chrome. Deux choses font qu'une surface lit comme du metal
-   poli plutot que comme du plastique colore :
-   - des bandes NETTES. Chaque couleur occupe une plage franche et bascule
-     d'un coup a la suivante (stops doubles), parce qu'un reflet sur du
-     metal a des aretes, pas des fondus.
-   - BEAUCOUP de bandes. Le fond est mis a l'echelle avec l'element quand
-     il zoome : avec seulement quelques bandes, le blason grossi n'en
-     montrerait plus qu'une ou deux et redeviendrait un aplat. La rampe
-     se repete donc en boucle serree pour qu'il en traverse toujours une
-     dizaine, quelle que soit la taille.
-   La forme est decoupee par `mask-image` et non teintee par un filtre :
-   les couleurs de la charte restent exactes. */
-.hyperzoom__chrome {
-  position: absolute;
-  inset: 0;
-  -webkit-mask-image: url("./assets/logo-mark-white.png");
-  mask-image: url("./assets/logo-mark-white.png");
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  background-image: repeating-linear-gradient(
-    100deg,
-    #05070f 0%,
-    #10141f 1.6%,
-    #454f6b 2.6%,
-    #aab3c8 3.4%,
-    #ffffff 4.2%,
-    #ffffff 5%,
-    #c2cadb 5.8%,
-    #5a6480 6.6%,
-    #1b2030 7.6%,
-    #05070f 8.6%,
-    #171d2e 9.4%,
-    #7b869f 10.2%,
-    #ffffff 11%,
-    #ffe9a8 11.8%,
-    #ffc300 12.4%,
-    #ff6a1a 13%,
-    #7a2a08 13.8%,
-    #10141f 14.8%,
-    #3b4560 15.6%,
-    #98a2b8 16.4%,
-    #ffffff 17.2%,
-    #48536f 18.2%,
-    #05070f 19.4%
-  );
-  background-size: 300% 300%;
-  filter: drop-shadow(0 0 18px rgb(255 195 0 / 0.22)) contrast(1.35) brightness(1.05);
-  animation: hyperzoom-sheen 5s linear infinite;
-}
-
-.hyperzoom__vignette {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at center,
-    transparent 40%,
-    color-mix(in srgb, var(--color-ink) 70%, transparent) 78%,
-    var(--color-ink) 100%
-  );
-}
-
-@keyframes hyperzoom-rush {
-  0% {
-    transform: scale(0.06);
-    opacity: 0;
-  }
-  14% {
-    opacity: 1;
-  }
-  72% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-
-/* Le reflet glisse en travers de la surface, independamment du zoom. */
-@keyframes hyperzoom-sheen {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 260% 50%;
-  }
-}
-
-/* Sans animation : un blason chrome pose au centre, fige. Les filtres
-   couteux (turbulence, speculaire anime) sont retires, ils n'ont plus
-   d'interet des lors que plus rien ne bouge. */
-@media (prefers-reduced-motion: reduce) {
-  .hyperzoom__stage {
-    filter: none;
-  }
-
-  .hyperzoom__instance {
-    animation: none;
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  .hyperzoom__instance + .hyperzoom__instance {
-    display: none;
-  }
-
-  .hyperzoom__chrome {
-    animation: none;
-  }
-}
-
-/* Ecran d'ouverture porte par l'hyperzoom. */
 .intro-splash {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Meme navy que le fond du fichier logo, pour que l'image se fonde dans
+     l'ecran au lieu de former un carre visible. */
+  background: #0f1564;
   cursor: pointer;
   opacity: 1;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.5s ease;
 }
 
 .intro-splash--leaving {
@@ -389,38 +220,28 @@ h1, h2, h3 {
   pointer-events: none;
 }
 
-.intro-splash__wordmark {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: clamp(2.5rem, 12vh, 6rem);
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1rem, 3.4vw, 1.5rem);
-  line-height: 1.15;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  opacity: 0;
-  animation: intro-wordmark 2.4s ease-out 0.5s forwards;
+.intro-splash__logo {
+  width: min(72vw, 52vh);
+  height: auto;
+  animation: intro-grow 1.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes intro-wordmark {
+@keyframes intro-grow {
   from {
+    transform: scale(0.72);
     opacity: 0;
-    transform: translateY(8px);
   }
-  30%,
-  100% {
-    opacity: 0.92;
-    transform: none;
+  35% {
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-splash__wordmark {
+  .intro-splash__logo {
     animation: none;
-    opacity: 0.92;
   }
 }
