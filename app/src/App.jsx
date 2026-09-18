@@ -11,12 +11,14 @@ import Sidebar from './components/Sidebar'
 import WelcomeSheet from './components/WelcomeSheet'
 import StandalonePushPrompt from './components/StandalonePushPrompt'
 import InAppBrowserNotice from './components/InAppBrowserNotice'
+import IntroSplash from './components/IntroSplash'
 
 function App() {
   return (
     <div className="lg:flex">
       <Sidebar />
       <div className="min-w-0 flex-1">
+        <IntroSplash />
         <InAppBrowserNotice />
         <WelcomeSheet />
         <StandalonePushPrompt />

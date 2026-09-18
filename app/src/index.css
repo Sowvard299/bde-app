@@ -194,3 +194,211 @@ h1, h2, h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* =====================================================================
+   Hyperzoom du blason
+   Le blason fonce vers l'ecran en boucle, avec aberration chromatique et
+   deformation liquide. Voir LogoHyperzoom.jsx pour le pourquoi du comment.
+   ===================================================================== */
+
+/* Le conteneur se place lui-meme en calque plein cadre : compter sur des
+   classes utilitaires passees par l'appelant ne marchait pas, la regle
+   `position: relative` d'ici gagnant sur le `absolute` de Tailwind (meme
+   specificite, declaree plus bas dans le fichier). Le conteneur tombait
+   alors a une hauteur nulle et `overflow: hidden` masquait tout. */
+.hyperzoom {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-ink);
+  isolation: isolate;
+}
+
+/* Le SVG ne sert qu'a porter le filtre : il ne doit rien occuper. */
+.hyperzoom__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.hyperzoom__preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hyperzoom__stage {
+  position: absolute;
+  inset: 0;
+  filter: url(#bde-hyperzoom-warp);
+}
+
+.hyperzoom__instance {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46vmin;
+  height: 46vmin;
+  margin: -23vmin 0 0 -23vmin;
+  animation: hyperzoom-rush 3.8s linear infinite;
+  will-change: transform, opacity;
+}
+
+.hyperzoom__layer {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: url("./assets/logo-mark-white.png");
+  mask-image: url("./assets/logo-mark-white.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Les deux calques teintes sont decales de quelques dixiemes de pourcent
+   de part et d'autre du calque blanc : c'est ce leger desalignement qui
+   fait la frange chromatique, comme une impression mal calee. */
+.hyperzoom__layer--accent {
+  background: var(--color-accent);
+  mix-blend-mode: screen;
+  animation: hyperzoom-split-a 1.6s ease-in-out infinite alternate;
+}
+
+.hyperzoom__layer--gold {
+  background: var(--color-accent-gold);
+  mix-blend-mode: screen;
+  animation: hyperzoom-split-b 1.6s ease-in-out infinite alternate;
+}
+
+.hyperzoom__layer--core {
+  background: #ffffff;
+  opacity: 0.92;
+}
+
+.hyperzoom__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 38%,
+    color-mix(in srgb, var(--color-ink) 75%, transparent) 78%,
+    var(--color-ink) 100%
+  );
+}
+
+@keyframes hyperzoom-rush {
+  0% {
+    transform: scale(0.18);
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
+
+@keyframes hyperzoom-split-a {
+  from {
+    transform: translate(-0.8%, 0.5%);
+  }
+  to {
+    transform: translate(-1.8%, -0.3%);
+  }
+}
+
+@keyframes hyperzoom-split-b {
+  from {
+    transform: translate(0.9%, -0.4%);
+  }
+  to {
+    transform: translate(1.9%, 0.4%);
+  }
+}
+
+/* Sans animation : un blason pose au centre, sans zoom ni deformation.
+   Le filtre de turbulence est retire aussi, il coute cher a rasteriser
+   pour rien des lors que plus rien ne bouge. */
+@media (prefers-reduced-motion: reduce) {
+  .hyperzoom__stage {
+    filter: none;
+  }
+
+  .hyperzoom__instance {
+    animation: none;
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .hyperzoom__instance + .hyperzoom__instance {
+    display: none;
+  }
+
+  .hyperzoom__layer--accent,
+  .hyperzoom__layer--gold {
+    animation: none;
+  }
+}
+
+/* Ecran d'ouverture porte par l'hyperzoom. */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--color-ink);
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.intro-splash--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-splash__wordmark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(2.5rem, 12vh, 6rem);
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1rem, 3.4vw, 1.5rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  opacity: 0;
+  animation: intro-wordmark 2.4s ease-out 0.5s forwards;
+}
+
+@keyframes intro-wordmark {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  30%,
+  100% {
+    opacity: 0.92;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-splash__wordmark {
+    animation: none;
+    opacity: 0.92;
+  }
+}
