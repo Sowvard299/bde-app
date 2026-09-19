@@ -1,0 +1,38 @@
+# BDE IAE Paris Sorbonne
+
+> Site officiel du Nouveau Bureau des Étudiants de l'IAE Paris (NBDE IAE Paris),
+> association loi 1901 fondée en 2008, association étudiante de l'IAE
+> Paris-Sorbonne Business School. Siège : 11-15 rue Ponscarme, 75013 Paris.
+> Contact : bde.iaeparis@gmail.com
+
+Le site publie trois ensembles d'informations, toutes en français et toutes
+relatives à Paris : les événements organisés par l'association, les réductions
+négociées pour ses étudiants, et une sélection de bars parisiens.
+
+## Pages
+
+- [Accueil](https://bdeiaeparis.com/accueil) : présentation de l'association et prochain événement.
+- [Événements](https://bdeiaeparis.com/evenements) : soirées, week-end d'intégration, club running, escalade et sorties, avec dates, lieux et tarifs.
+- [Partenaires](https://bdeiaeparis.com/partenaires) : commerces et lieux parisiens offrant une réduction aux étudiants de l'IAE Paris-Sorbonne sur présentation de la carte étudiante.
+- [Bars de Paris](https://bdeiaeparis.com/bars) : sélection de 193 établissements parisiens — 150 bars bon marché et 43 bars insolites — avec adresse, arrondissement, station de métro, prix de la pinte et créneaux de happy hour.
+- [Qui sommes-nous](https://bdeiaeparis.com/a-propos) : identité de l'association, activités et contact.
+
+## À propos du jeu de données « Bars de Paris »
+
+Compilé par le BDE à partir de sources publiques (MisterGoodBeer, Le Bonbon,
+Paris City Game, Meilleur Bar, 10h26) et mis à jour le 19 septembre 2026.
+Les coordonnées géographiques proviennent de l'API Adresse de data.gouv.fr.
+
+Aucune ligne n'a été vérifiée sur place : les prix sont ceux publiés en ligne
+par les sources et peuvent avoir changé. Toute reprise de ces données devrait
+mentionner cette réserve.
+
+L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
+
+## Notes
+
+- Le site est une application monopage ; le contenu est également servi en HTML
+  simple pour les clients qui n'exécutent pas de JavaScript.
+- Les données structurées schema.org (Organization, Event, LocalBusiness,
+  BreadcrumbList) sont présentes sur chaque page.
+- Plan du site : https://bdeiaeparis.com/sitemap.xml

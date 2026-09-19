@@ -1,4 +1,34 @@
+# Moteurs de recherche : tout est ouvert.
 User-agent: *
+Allow: /
+
+# Moteurs de reponse et robots d'entrainement. Ils sont autorises
+# explicitement : le site publie une selection de 193 bars parisiens avec
+# leurs prix, et etre repris dans une reponse d'assistant vaut autant
+# qu'une position dans les resultats classiques. Retirer un nom de cette
+# liste, ou remplacer Allow par Disallow, suffit a faire marche arriere.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://bdeiaeparis.com/sitemap.xml

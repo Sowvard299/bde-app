@@ -1,3 +1,16 @@
+# Les fichiers de /assets/ portent une empreinte dans leur nom : un
+# changement de contenu change le nom. Ils peuvent donc etre gardes
+# indefiniment. Par defaut, Cloudflare les servait en
+# « max-age=0, must-revalidate », ce qui forcait un aller-retour reseau
+# par fichier a chaque visite.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Les images et icones de /public gardent leur nom d'une version a
+# l'autre : une journee de cache, revalidee ensuite.
+/*.png
+  Cache-Control: public, max-age=86400
+
 /manifest.webmanifest
   Content-Type: application/manifest+json
 

@@ -52,6 +52,12 @@ export default function MonthlyActivities() {
             <img
               src={activity.photo}
               alt=""
+              // Ces vignettes sont sous la ligne de flottaison : sans cet
+              // attribut, le navigateur telechargeait les six photos des
+              // l'ouverture de l'accueil, avant meme qu'on ait defile.
+              // Les fichiers eux-memes ne changent pas.
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover"
               onError={(event) => {
                 // Photo unreachable (offline, storage outage): drop it and let
