@@ -12,14 +12,8 @@ import { ASSOCIATION } from '../lib/seo'
 // noindex, écrite pour le juriste et pas pour l'étudiant.
 //
 // Tous les faits ci-dessous viennent des mentions légales. Rien n'est
-// inventé : ce qui n'y figure pas (composition du bureau, pôles) n'est
-// pas écrit ici.
-
-const CHIFFRES = [
-  { valeur: '2008', libelle: 'Année de création' },
-  { valeur: '193', libelle: 'Bars référencés dans Paris' },
-  { valeur: '10', libelle: 'Partenaires à tarif étudiant' },
-]
+// inventé : la composition du bureau, qui change chaque année, renvoie
+// vers Instagram plutôt que d'être recopiée ici.
 
 export default function AProposPage() {
   return (
@@ -43,20 +37,6 @@ export default function AProposPage() {
           étudiants de payer moins cher là où ils sortent déjà.
         </p>
       </section>
-
-      <dl className="grid grid-cols-3 gap-3">
-        {CHIFFRES.map((chiffre) => (
-          <div
-            key={chiffre.libelle}
-            className="rounded-2xl border border-line bg-surface px-3 py-4 text-center"
-          >
-            <dt className="font-display text-2xl font-semibold text-accent-gold">
-              {chiffre.valeur}
-            </dt>
-            <dd className="mt-1 text-[11px] leading-tight text-fg-faint">{chiffre.libelle}</dd>
-          </div>
-        ))}
-      </dl>
 
       <section className="flex flex-col gap-3">
         <h2 className="font-display text-xl font-semibold text-fg">Ce qu'on organise</h2>
@@ -82,14 +62,26 @@ export default function AProposPage() {
             </Link>
             .
           </li>
-          <li>
-            <strong className="text-fg">La carte des bars.</strong> On a compilé{' '}
-            <Link to="/bars" className="text-accent underline underline-offset-2">
-              193 adresses dans Paris
-            </Link>{' '}
-            : les moins chères de la ville et celles qui valent le détour pour ce qu'on y fait.
-          </li>
         </ul>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="font-display text-xl font-semibold text-fg">Le bureau</h2>
+        <p className="text-fg-muted">
+          L'équipe change à chaque élection : on la présente sur Instagram plutôt qu'ici, où elle
+          serait périmée dès le bureau suivant.
+        </p>
+        <a
+          href={ASSOCIATION.membres}
+          target="_blank"
+          rel="noreferrer"
+          className="lift flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 font-semibold text-fg transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Découvrir les membres du bureau
+          <span aria-hidden="true" className="text-fg-subtle">
+            ›
+          </span>
+        </a>
       </section>
 
       <section className="flex flex-col gap-3">

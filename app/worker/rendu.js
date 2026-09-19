@@ -100,6 +100,10 @@ siège au ${e(ASSOCIATION.adresse)}, ${e(ASSOCIATION.codePostal)} ${e(ASSOCIATIO
 <p>Nous organisons la vie étudiante de l'école : soirées, week-end d'intégration, sorties
 culturelles, club running, escalade, et les partenariats qui permettent aux étudiants de payer
 moins cher là où ils sortent déjà.</p>
+<h2>Le bureau</h2>
+<p>L'équipe change à chaque élection : elle est présentée sur Instagram plutôt qu'ici, où elle
+serait périmée dès le bureau suivant.
+<a href="${e(ASSOCIATION.membres)}" rel="noopener">Découvrir les membres du bureau</a></p>
 <h2>Nous joindre</h2>
 <p>Courriel : <a href="mailto:${e(ASSOCIATION.email)}">${e(ASSOCIATION.email)}</a><br>
 Instagram : <a href="${e(ASSOCIATION.instagram)}" rel="noopener">@bde.iaeparissorbonne</a></p>`)

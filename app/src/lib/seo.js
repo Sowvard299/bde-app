@@ -112,6 +112,10 @@ export const ASSOCIATION = {
   ville: 'Paris',
   email: 'bde.iaeparis@gmail.com',
   instagram: 'https://www.instagram.com/bde.iaeparissorbonne',
+  // Présentation du bureau en cours. À remplacer à chaque élection —
+  // c'est tout l'intérêt de pointer un post plutôt que de recopier les
+  // noms dans la page.
+  membres: 'https://www.instagram.com/p/DdbJeT7gNyO/?img_index=1',
   ecole: "IAE Paris-Sorbonne Business School",
 }
 
