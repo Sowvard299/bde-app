@@ -15,6 +15,7 @@ import {
   listerPourSitemap,
 } from './supabase'
 import { rendu } from './rendu'
+import { BUILD_ID } from './env.generated'
 
 // Worker placé devant les fichiers statiques du site.
 //
@@ -229,7 +230,10 @@ function echapper(valeur) {
 // première soirée ajoutée.
 async function sitemap(ctx) {
   const cache = caches.default
-  const cle = new Request(`${SITE}/sitemap.xml`)
+  // L'identifiant de construction dans la clé : un déploiement repart
+  // donc d'un cache vide, au lieu de servir pendant une heure un sitemap
+  // produit par la version précédente.
+  const cle = new Request(`${SITE}/sitemap.xml?v=${encodeURIComponent(BUILD_ID)}`)
 
   const enCache = await cache.match(cle)
   if (enCache) return enCache
