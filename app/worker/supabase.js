@@ -74,3 +74,18 @@ export async function listerPourSitemap() {
 
   return { evenements: evenements ?? [], partenaires: partenaires ?? [] }
 }
+
+// Listes completes, pour le rendu des pages de liste. Le meme cache d'une
+// minute que les fiches : un robot qui parcourt le site enchaine les
+// pages, il ne faut pas une requete Supabase par passage.
+export async function listerEvenementsComplets() {
+  return await lireTable(
+    'events?select=id,title,starts_at,location_name&is_published=eq.true&order=starts_at.desc'
+  )
+}
+
+export async function listerPartenairesComplets() {
+  return await lireTable(
+    'partners?select=id,name,benefit,address&is_published=eq.true&order=name'
+  )
+}

@@ -138,7 +138,11 @@ function preparer(payload) {
 // Le prix qui sert de repère dans la liste et de clé de tri. Un bar se
 // compare sur sa pinte ; un insolite n'a souvent qu'un ticket d'entrée.
 export function prixRepere(lieu) {
-  const p = lieu.prix
+  // Les fiches sans aucun prix publié n'ont pas de champ `prix` du tout.
+  // L'application le comble au chargement, mais le rendu serveur lit le
+  // fichier brut : sans ce garde-fou, une seule de ces fiches faisait
+  // echouer toute la page.
+  const p = lieu.prix ?? {}
   if (p.pinte_hh != null) return { valeur: p.pinte_hh, libelle: 'la pinte en happy hour' }
   if (p.pinte_hors_hh != null) return { valeur: p.pinte_hors_hh, libelle: 'la pinte' }
   if (p.ticket_entree != null) return { valeur: p.ticket_entree, libelle: "l'entrée" }

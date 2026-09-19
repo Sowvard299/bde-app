@@ -51,6 +51,9 @@ export default function Sidebar() {
       </nav>
 
       <div className="relative mt-auto flex flex-col gap-2 text-xs text-fg-subtle">
+        <NavLink to="/a-propos" className="hover:text-fg-faint">
+          Qui sommes-nous
+        </NavLink>
         <NavLink to="/mentions-legales" className="hover:text-fg-faint">
           Mentions légales
         </NavLink>

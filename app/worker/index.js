@@ -7,7 +7,14 @@ import {
   metaPartenaire,
   metaStatique,
 } from '../src/lib/seo'
-import { lireEvenement, lirePartenaire, listerPourSitemap } from './supabase'
+import {
+  lireEvenement,
+  lirePartenaire,
+  listerEvenementsComplets,
+  listerPartenairesComplets,
+  listerPourSitemap,
+} from './supabase'
+import { rendu } from './rendu'
 
 // Worker placé devant les fichiers statiques du site.
 //
@@ -51,6 +58,12 @@ async function router(request, env, ctx) {
     return Response.redirect(new URL('/accueil', url).toString(), 301)
   }
 
+  // Ancienne adresse de la carte, redirigee jusqu'ici en JavaScript :
+  // pour un robot, c'etait donc une deuxieme page au contenu identique.
+  if (url.pathname === '/carte-bde') {
+    return Response.redirect(new URL('/partenaires', url).toString(), 301)
+  }
+
   if (url.pathname === '/sitemap.xml') {
     return sitemap(ctx)
   }
@@ -62,21 +75,52 @@ async function router(request, env, ctx) {
   const type = reponse.headers.get('content-type') ?? ''
   if (!type.includes('text/html')) return reponse
 
-  const meta = await metaPourChemin(url.pathname)
-  return injecter(reponse, meta)
+  const { meta, corps, introuvable } = await pagePour(url.pathname)
+  return injecter(reponse, meta, corps, introuvable)
 }
 
-async function metaPourChemin(chemin) {
-  const statique = metaStatique(chemin)
-  if (statique) return statique
+// Rassemble tout ce qu'une adresse produit : ses métadonnées, son
+// contenu HTML, et si elle existe.
+async function pagePour(chemin) {
+  const normalise = chemin.replace(/\/+$/, '') || '/accueil'
+  const statique = metaStatique(normalise)
 
-  const evenement = chemin.match(/^\/evenements\/([^/]+)\/?$/)
-  if (evenement) return metaEvenement(await lireEvenement(evenement[1])) ?? metaParDefaut()
+  if (statique) {
+    // Les deux pages de liste ont besoin de leurs données. Si Supabase ne
+    // répond pas, la page part sans sa liste plutôt que de faire attendre.
+    let donnees = {}
+    if (normalise === '/evenements') donnees = { evenements: await listerEvenementsComplets() }
+    if (normalise === '/partenaires') donnees = { partenaires: await listerPartenairesComplets() }
 
-  const partenaire = chemin.match(/^\/partenaires\/([^/]+)\/?$/)
-  if (partenaire) return metaPartenaire(await lirePartenaire(partenaire[1])) ?? metaParDefaut()
+    return { meta: statique, corps: rendu(normalise, donnees), introuvable: false }
+  }
 
-  return metaParDefaut()
+  const idEvenement = normalise.match(/^\/evenements\/([^/]+)$/)
+  if (idEvenement) {
+    const evenement = await lireEvenement(idEvenement[1])
+    if (evenement) {
+      return { meta: metaEvenement(evenement), corps: rendu(normalise, { evenement }), introuvable: false }
+    }
+    return introuvablePage()
+  }
+
+  const idPartenaire = normalise.match(/^\/partenaires\/([^/]+)$/)
+  if (idPartenaire) {
+    const partenaire = await lirePartenaire(idPartenaire[1])
+    if (partenaire) {
+      return { meta: metaPartenaire(partenaire), corps: rendu(normalise, { partenaire }), introuvable: false }
+    }
+    return introuvablePage()
+  }
+
+  return introuvablePage()
+}
+
+// Une adresse inconnue répondait 200 avec la coquille de l'application,
+// donc une page blanche. Google compte ces réponses comme des « soft
+// 404 » et les signale : il faut un vrai code d'erreur.
+function introuvablePage() {
+  return { meta: metaParDefaut(), corps: rendu('/introuvable'), introuvable: true }
 }
 
 // Un contenu saisi en base peut contenir n'importe quoi ; échapper les
@@ -86,10 +130,10 @@ function jsonLdSur(meta) {
   return JSON.stringify(meta.jsonLd).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
 }
 
-function injecter(reponse, meta) {
+function injecter(reponse, meta, corps, introuvable) {
   const imageParDefaut = meta.image === IMAGE_PARTAGE
 
-  return (
+  const transformee = (
     new HTMLRewriter()
       .on('title', {
         element: (el) => el.setInnerContent(meta.titre),
@@ -151,8 +195,25 @@ function injecter(reponse, meta) {
           }
         },
       })
+      // Le contenu de la page, ecrit dans le conteneur que React vide
+      // au demarrage. Voir worker/rendu.js : sans lui, le corps du
+      // document part vide, et les robots qui n'executent pas de
+      // JavaScript ne voient rien du tout.
+      .on('#root', {
+        element: (el) => {
+          if (corps) el.setInnerContent(corps, { html: true })
+        },
+      })
       .transform(reponse)
   )
+
+  // Le statut doit changer avec le contenu : meme coquille, mais 404.
+  return introuvable
+    ? new Response(transformee.body, {
+        status: 404,
+        headers: transformee.headers,
+      })
+    : transformee
 }
 
 function echapper(valeur) {

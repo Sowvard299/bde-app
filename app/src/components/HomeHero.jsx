@@ -52,8 +52,12 @@ export default function HomeHero({ nextEvent, isWeicup = false }) {
           Bureau des étudiants
         </p>
 
-        <h1 className="mt-3 font-display font-semibold leading-[0.95] text-white">
-          <span className="block text-xl text-white/70 lg:text-2xl">Bienvenue sur le site du</span>
+        {/* « Bienvenue sur le site du » est sorti du h1 : c'etait les
+            premiers mots du titre le plus important de la page, et ils ne
+            disent rien — ni a un lecteur d'ecran, qui annonce le h1 en
+            entier, ni a un moteur de recherche. Le rendu ne change pas. */}
+        <p className="mt-3 text-xl text-white/70 lg:text-2xl">Bienvenue sur le site du</p>
+        <h1 className="font-display font-semibold leading-[0.95] text-white">
           <span className="text-gradient mt-1 block text-4xl uppercase sm:text-5xl lg:text-7xl">
             BDE IAE
             <br />

@@ -67,6 +67,11 @@ const PAGES = {
     description:
       "193 bars de Paris repérés par le BDE IAE Paris-Sorbonne : pinte dès 2,50 €, happy hours en cours en temps réel, 43 bars insolites. Carte et filtres par prix.",
   },
+  '/a-propos': {
+    titre: 'Qui sommes-nous — BDE IAE Paris Sorbonne',
+    description:
+      "Le Nouveau Bureau des Étudiants de l'IAE Paris, association loi 1901 fondée en 2008 : qui nous sommes, ce que nous organisons pour les étudiants de l'IAE Paris-Sorbonne, et comment nous joindre.",
+  },
   '/mentions-legales': {
     titre: 'Mentions légales — BDE IAE Sorbonne',
     description: "Mentions légales du site du Bureau des étudiants de l'IAE Paris-Sorbonne.",
@@ -90,17 +95,50 @@ export const ROUTES_STATIQUES = [
   { chemin: '/evenements', frequence: 'daily', priorite: '0.9' },
   { chemin: '/partenaires', frequence: 'weekly', priorite: '0.9' },
   { chemin: '/bars', frequence: 'monthly', priorite: '0.8' },
+  { chemin: '/a-propos', frequence: 'yearly', priorite: '0.6' },
 ]
+
+// Les faits de l'association, tels qu'ils figurent dans les mentions
+// légales. Un Organization réduit à un nom et un logo n'apprend rien à
+// personne ; avec une forme juridique, une adresse, une date de création
+// et un contact, le site cesse d'être un site anonyme — c'est ce que
+// Google appelle la fiabilité, et ce qu'un moteur de réponse cite.
+export const ASSOCIATION = {
+  nomLegal: "Nouveau Bureau des Étudiants de l'IAE Paris",
+  sigle: 'NBDE IAE Paris',
+  fondation: '2008',
+  adresse: '11-15 rue Ponscarme',
+  codePostal: '75013',
+  ville: 'Paris',
+  email: 'bde.iaeparis@gmail.com',
+  instagram: 'https://www.instagram.com/bde.iaeparissorbonne',
+  ecole: "IAE Paris-Sorbonne Business School",
+}
 
 function organisation() {
   return {
     '@type': 'Organization',
     '@id': `${SITE}/#organisation`,
     name: NOM_SITE,
-    alternateName: "Nouveau Bureau des Étudiants de l'IAE Paris",
-    url: `${SITE}/`,
+    alternateName: [ASSOCIATION.nomLegal, ASSOCIATION.sigle],
+    description:
+      "Bureau des étudiants de l'IAE Paris-Sorbonne : organisation d'événements étudiants, de sorties et de partenariats à tarif réduit.",
+    url: `${SITE}/accueil`,
     logo: `${SITE}/pwa-512.png`,
-    sameAs: ['https://www.instagram.com/bde.iaeparissorbonne'],
+    foundingDate: ASSOCIATION.fondation,
+    email: ASSOCIATION.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: ASSOCIATION.adresse,
+      postalCode: ASSOCIATION.codePostal,
+      addressLocality: ASSOCIATION.ville,
+      addressCountry: 'FR',
+    },
+    parentOrganization: {
+      '@type': 'CollegeOrUniversity',
+      name: ASSOCIATION.ecole,
+    },
+    sameAs: [ASSOCIATION.instagram],
   }
 }
 
