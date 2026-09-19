@@ -62,7 +62,12 @@ writeFileSync(
   destination,
   `// Généré par scripts/generate-worker-env.mjs — ne pas modifier à la main.\n` +
     `export const SUPABASE_URL = ${JSON.stringify(url)}\n` +
-    `export const SUPABASE_ANON_KEY = ${JSON.stringify(cle)}\n`,
+    `export const SUPABASE_ANON_KEY = ${JSON.stringify(cle)}\n` +
+    // Change à chaque construction. Sert de clé au cache du sitemap :
+    // sans lui, un sitemap mis en cache pour une heure survivait au
+    // déploiement qui venait d'en changer le contenu, et rien ne
+    // permettait de le rafraîchir.
+    `export const BUILD_ID = ${JSON.stringify(new Date().toISOString())}\n`,
   'utf8'
 )
 
