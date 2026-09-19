@@ -184,9 +184,9 @@ function bars() {
   const insolites = donneesBars.lieux.filter((l) => l.type === 'insolite')
 
   return page(`<h1>Bars pas chers et bars insolites à Paris</h1>
-<p>${donneesBars.lieux.length} adresses compilées par le ${e(NOM_SITE)} à partir de sources
-publiques, mises à jour le ${e(donneesBars.maj)}. ${e(donneesBars.avertissement)}</p>
-<p class="m">${e(donneesBars.avertissement_donnees)}</p>
+<p>${donneesBars.lieux.length} adresses à Paris, relevées par le ${e(NOM_SITE)}.
+Données du ${e(donneesBars.maj.split('-').reverse().join('/'))} : prix pouvant avoir changé.
+${e(donneesBars.avertissement)}</p>
 <h2>Bars pas chers (${pasChers.length})</h2>
 <ul>${pasChers.map(ligne).join('')}</ul>
 <h2>Bars insolites (${insolites.length})</h2>

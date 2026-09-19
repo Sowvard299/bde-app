@@ -29,8 +29,6 @@ for e in d["etablissements"]:
         "lat": e["latitude"],
         "lon": e["longitude"],
         "flags": e["flags"],
-        "source": e["source"],
-        "fiabilite": e["fiabilite"],
     }
     if prix:
         row["prix"] = prix
@@ -54,8 +52,6 @@ for groupe in d["taxonomie"].values():
 payload = {
     "maj": d["meta"]["date"],
     "avertissement": d["meta"]["avertissement_legal"],
-    "avertissement_donnees": d["meta"]["avertissement_donnees"],
-    "sources": [{"nom": s["nom"], "url": s["url"]} for s in d["meta"]["sources"]],
     "libelles": libelles,
     "lieux": out,
 }

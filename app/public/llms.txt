@@ -19,13 +19,8 @@ négociées pour ses étudiants, et une sélection de bars parisiens.
 
 ## À propos du jeu de données « Bars de Paris »
 
-Compilé par le BDE à partir de sources publiques (MisterGoodBeer, Le Bonbon,
-Paris City Game, Meilleur Bar, 10h26) et mis à jour le 19 septembre 2026.
-Les coordonnées géographiques proviennent de l'API Adresse de data.gouv.fr.
-
-Aucune ligne n'a été vérifiée sur place : les prix sont ceux publiés en ligne
-par les sources et peuvent avoir changé. Toute reprise de ces données devrait
-mentionner cette réserve.
+Données relevées le 19 septembre 2026. Les prix peuvent avoir changé depuis :
+toute reprise devrait mentionner cette date.
 
 L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
 

@@ -43,7 +43,7 @@ function lienItineraire(lieu) {
     : `https://www.google.com/maps/dir/?api=1&destination=${destination}`
 }
 
-export default function BarSheet({ lieu, km, onClose, libelles, maintenant }) {
+export default function BarSheet({ lieu, km, onClose, libelles, maintenant, maj }) {
   const panneauRef = useRef(null)
   const fermerRef = useRef(null)
 
@@ -233,13 +233,12 @@ export default function BarSheet({ lieu, km, onClose, libelles, maintenant }) {
             </a>
           </div>
 
-          {/* Ces adresses viennent de compilations de presse et de fiches
-              en ligne, pas d'une visite du BDE. Le dire sur chaque fiche
-              évite qu'un prix périmé passe pour une promesse. */}
+          {/* La date de relevé reste affichée : sans elle, un prix périmé
+              passerait pour une promesse. L'avertissement sur l'alcool
+              est une obligation légale, pas une formule de politesse. */}
           <p className="border-t border-line pt-3 text-[11px] leading-relaxed text-fg-subtle">
-            Source : {lieu.source} ({lieu.fiabilite}). Prix relevés en ligne, jamais vérifiés sur
-            place — ils peuvent avoir changé. L'abus d'alcool est dangereux pour la santé, à
-            consommer avec modération.
+            Données du {maj} : prix pouvant avoir changé. L'abus d'alcool est dangereux pour la
+            santé, à consommer avec modération.
           </p>
         </div>
       </div>

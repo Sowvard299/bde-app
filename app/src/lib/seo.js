@@ -20,9 +20,9 @@ export const IMAGE_PARTAGE = `${SITE}/og-image.png`
 // de la phrase, souvent celle qui donne envie de cliquer, disparaît.
 // D'où une marque abrégée, et des titres de pages fixes écrits en entier
 // plutôt qu'assemblés.
-const MARQUE = 'BDE IAE Sorbonne'
+const MARQUE = 'BDE IAE Paris Sorbonne'
 
-function avecMarque(titre, budget = 60) {
+function avecMarque(titre, budget = 65) {
   const suffixe = ` | ${MARQUE}`
   const place = budget - suffixe.length
   return `${titre.length > place ? tronquer(titre, place) : titre}${suffixe}`
@@ -46,15 +46,15 @@ const PAGES = {
   '/accueil': {
     titre: 'BDE IAE Paris Sorbonne — Bureau des étudiants',
     description:
-      "Le Bureau des étudiants de l'IAE Paris-Sorbonne : soirées, sport, sorties et réductions étudiantes négociées chez nos partenaires, à Paris 13e et ailleurs.",
+      "Site officiel du Bureau des étudiants de l'IAE Paris-Sorbonne (NBDE IAE Paris) : soirées, WEI, sport, sorties et réductions étudiantes. Association loi 1901 depuis 2008.",
   },
   '/evenements': {
-    titre: 'Soirées et événements étudiants — BDE IAE Sorbonne',
+    titre: 'Soirées et événements étudiants — BDE IAE Paris Sorbonne',
     description:
       "Toutes les soirées, sorties et activités du BDE de l'IAE Paris-Sorbonne : dates, lieux, tarifs et billetterie. WEI, soirées étudiantes, running, escalade.",
   },
   '/partenaires': {
-    titre: 'Réductions étudiantes à Paris — BDE IAE Sorbonne',
+    titre: 'Réductions étudiantes à Paris — BDE IAE Paris Sorbonne',
     description:
       "Les réductions négociées par le BDE de l'IAE Paris-Sorbonne : restauration, sport, culture, beauté. Ta carte étudiante suffit, aucune inscription.",
   },
@@ -73,12 +73,12 @@ const PAGES = {
       "Le Nouveau Bureau des Étudiants de l'IAE Paris, association loi 1901 fondée en 2008 : qui nous sommes, ce que nous organisons pour les étudiants de l'IAE Paris-Sorbonne, et comment nous joindre.",
   },
   '/mentions-legales': {
-    titre: 'Mentions légales — BDE IAE Sorbonne',
+    titre: 'Mentions légales — BDE IAE Paris Sorbonne',
     description: "Mentions légales du site du Bureau des étudiants de l'IAE Paris-Sorbonne.",
     indexable: false,
   },
   '/confidentialite': {
-    titre: 'Confidentialité — BDE IAE Sorbonne',
+    titre: 'Confidentialité — BDE IAE Paris Sorbonne',
     description:
       "Politique de confidentialité et traitement des données personnelles sur le site du BDE de l'IAE Paris-Sorbonne.",
     indexable: false,
@@ -115,12 +115,30 @@ export const ASSOCIATION = {
   ecole: "IAE Paris-Sorbonne Business School",
 }
 
+function siteWeb() {
+  return {
+    '@type': 'WebSite',
+    '@id': `${SITE}/#site`,
+    url: `${SITE}/accueil`,
+    name: NOM_SITE,
+    alternateName: ['BDE IAE Paris', 'NBDE IAE Paris'],
+    inLanguage: 'fr-FR',
+    publisher: { '@id': `${SITE}/#organisation` },
+  }
+}
+
 function organisation() {
   return {
     '@type': 'Organization',
     '@id': `${SITE}/#organisation`,
     name: NOM_SITE,
-    alternateName: [ASSOCIATION.nomLegal, ASSOCIATION.sigle],
+    alternateName: [
+      ASSOCIATION.nomLegal,
+      ASSOCIATION.sigle,
+      'BDE IAE Paris',
+      'BDE IAE Paris-Sorbonne',
+      "BDE de l'IAE Paris",
+    ],
     description:
       "Bureau des étudiants de l'IAE Paris-Sorbonne : organisation d'événements étudiants, de sorties et de partenariats à tarif réduit.",
     url: `${SITE}/accueil`,
@@ -212,7 +230,7 @@ export function metaStatique(chemin) {
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': estAccueil
-        ? [organisation()]
+        ? [organisation(), siteWeb()]
         : [
             organisation(),
             filAriane([
@@ -253,8 +271,14 @@ export function metaEvenement(evenement) {
       }
     : undefined
 
+  // La date n'est ajoutée que si elle tient en entier. Tronquée, elle
+  // donnait « WEICUP — Latino Edition — 25 | BDE IAE Paris Sorbonne » :
+  // un « 25 » orphelin dit moins que pas de date du tout.
+  const avecDate = `${evenement.title} — ${quand}`
+  const titreBase = quand && avecDate.length <= 40 ? avecDate : evenement.title
+
   return {
-    titre: avecMarque(quand ? `${evenement.title} — ${quand}` : evenement.title),
+    titre: avecMarque(titreBase),
     description: resumer(
       evenement.description ||
         `${evenement.title}${quand ? `, le ${quand}` : ''}${

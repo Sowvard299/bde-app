@@ -117,6 +117,8 @@ export default function BarsContent() {
   }, [donnees, selectionId, position])
 
   const nbFiltresActifs = compterFiltresActifs(filtres)
+  // « 2026-09-19 » se lit « 19/09/2026 ».
+  const dateMaj = donnees?.maj.split('-').reverse().join('/')
 
   if (erreur) {
     return (
@@ -208,13 +210,13 @@ export default function BarsContent() {
           onClose={fermer}
           libelles={donnees.libelles}
           maintenant={maintenant}
+          maj={dateMaj}
         />
       )}
 
       <p className="text-[11px] leading-relaxed text-fg-subtle">
-        {donnees.lieux.length} adresses compilées par le BDE à partir de {donnees.sources.length}{' '}
-        sources publiques, mises à jour le {donnees.maj.split('-').reverse().join('/')}.{' '}
-        {donnees.avertissement_donnees}
+        {donnees.lieux.length} adresses. Données du {dateMaj} : prix pouvant avoir changé.{' '}
+        {donnees.avertissement}
       </p>
     </div>
   )
