@@ -1,6 +1,6 @@
 -- A executer dans l'editeur SQL du NOUVEAU projet Supabase.
 --
--- Ajoute L'Avenue Bibliotheque 13, partenariat confirme par David HOUDET
+-- Ajoute Avenue 13, partenariat confirme par David HOUDET
 -- le 10 septembre 2026 : 20% sur l'ensemble de la carte boissons et
 -- restauration, une carte etudiante valable pour une personne et non
 -- pour une table.
@@ -12,7 +12,7 @@ insert into partners (
   name, category_id, kind, benefit, description,
   address, latitude, longitude, website_url, is_published
 ) values (
-  'L' || chr(39) || 'Avenue Biblioth' || chr(232) || 'que 13',
+  'Avenue 13',
   '5dbfb7d6-dfbf-4753-a0cc-cc7f2e58fd86',  -- Restauration
   'partenaire',
   '-20% sur toute la carte',
