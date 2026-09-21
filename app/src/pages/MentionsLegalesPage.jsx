@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import AddressLink from '../components/AddressLink'
 
 export default function MentionsLegalesPage() {
   return (
@@ -16,7 +17,14 @@ export default function MentionsLegalesPage() {
           Étudiants de l'Institut d'Administration des Entreprises de Paris (NBDE IAE Paris),
           association loi 1901 fondée en 2008.
         </p>
-        <p>Siège social : 11-15 rue Ponscarme, 75013 Paris.</p>
+        <p>
+          Siège social :{' '}
+          <AddressLink
+            adresse="11-15 rue Ponscarme, 75013 Paris"
+            className="text-accent underline"
+          />
+          .
+        </p>
         <p>Directrice de la publication : Emma Lagenèbre, Présidente.</p>
         <p>
           Contact :{' '}

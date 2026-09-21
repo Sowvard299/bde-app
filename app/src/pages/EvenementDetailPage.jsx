@@ -6,6 +6,7 @@ import { useSeoDonnees } from '../hooks/useSeo'
 import { formatEventDateTime } from '../lib/formatDate'
 import { buildGoogleCalendarUrl, downloadEventIcs } from '../lib/ics'
 import AppFooter from '../components/AppFooter'
+import AddressLink from '../components/AddressLink'
 import EventMedia from '../components/EventMedia'
 import {
   isReusedMedia,
@@ -134,10 +135,19 @@ export default function EvenementDetailPage() {
             {event.title}
           </h1>
           {(event.location_name || event.location_address) && (
-            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white/85 backdrop-blur-sm">
+            <AddressLink
+              nom={event.location_name}
+              adresse={event.location_address}
+              lat={event.latitude}
+              lon={event.longitude}
+              className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white/85 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
+            >
               <span aria-hidden="true">📍</span>
               {[event.location_name, event.location_address].filter(Boolean).join(' — ')}
-            </p>
+              <span aria-hidden="true" className="text-white/50">
+                ↗
+              </span>
+            </AddressLink>
           )}
         </div>
       </div>

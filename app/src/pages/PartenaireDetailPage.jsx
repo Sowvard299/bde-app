@@ -7,6 +7,8 @@ import { isLogoFile } from '../lib/media'
 import PartnerMiniMap from '../components/PartnerMiniMap'
 import PartnerDescription from '../components/PartnerDescription'
 import AppFooter from '../components/AppFooter'
+import AddressLink from '../components/AddressLink'
+import { nomAppCartes } from '../lib/maps'
 
 const SHELL =
   'mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12'
@@ -167,12 +169,53 @@ export default function PartenaireDetailPage() {
           )}
 
           {partner.address && (
-            <p className="flex gap-3 text-fg-muted">
+            // L'adresse entière est le lien, avec l'application nommée
+            // dessous : un texte souligné seul ne dit pas où il mène, et
+            // sur téléphone on veut savoir si c'est Plans ou Google Maps
+            // qui va s'ouvrir avant d'appuyer.
+            <AddressLink
+              nom={partner.name}
+              adresse={partner.address}
+              lat={partner.latitude}
+              lon={partner.longitude}
+              className="group flex gap-3 text-fg-muted transition hover:text-fg"
+            >
               <span className="mt-0.5 shrink-0 text-accent">
                 <PinIcon />
               </span>
-              {partner.address}
-            </p>
+              <span>
+                <span className="underline decoration-line underline-offset-4 transition group-hover:decoration-fg-subtle">
+                  {partner.address}
+                </span>
+                <span className="mt-0.5 block text-xs text-fg-subtle">
+                  Ouvrir dans {nomAppCartes()} ↗
+                </span>
+              </span>
+            </AddressLink>
+          )}
+
+          {/* Certains partenaires ont des coordonnées sans adresse écrite
+              (le Théâtre Dunois) : la carte s'affichait, mais rien n'était
+              cliquable. Le lien passe alors par les coordonnées. */}
+          {!partner.address && hasMap && (
+            <AddressLink
+              nom={partner.name}
+              lat={partner.latitude}
+              lon={partner.longitude}
+              className="group flex gap-3 text-fg-muted transition hover:text-fg"
+            >
+              <span className="mt-0.5 shrink-0 text-accent">
+                <PinIcon />
+              </span>
+              <span>
+                <span className="underline decoration-line underline-offset-4 transition group-hover:decoration-fg-subtle">
+                  Voir sur la carte
+                </span>
+                <span className="mt-0.5 block text-xs text-fg-subtle">
+                  Ouvrir dans {nomAppCartes()} ↗
+                </span>
+              </span>
+            </AddressLink>
           )}
 
           {partner.phone && (

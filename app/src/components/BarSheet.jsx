@@ -6,7 +6,8 @@ import {
   formatEuro,
   tarifMaintenant,
 } from '../lib/bars'
-import { isIos } from '../lib/platform'
+import { lienItineraire } from '../lib/maps'
+import AddressLink from './AddressLink'
 
 // Les lignes du tableau de prix, dans l'ordre où on se les demande : ce
 // que coûte une bière d'abord, le reste ensuite. Une ligne sans valeur
@@ -31,16 +32,6 @@ const COULEUR_TARIF = {
 const SANS_ALCOOL = {
   'oui-assume': 'Le lieu revendique une offre sans alcool.',
   'probable-activite': "L'activité se tient sans boire : le BDE le suppose, le lieu ne l'annonce pas.",
-}
-
-function lienItineraire(lieu) {
-  const destination = `${lieu.lat},${lieu.lon}`
-  const libelle = encodeURIComponent(`${lieu.nom}, ${lieu.adresse}`)
-  // Plans sur iPhone, Google Maps partout ailleurs : sur iOS le lien
-  // Google ouvre une page web dans Safari au lieu de l'app d'itinéraire.
-  return isIos()
-    ? `https://maps.apple.com/?daddr=${destination}&q=${libelle}`
-    : `https://www.google.com/maps/dir/?api=1&destination=${destination}`
 }
 
 export default function BarSheet({ lieu, km, onClose, libelles, maintenant, maj }) {
@@ -112,7 +103,13 @@ export default function BarSheet({ lieu, km, onClose, libelles, maintenant, maj 
                 {lieu.nom}
               </h2>
               <p className="mt-0.5 text-sm text-fg-faint">
-                {lieu.adresse}
+                <AddressLink
+                  nom={lieu.nom}
+                  adresse={lieu.adresse}
+                  lat={lieu.lat}
+                  lon={lieu.lon}
+                  className="underline decoration-line underline-offset-4 transition hover:text-fg hover:decoration-fg-subtle"
+                />
                 {km != null && ` · à ${formatDistance(km)}`}
               </p>
             </div>
@@ -216,7 +213,7 @@ export default function BarSheet({ lieu, km, onClose, libelles, maintenant, maj 
 
           <div className="flex flex-wrap gap-2">
             <a
-              href={lienItineraire(lieu)}
+              href={lienItineraire({ nom: lieu.nom, adresse: lieu.adresse, lat: lieu.lat, lon: lieu.lon })}
               target="_blank"
               rel="noreferrer"
               className="flex-1 rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { bdeIcon, bonPlanIcon, partenaireIcon } from '../lib/leafletIcons'
+import AddressLink from './AddressLink'
 
 // IAE Paris Sorbonne — Rue Ponscarme, 75013 Paris.
 const SCHOOL = {
@@ -50,6 +51,15 @@ export default function PartnersMap({ partners }) {
                 </span>
                 <span className="font-semibold">{partner.name}</span>
                 <span>{partner.benefit}</span>
+                {partner.address && (
+                  <AddressLink
+                    nom={partner.name}
+                    adresse={partner.address}
+                    lat={partner.latitude}
+                    lon={partner.longitude}
+                    className="text-xs text-accent underline underline-offset-2"
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => navigate(`/partenaires/${partner.id}`)}

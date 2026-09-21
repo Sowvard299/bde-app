@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import AppFooter from '../components/AppFooter'
 import PageHeader from '../components/PageHeader'
+import AddressLink from '../components/AddressLink'
 import { ASSOCIATION } from '../lib/seo'
 
 // Page « Qui sommes-nous ».
@@ -28,8 +29,12 @@ export default function AProposPage() {
         <p>
           Le <strong className="text-fg">{ASSOCIATION.nomLegal}</strong> ({ASSOCIATION.sigle}) est
           l'association étudiante de l'{ASSOCIATION.ecole}. C'est une association loi 1901, fondée
-          en {ASSOCIATION.fondation}, dont le siège se trouve au {ASSOCIATION.adresse},{' '}
-          {ASSOCIATION.codePostal} {ASSOCIATION.ville}.
+          en {ASSOCIATION.fondation}, dont le siège se trouve au{' '}
+          <AddressLink
+            adresse={`${ASSOCIATION.adresse}, ${ASSOCIATION.codePostal} ${ASSOCIATION.ville}`}
+            className="text-accent underline underline-offset-2"
+          />
+          .
         </p>
         <p>
           On organise la vie étudiante de l'école : les soirées, le week-end d'intégration, les
