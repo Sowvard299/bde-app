@@ -12,6 +12,7 @@ import BarCard from './BarCard'
 import BarSheet from './BarSheet'
 import BarsFilters from './BarsFilters'
 import BarsMap from './BarsMap'
+import ProposerBarSheet from './ProposerBarSheet'
 import ViewToggle from './ViewToggle'
 
 // Le seul état de la page qui vieillit tout seul, c'est l'heure : un
@@ -42,6 +43,7 @@ export default function BarsContent() {
   // au lieu de quitter la page, et un lien vers un bar se partage.
   const [params, setParams] = useSearchParams()
   const selectionId = params.get('lieu') ? Number(params.get('lieu')) : null
+  const proposerOuvert = params.get('proposer') === '1'
 
   // Seuil plus haut que le `lg` de Tailwind : a 1024 px la colonne de
   // navigation et la liste laissent moins de 300 px a la carte, ou plus
@@ -68,6 +70,25 @@ export default function BarsContent() {
   )
 
   const fermer = useCallback(() => selectionner(null), [selectionner])
+
+  // Même logique que la fiche d'un bar : vivre dans l'URL fait fermer le
+  // formulaire avec le bouton retour du téléphone plutôt que de quitter
+  // la page, et permet de partager un lien qui l'ouvre directement.
+  const ouvrirProposition = useCallback(() => {
+    setParams((p) => {
+      const suivant = new URLSearchParams(p)
+      suivant.set('proposer', '1')
+      return suivant
+    })
+  }, [setParams])
+
+  const fermerProposition = useCallback(() => {
+    setParams((p) => {
+      const suivant = new URLSearchParams(p)
+      suivant.delete('proposer')
+      return suivant
+    })
+  }, [setParams])
 
   const demanderPosition = useCallback(() => {
     if (!navigator.geolocation) {
@@ -213,6 +234,23 @@ export default function BarsContent() {
           maj={dateMaj}
         />
       )}
+
+      {/* Une seule entrée, en bas de page plutôt qu'un bouton flottant
+          sur la carte ou dans la barre de filtres : la liste doit rester
+          concentrée sur ses 193 adresses, pas sur la façon d'en ajouter
+          une. */}
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-line bg-surface/60 px-4 py-3.5">
+        <p className="text-sm text-fg-muted">Ton bar préféré n'y est pas ?</p>
+        <button
+          type="button"
+          onClick={ouvrirProposition}
+          className="shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Le proposer
+        </button>
+      </div>
+
+      {proposerOuvert && <ProposerBarSheet onClose={fermerProposition} />}
 
       <p className="text-[11px] leading-relaxed text-fg-subtle">
         {donnees.lieux.length} adresses. Données du {dateMaj} : prix pouvant avoir changé.{' '}
