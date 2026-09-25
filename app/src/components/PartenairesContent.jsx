@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchCategories, fetchPartners } from '../lib/partners'
+import { PARTENAIRE_A_LA_UNE_ID, fetchCategories, fetchPartners } from '../lib/partners'
 import PartnerRow from './PartnerRow'
+import PartnerSpotlight from './PartnerSpotlight'
 import CategoryChips from './CategoryChips'
 import PartnersMap from './PartnersMap'
 import ViewToggle from './ViewToggle'
@@ -49,7 +50,29 @@ export default function PartenairesContent() {
     })
   }, [partners, search, activeSlug])
 
-  const partenaires = useMemo(() => filtered.filter((p) => p.kind === 'partenaire'), [filtered])
+  // Le partenaire à la une vit dans le jeu complet, pas dans `filtered` :
+  // une recherche ou une catégorie ne doit pas le faire disparaître ni
+  // sauter la page de haut en bas pendant qu'on tape.
+  const aLaUne = useMemo(
+    () => partners?.find((p) => p.id === PARTENAIRE_A_LA_UNE_ID) ?? null,
+    [partners]
+  )
+
+  // Vitrine en vue liste seulement : sur la carte, l'écran appartient à la
+  // carte. Le sélecteur Liste/Carte reste au-dessus de la vitrine, donc il ne
+  // bouge pas quand on bascule d'une vue à l'autre.
+  const vitrineVisible = aLaUne !== null && view === 'liste'
+
+  // Un partenaire affiché en vitrine n'est pas répété dans la grille juste
+  // en dessous : la même carte deux fois dans la même page se lit comme un
+  // doublon, pas comme une mise en avant.
+  const partenaires = useMemo(
+    () =>
+      filtered.filter(
+        (p) => p.kind === 'partenaire' && !(vitrineVisible && p.id === PARTENAIRE_A_LA_UNE_ID)
+      ),
+    [filtered, vitrineVisible]
+  )
   const bonsPlans = useMemo(
     () => filtered.filter((p) => p.kind !== 'partenaire'),
     [filtered]
@@ -65,6 +88,8 @@ export default function PartenairesContent() {
         value={view}
         onChange={setView}
       />
+
+      {!error && vitrineVisible && <PartnerSpotlight partner={aLaUne} />}
 
       <input
         type="search"
@@ -100,7 +125,7 @@ export default function PartenairesContent() {
             <div className="flex flex-col gap-4">
               <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
                 <span className="h-px w-6 bg-accent-gold" />
-                Partenaires
+                {vitrineVisible ? 'Autres partenaires' : 'Partenaires'}
                 <span className="font-sans text-fg-subtle">({partenaires.length})</span>
               </h3>
               <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
