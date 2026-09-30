@@ -2,11 +2,13 @@ import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AccueilPage from './pages/AccueilPage'
 import BottomNav from './components/BottomNav'
-import Sidebar from './components/Sidebar'
+import SiteHeader from './components/SiteHeader'
+import AppFooter from './components/AppFooter'
 import WelcomeSheet from './components/WelcomeSheet'
 import StandalonePushPrompt from './components/StandalonePushPrompt'
 import InAppBrowserNotice from './components/InAppBrowserNotice'
 import IntroSplash from './components/IntroSplash'
+import RetourEnHaut from './components/RetourEnHaut'
 import { useSeoRoute } from './hooks/useSeo'
 
 // Tout le site partait dans un seul fichier de 213 Ko compressés, Leaflet
@@ -32,8 +34,8 @@ const IntrouvablePage = lazy(() => import('./pages/IntrouvablePage'))
 // clignoter pour rien.
 function EnChargement() {
   return (
-    <main className="mx-auto w-full max-w-[480px] px-4 pt-10 sm:max-w-xl lg:max-w-6xl lg:px-10">
-      <p className="text-fg-faint">Chargement…</p>
+    <main className="mx-auto min-h-[60svh] w-full max-w-6xl px-5 pt-10 lg:px-10">
+      <p className="label text-fg-subtle">Chargement</p>
     </main>
   )
 }
@@ -42,8 +44,9 @@ function App() {
   useSeoRoute()
 
   return (
-    <div className="lg:flex">
-      <Sidebar />
+    <div className="flex min-h-svh flex-col">
+      <RetourEnHaut />
+      <SiteHeader />
       <div className="min-w-0 flex-1">
         <IntroSplash />
         <InAppBrowserNotice />
@@ -68,6 +71,7 @@ function App() {
           </Routes>
         </Suspense>
       </div>
+      <AppFooter />
       <BottomNav />
     </div>
   )

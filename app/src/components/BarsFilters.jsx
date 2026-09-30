@@ -10,7 +10,7 @@ const ORDRE_ARRONDISSEMENTS = (a, b) => {
 
 // Bouton de famille : c'est le filtre principal de la page, celui qui
 // porte la couleur de la pastille correspondante sur la carte. Actif, il
-// s'allume de cette couleur — la légende et le filtre ne font qu'un.
+// s'allume de cette couleur : la légende et le filtre ne font qu'un.
 function BoutonType({ type, actif, compte, onToggle }) {
   const t = TYPES[type]
 
@@ -19,29 +19,17 @@ function BoutonType({ type, actif, compte, onToggle }) {
       type="button"
       onClick={onToggle}
       aria-pressed={actif}
-      className="flex flex-1 items-center gap-2.5 rounded-2xl border px-3.5 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      style={
-        actif
-          ? { borderColor: t.couleur, background: `color-mix(in srgb, ${t.couleur} 14%, transparent)` }
-          : { borderColor: 'var(--color-line)', background: 'var(--color-surface)' }
-      }
+      className="flex min-w-0 flex-1 items-center gap-3 border-2 border-ink px-3 py-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      style={{ background: actif ? t.couleur : '#fff' }}
     >
       <span
-        className="h-3.5 w-3.5 shrink-0 rounded-full transition"
-        style={{
-          background: actif ? t.couleur : 'transparent',
-          boxShadow: `inset 0 0 0 2px ${actif ? t.couleur : 'var(--color-fg-subtle)'}`,
-        }}
+        className="h-4 w-4 shrink-0 border-2 border-ink transition"
+        style={{ background: actif ? 'var(--color-ink)' : t.couleur }}
         aria-hidden="true"
       />
       <span className="min-w-0">
-        <span
-          className="block truncate text-sm font-semibold"
-          style={{ color: actif ? t.couleur : 'var(--color-fg-muted)' }}
-        >
-          {t.libelle}
-        </span>
-        <span className="block text-[11px] text-fg-subtle">{compte} adresses</span>
+        <span className="block font-display text-base uppercase leading-none sm:text-lg">{t.libelle}</span>
+        <span className="mt-1 block text-[11px] text-fg-muted">{compte} adresses</span>
       </span>
     </button>
   )
@@ -54,14 +42,11 @@ function Puce({ label, actif, onClick, titre }) {
       onClick={onClick}
       aria-pressed={actif}
       title={titre}
-      // Sans ca, le `title` prend la place du libelle dans le nom
-      // annonce par un lecteur d'ecran : on entendrait la note de bas de
-      // page au lieu du nom du filtre.
+      // Sans ça, le `title` prend la place du libellé dans le nom
+      // annoncé par un lecteur d'écran.
       aria-label={label}
-      className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-        actif
-          ? 'border-accent bg-accent text-white'
-          : 'border-line bg-surface text-fg-muted hover:border-fg-subtle'
+      className={`shrink-0 border-2 border-ink px-3 py-1.5 text-[13px] font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        actif ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-accent-gold'
       }`}
     >
       {label}
@@ -141,8 +126,9 @@ export default function BarsFilters({
         type="search"
         value={filtres.q}
         onChange={(e) => maj({ q: e.target.value })}
-        placeholder="Un nom, une rue, un métro…"
-        className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-fg placeholder:text-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        placeholder="Nom, rue ou station de métro"
+        aria-label="Rechercher un bar"
+        className="field"
       />
 
       <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
@@ -161,8 +147,8 @@ export default function BarsFilters({
           />
         ))}
         <Puce
-          label={etatPosition === 'attente' ? 'Localisation…' : 'Autour de moi'}
-          titre="Trier par distance depuis ta position"
+          label={etatPosition === 'attente' ? 'Localisation' : 'Autour de moi'}
+          titre="Trier par distance depuis votre position"
           actif={filtres.tri === 'distance' && Boolean(position)}
           onClick={() => {
             if (position) {
@@ -176,14 +162,13 @@ export default function BarsFilters({
 
       {etatPosition === 'refuse' && (
         <p className="text-xs text-fg-subtle">
-          Position refusée. Autorise la localisation dans ton navigateur pour trier par distance.
+          Position refusée. Autorisez la localisation dans le navigateur pour trier par distance.
         </p>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-fg-faint">
-          <span className="font-semibold text-fg">{nbResultats}</span>{' '}
-          {nbResultats > 1 ? 'adresses' : 'adresse'}
+        <p className="label text-fg-muted">
+          {nbResultats} {nbResultats > 1 ? 'adresses' : 'adresse'}
         </p>
 
         <div className="flex items-center gap-2">
@@ -191,7 +176,7 @@ export default function BarsFilters({
             <button
               type="button"
               onClick={onReinitialiser}
-              className="rounded-full px-2.5 py-1 text-xs font-semibold text-fg-faint underline-offset-2 transition hover:text-fg hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="label px-2 py-1.5 underline underline-offset-2 transition hover:bg-accent-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Tout effacer
             </button>
@@ -200,11 +185,11 @@ export default function BarsFilters({
             type="button"
             onClick={() => setOuvert((v) => !v)}
             aria-expanded={ouvert}
-            className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-fg-muted transition hover:border-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="label border-2 border-ink bg-white px-3 py-1.5 transition hover:bg-accent-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             {ouvert ? 'Moins de filtres' : 'Plus de filtres'}
             {nbFiltresActifs > 0 && (
-              <span className="ml-1.5 rounded-full bg-accent px-1.5 py-0.5 text-[10px] text-white">
+              <span className="ml-1.5 bg-ink px-1.5 py-0.5 text-[10px] text-white">
                 {nbFiltresActifs}
               </span>
             )}
@@ -213,14 +198,14 @@ export default function BarsFilters({
       </div>
 
       {ouvert && (
-        <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface/60 p-4">
+        <div className="flex flex-col gap-5 border-2 border-ink bg-surface p-4">
           <div className="flex flex-wrap gap-4">
-            <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wider text-fg-subtle">
+            <label className="label flex flex-col gap-1.5 text-fg-muted">
               Arrondissement
               <select
                 value={filtres.arrondissement ?? ''}
                 onChange={(e) => maj({ arrondissement: e.target.value || null })}
-                className="rounded-lg border border-line bg-surface px-3 py-2 text-sm font-normal normal-case tracking-normal text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="border-2 border-ink bg-white px-3 py-2 text-sm font-normal normal-case tracking-normal text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <option value="">Tous</option>
                 {comptes.arrondissements.map((a) => (
@@ -231,12 +216,12 @@ export default function BarsFilters({
               </select>
             </label>
 
-            <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wider text-fg-subtle">
+            <label className="label flex flex-col gap-1.5 text-fg-muted">
               Trier par
               <select
                 value={filtres.tri}
                 onChange={(e) => maj({ tri: e.target.value })}
-                className="rounded-lg border border-line bg-surface px-3 py-2 text-sm font-normal normal-case tracking-normal text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="border-2 border-ink bg-white px-3 py-2 text-sm font-normal normal-case tracking-normal text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <option value="prix">Prix croissant</option>
                 <option value="nom">Nom</option>
@@ -256,7 +241,7 @@ export default function BarsFilters({
 
             return (
               <div key={groupe.cle} className="flex flex-col gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-fg-subtle">
+                <p className="label text-fg-muted">
                   {groupe.libelle}
                 </p>
                 <div className="flex flex-wrap gap-1.5">

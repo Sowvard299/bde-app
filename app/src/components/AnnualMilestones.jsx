@@ -1,157 +1,171 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EventMedia from './EventMedia'
-import { R2_MEDIA_BASE, WEICUP_EVENT_ID, WEICUP_LOGO, weicupSaleIsLive } from '../lib/media'
+import { R2_MEDIA_BASE, WEICUP_EVENT_ID, WEICUP_LOGO } from '../lib/media'
 import pullsPoster from '../assets/video-posters/pulls.jpg'
 import cdfPoster from '../assets/video-posters/cdf.jpg'
 import galaPoster from '../assets/video-posters/gala.jpg'
 
 const ACTIVITIES_BASE = R2_MEDIA_BASE + 'activities/'
 
-const MILESTONES = [
+// Les grands rendez-vous de l'année, dans l'ordre. Le WEI reste en tête
+// même une fois passé : c'est le premier gros événement de l'année, et la
+// frise sert à montrer l'année entière, pas seulement ce qui reste à venir.
+const RENDEZ_VOUS = [
   {
-    title: 'WEICUP — Latino Edition',
-    date: '25-27 septembre 2026',
-    note: weicupSaleIsLive() ? 'Billetterie ouverte' : 'Place bientôt disponible',
+    titre: 'WEICUP Latino Edition',
+    date: 'Septembre 2026',
     media: WEICUP_LOGO,
-    isLogo: true,
-    logoBg: '#f7b422',
+    fond: '#f7b422',
+    contenir: true,
     to: `/evenements/${WEICUP_EVENT_ID}`,
   },
   {
-    title: 'Pull de promo',
-    date: 'Février / mars 2027',
+    titre: 'Pull de promo',
+    date: 'Février – mars 2027',
     media: R2_MEDIA_BASE + 'pulls.mp4',
     poster: pullsPoster,
   },
   {
-    title: "Concours Inter-IAE d'éloquence",
+    titre: "Concours inter-IAE d'éloquence",
     date: 'Mars 2027',
-    media: ACTIVITIES_BASE + "concours-eloquence.jpeg",
-    isLogo: true,
+    media: ACTIVITIES_BASE + 'concours-eloquence.jpeg',
+    contenir: true,
   },
   {
-    title: 'Coupe de France des IAE',
+    titre: 'Coupe de France des IAE',
     date: 'Avril 2027',
     media: R2_MEDIA_BASE + 'cdf.mov',
     poster: cdfPoster,
   },
   {
-    title: 'Gala IAE Paris Sorbonne',
+    titre: 'Gala IAE Paris Sorbonne',
     date: 'Mai 2027',
     media: R2_MEDIA_BASE + 'gala.mov',
     poster: galaPoster,
   },
 ]
 
-const PIXELS_PER_SECOND = 28
-const PAUSE_AFTER_MANUAL_MS = 2500
+const PIXELS_PAR_SECONDE = 28
+const PAUSE_APRES_GESTE_MS = 2500
 
+// Frise qui défile seule, en aller-retour (revenir d'un coup au début se
+// lisait comme un bug). Elle s'arrête dès qu'on la touche, qu'on la
+// survole ou qu'on la fait défiler, et repart peu après.
 export default function AnnualMilestones() {
-  const scrollRef = useRef(null)
-  const pausedRef = useRef(false)
-  const resumeTimeoutRef = useRef(null)
-  const directionRef = useRef(1)
+  const pisteRef = useRef(null)
+  const enPauseRef = useRef(false)
+  const repriseRef = useRef(null)
 
   useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
+    const piste = pisteRef.current
+    if (!piste) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    let rafId
-    let lastTime = null
+    // La position est tenue en décimal ici : certains navigateurs
+    // arrondissent scrollLeft à l'entier, et un demi-pixel par image
+    // n'avancerait alors jamais.
+    let position = piste.scrollLeft
+    let sens = 1
+    let precedent = null
+    let idImage
 
-    function step(time) {
-      if (lastTime === null) lastTime = time
-      const dt = time - lastTime
-      lastTime = time
+    function avancer(temps) {
+      const dt = precedent === null ? 0 : Math.min(temps - precedent, 100)
+      precedent = temps
 
-      if (!pausedRef.current) {
-        const maxScroll = el.scrollWidth - el.clientWidth
-        if (maxScroll > 0) {
-          // Bounce back and forth rather than snapping to the start, which
-          // read as a glitch.
-          const next =
-            el.scrollLeft + (directionRef.current * PIXELS_PER_SECOND * dt) / 1000
-
-          if (next >= maxScroll) {
-            el.scrollLeft = maxScroll
-            directionRef.current = -1
-          } else if (next <= 0) {
-            el.scrollLeft = 0
-            directionRef.current = 1
-          } else {
-            el.scrollLeft = next
+      if (enPauseRef.current) {
+        position = piste.scrollLeft
+      } else {
+        const max = piste.scrollWidth - piste.clientWidth
+        if (max > 0) {
+          position += (sens * PIXELS_PAR_SECONDE * dt) / 1000
+          if (position >= max) {
+            position = max
+            sens = -1
+          } else if (position <= 0) {
+            position = 0
+            sens = 1
           }
+          piste.scrollLeft = position
         }
       }
-
-      rafId = requestAnimationFrame(step)
+      idImage = requestAnimationFrame(avancer)
     }
 
-    rafId = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(rafId)
+    idImage = requestAnimationFrame(avancer)
+    return () => {
+      cancelAnimationFrame(idImage)
+      clearTimeout(repriseRef.current)
+    }
   }, [])
 
-  function pauseAutoScroll() {
-    pausedRef.current = true
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
-    resumeTimeoutRef.current = setTimeout(() => {
-      pausedRef.current = false
-    }, PAUSE_AFTER_MANUAL_MS)
+  function pause() {
+    enPauseRef.current = true
+    clearTimeout(repriseRef.current)
+    repriseRef.current = setTimeout(() => {
+      enPauseRef.current = false
+    }, PAUSE_APRES_GESTE_MS)
+  }
+
+  function pauseTenue() {
+    enPauseRef.current = true
+    clearTimeout(repriseRef.current)
   }
 
   return (
-    <div
-      ref={scrollRef}
-      onPointerDown={pauseAutoScroll}
-      onWheel={pauseAutoScroll}
-      className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2"
+    <ol
+      ref={pisteRef}
+      onPointerDown={pause}
+      onTouchStart={pause}
+      onWheel={pause}
+      onMouseEnter={pauseTenue}
+      onMouseLeave={pause}
+      onFocus={pauseTenue}
+      onBlur={pause}
+      className="no-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-2 lg:-mx-10 lg:gap-6 lg:px-10"
     >
-      {MILESTONES.map((milestone) => {
-        const Tag = milestone.to ? Link : milestone.href ? 'a' : 'div'
-        const linkProps = milestone.to
-          ? { to: milestone.to }
-          : milestone.href
-            ? { href: milestone.href, target: '_blank', rel: 'noreferrer' }
-            : {}
+      {RENDEZ_VOUS.map((rdv, index) => {
+        const Tag = rdv.to ? Link : 'div'
         return (
-          <Tag
-            key={milestone.title}
-            {...linkProps}
-            className="lift zoom-media flex w-56 shrink-0 flex-col gap-2 rounded-2xl bg-ink p-3 ring-1 ring-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <p className="text-xs font-bold uppercase italic tracking-wide text-accent">
-              {milestone.date}
-            </p>
-
-            {milestone.isLogo ? (
-              <div
-                className="flex aspect-square w-full items-center justify-center rounded-xl p-1"
-                style={{ backgroundColor: milestone.logoBg || '#ffffff' }}
-              >
-                <EventMedia src={milestone.media} className="h-full w-full object-contain" />
+          <li key={rdv.titre} className="w-[68vw] max-w-[280px] shrink-0 lg:w-[280px]">
+            <Tag
+              {...(rdv.to ? { to: rdv.to } : {})}
+              className={`group block ${rdv.to ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent' : ''}`}
+            >
+              <div className="zoom-media overflow-hidden border-2 border-ink">
+                {rdv.contenir ? (
+                  <div
+                    className="flex aspect-square w-full items-center justify-center p-4"
+                    style={{ backgroundColor: rdv.fond ?? '#fff' }}
+                  >
+                    <EventMedia src={rdv.media} className="h-full w-full object-contain" />
+                  </div>
+                ) : (
+                  <EventMedia
+                    src={rdv.media}
+                    poster={rdv.poster}
+                    className="aspect-square w-full object-cover"
+                    fallbackLabel={rdv.titre}
+                  />
+                )}
               </div>
-            ) : (
-              <div className="aspect-square w-full overflow-hidden rounded-xl">
-                <EventMedia
-                  src={milestone.media}
-                  poster={milestone.poster}
-                  className="h-full w-full object-cover"
-                  fallbackLabel={milestone.title}
-                />
+              <div className="mt-3 flex items-baseline justify-between gap-2">
+                <p className="label text-fg-subtle">{rdv.date}</p>
+                <p className="label text-fg-subtle">{String(index + 1).padStart(2, '0')}</p>
               </div>
-            )}
-
-            <p className="font-display text-base font-bold uppercase leading-tight text-white">
-              {milestone.title}
-            </p>
-            {milestone.note && (
-              <p className="-mt-1 text-sm italic text-white/60">{milestone.note}</p>
-            )}
-          </Tag>
+              <p className="mt-1.5 font-display text-2xl uppercase leading-[0.92]">
+                {rdv.titre}
+                {rdv.to && (
+                  <span aria-hidden="true" className="ml-2 inline-block transition group-hover:translate-x-1">
+                    →
+                  </span>
+                )}
+              </p>
+            </Tag>
+          </li>
         )
       })}
-    </div>
+    </ol>
   )
 }

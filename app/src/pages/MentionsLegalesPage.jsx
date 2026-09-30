@@ -1,15 +1,13 @@
 import { Link } from 'react-router-dom'
 import AddressLink from '../components/AddressLink'
+import PageHeader from '../components/PageHeader'
+
+const LIEN = 'underline decoration-2 underline-offset-4 transition hover:bg-accent-gold'
 
 export default function MentionsLegalesPage() {
   return (
-    <main className="mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12">
-      <div>
-        <Link to="/evenements" className="text-sm font-medium text-accent">
-          ‹ Retour
-        </Link>
-        <h1 className="mt-2 font-display text-2xl font-semibold text-fg lg:text-3xl">Mentions légales</h1>
-      </div>
+    <main className="mx-auto w-full max-w-6xl px-5 pb-16 lg:px-10 lg:pb-24">
+      <PageHeader title="Mentions légales" />
 
       <Section title="Éditeur du site">
         <p>
@@ -19,31 +17,21 @@ export default function MentionsLegalesPage() {
         </p>
         <p>
           Siège social :{' '}
-          <AddressLink
-            adresse="11-15 rue Ponscarme, 75013 Paris"
-            className="text-accent underline"
-          />
-          .
+          <AddressLink adresse="11-15 rue Ponscarme, 75013 Paris" className={LIEN} />.
         </p>
         <p>Directrice de la publication : Emma Lagenèbre, Présidente.</p>
         <p>
           Contact :{' '}
-          <a href="mailto:bde.iaeparis@gmail.com" className="text-accent underline">
+          <a href="mailto:bde.iaeparis@gmail.com" className={LIEN}>
             bde.iaeparis@gmail.com
           </a>
         </p>
       </Section>
 
       <Section title="Hébergement">
-        <p>Le site est hébergé par :</p>
         <p>
-          Cloudflare, Inc. — 101 Townsend St, San Francisco, CA 94107, États-Unis —{' '}
-          <a
-            href="https://www.cloudflare.com"
-            target="_blank"
-            rel="noreferrer"
-            className="text-accent underline"
-          >
+          Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis.{' '}
+          <a href="https://www.cloudflare.com" target="_blank" rel="noreferrer" className={LIEN}>
             cloudflare.com
           </a>
         </p>
@@ -51,16 +39,15 @@ export default function MentionsLegalesPage() {
 
       <Section title="Propriété intellectuelle">
         <p>
-          L'ensemble des contenus présents sur cette application (textes, visuels, logo) est la
-          propriété du BDE IAE Paris Sorbonne, sauf mention contraire. Toute reproduction sans
-          autorisation est interdite.
+          Les contenus de ce site (textes, visuels, logo) sont la propriété du BDE IAE Paris
+          Sorbonne, sauf mention contraire. Toute reproduction sans autorisation est interdite.
         </p>
       </Section>
 
       <Section title="Données personnelles">
         <p>
-          Le traitement des données personnelles est détaillé dans notre{' '}
-          <Link to="/confidentialite" className="text-accent underline">
+          Le traitement des données personnelles est détaillé dans la{' '}
+          <Link to="/confidentialite" className={LIEN}>
             politique de confidentialité
           </Link>
           .
@@ -72,9 +59,9 @@ export default function MentionsLegalesPage() {
 
 function Section({ title, children }) {
   return (
-    <div className="flex flex-col gap-1">
-      <h2 className="font-display text-lg font-semibold text-fg">{title}</h2>
-      <div className="flex flex-col gap-1 text-fg-muted">{children}</div>
-    </div>
+    <section className="grid gap-3 border-b-2 border-ink py-6 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-14 lg:py-8">
+      <h2 className="label pt-1 text-[12px]">{title}</h2>
+      <div className="flex max-w-2xl flex-col gap-2 leading-relaxed text-fg-muted">{children}</div>
+    </section>
   )
 }

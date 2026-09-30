@@ -29,19 +29,20 @@ function e(valeur) {
 // Reprend les couleurs et les proportions du site pour que ce rendu ne
 // ressemble pas à une page d'erreur pendant le temps qu'il est visible.
 const STYLE = `
-.ssr{--or:#ffc300;--ac:#ff4214;background:#0a0a12;color:#f5f5f7;font-family:system-ui,sans-serif;
-margin:0 auto;max-width:900px;padding:24px 16px 80px;line-height:1.5}
-.ssr a{color:var(--or);text-decoration:none}
-.ssr a:hover{text-decoration:underline}
-.ssr h1{font-size:1.9rem;line-height:1.15;margin:.2em 0 .3em}
-.ssr h2{font-size:1.2rem;margin:1.6em 0 .5em;color:var(--or)}
-.ssr p{color:#c7c7d1;margin:.5em 0}
-.ssr nav{border-bottom:1px solid #2b2b38;padding-bottom:12px;margin-bottom:16px;
-display:flex;flex-wrap:wrap;gap:14px;font-size:.9rem}
-.ssr ul{list-style:none;padding:0;margin:.5em 0}
-.ssr li{border-bottom:1px solid #1e1e2a;padding:9px 0}
-.ssr .m{color:#94949f;font-size:.85rem}
-.ssr footer{margin-top:32px;border-top:1px solid #2b2b38;padding-top:12px;font-size:.8rem;color:#6b6b78}
+.ssr{--ink:#0f1564;--or:#ffc300;background:#fff;color:var(--ink);font-family:system-ui,sans-serif;
+margin:0 auto;max-width:900px;padding:24px 20px 80px;line-height:1.5}
+.ssr a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.ssr a:hover{background:var(--or)}
+.ssr h1{font-size:2.4rem;line-height:1;margin:.3em 0 .4em;text-transform:uppercase;letter-spacing:-.01em}
+.ssr h2{font-size:.8rem;margin:2em 0 .5em;text-transform:uppercase;letter-spacing:.08em;
+border-bottom:2px solid var(--ink);padding-bottom:6px}
+.ssr p{color:#3a3f73;margin:.5em 0}
+.ssr nav{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px;
+display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.ssr ul{list-style:none;padding:0;margin:.5em 0;border-top:2px solid var(--ink)}
+.ssr li{border-bottom:2px solid var(--ink);padding:10px 0}
+.ssr .m{color:#555a8a;font-size:.85rem}
+.ssr footer{margin-top:32px;border-top:2px solid var(--ink);padding-top:12px;font-size:.8rem;color:#555a8a}
 `
 
 // Les mêmes liens sur chaque page : c'est ce qui permet à un robot de
@@ -49,16 +50,16 @@ display:flex;flex-wrap:wrap;gap:14px;font-size:.9rem}
 function navigation() {
   return `<nav>
 <a href="/accueil">Accueil</a>
-<a href="/evenements">Événements</a>
+<a href="/evenements">Agenda</a>
 <a href="/partenaires">Partenaires</a>
-<a href="/bars">Bars de Paris</a>
-<a href="/a-propos">Qui sommes-nous</a>
+<a href="/bars">Bars</a>
+<a href="/a-propos">Le BDE</a>
 </nav>`
 }
 
 function page(corps) {
   return `<div class="ssr"><style>${STYLE}</style>${navigation()}<main>${corps}</main>
-<footer>${e(NOM_SITE)} — ${e(ASSOCIATION.nomLegal)}, association loi 1901.
+<footer>${e(NOM_SITE)}, ${e(ASSOCIATION.nomLegal)}, association loi 1901.
 Contact : <a href="mailto:${e(ASSOCIATION.email)}">${e(ASSOCIATION.email)}</a>.
 <a href="/mentions-legales">Mentions légales</a></footer></div>`
 }
@@ -83,7 +84,7 @@ function accueil() {
   return page(`<h1>${e(NOM_SITE)}</h1>
 <p>Le bureau des étudiants de l'${e(ASSOCIATION.ecole)}. Soirées, sport, sorties et réductions
 étudiantes, à Paris.</p>
-<h2>Ce qu'on fait</h2>
+<h2>Rubriques</h2>
 <ul>
 <li><a href="/evenements">Les événements</a><div class="m">Soirées, week-end d'intégration, running, escalade : toutes les dates à venir.</div></li>
 <li><a href="/partenaires">Les partenaires</a><div class="m">Les réductions négociées pour les étudiants de l'IAE. La carte étudiante suffit.</div></li>
@@ -97,14 +98,13 @@ function aPropos() {
 <p>Le ${e(ASSOCIATION.nomLegal)} (${e(ASSOCIATION.sigle)}) est l'association étudiante de
 l'${e(ASSOCIATION.ecole)}. Association loi 1901 fondée en ${e(ASSOCIATION.fondation)},
 siège au ${e(ASSOCIATION.adresse)}, ${e(ASSOCIATION.codePostal)} ${e(ASSOCIATION.ville)}.</p>
-<p>Nous organisons la vie étudiante de l'école : soirées, week-end d'intégration, sorties
-culturelles, club running, escalade, et les partenariats qui permettent aux étudiants de payer
-moins cher là où ils sortent déjà.</p>
+<p>L'association organise la vie étudiante de l'école (soirées, week-end d'intégration,
+sorties culturelles, club running, escalade) et négocie des réductions auprès de commerçants
+pour les étudiants.</p>
 <h2>Le bureau</h2>
-<p>L'équipe change à chaque élection : elle est présentée sur Instagram plutôt qu'ici, où elle
-serait périmée dès le bureau suivant.
-<a href="${e(ASSOCIATION.membres)}" rel="noopener">Découvrir les membres du bureau</a></p>
-<h2>Nous joindre</h2>
+<p>L'équipe change à chaque élection. Elle est présentée sur le compte Instagram du BDE.
+<a href="${e(ASSOCIATION.membres)}" rel="noopener">Voir les membres du bureau</a></p>
+<h2>Contact</h2>
 <p>Courriel : <a href="mailto:${e(ASSOCIATION.email)}">${e(ASSOCIATION.email)}</a><br>
 Instagram : <a href="${e(ASSOCIATION.instagram)}" rel="noopener">@bde.iaeparissorbonne</a></p>`)
 }
@@ -115,7 +115,7 @@ function evenements(liste) {
   const items = liste
     .map(
       (ev) => `<li><a href="/evenements/${e(ev.id)}">${e(ev.title)}</a>
-<div class="m">${e(dateLongue(ev.starts_at))}${ev.location_name ? ` — ${e(ev.location_name)}` : ''}</div></li>`
+<div class="m">${e(dateLongue(ev.starts_at))}${ev.location_name ? ` · ${e(ev.location_name)}` : ''}</div></li>`
     )
     .join('')
 
@@ -125,16 +125,38 @@ escalade et sorties.</p>
 <ul>${items}</ul>`)
 }
 
+// Descriptions saisies en base : intertitres en « # », puces en « - ».
+// Rendu en vrais titres et en vraies listes, plus lisibles pour un robot
+// qu'une suite de paragraphes.
+function texteRiche(texte) {
+  const blocs = []
+  let liste = null
+  for (const brute of String(texte).split('\n')) {
+    const ligne = brute.trim()
+    if (!ligne) continue
+    const puce = ligne.match(/^(?:[•\-–]|\d+[.)])\s+(.*)$/)
+    if (puce) {
+      if (!liste) blocs.push((liste = []))
+      liste.push(`<li>${e(puce[1])}</li>`)
+      continue
+    }
+    liste = null
+    const titre = ligne.match(/^#{1,3}\s+(.*)$/)
+    blocs.push(titre ? `<h2>${e(titre[1])}</h2>` : `<p>${e(ligne)}</p>`)
+  }
+  return blocs.map((b) => (Array.isArray(b) ? `<ul>${b.join('')}</ul>` : b)).join('')
+}
+
 function evenement(ev) {
   if (!ev) return null
 
   return page(`<h1>${e(ev.title)}</h1>
-<p class="m">${e(dateLongue(ev.starts_at))}${ev.location_name ? ` — ${e(ev.location_name)}` : ''}${
+<p class="m">${e(dateLongue(ev.starts_at))}${ev.location_name ? ` · ${e(ev.location_name)}` : ''}${
     ev.location_address ? `, ${e(ev.location_address)}` : ''
   }</p>
-${ev.description ? `<p>${e(ev.description).replace(/\n+/g, '</p><p>')}</p>` : ''}
+${ev.description ? texteRiche(ev.description) : ''}
 ${ev.ticket_url ? `<p><a href="${e(ev.ticket_url)}" rel="noopener">Billetterie</a></p>` : ''}
-<p><a href="/evenements">Tous les événements</a></p>`)
+<p><a href="/evenements">Agenda</a></p>`)
 }
 
 function partenaires(liste) {
@@ -143,7 +165,7 @@ function partenaires(liste) {
   const items = liste
     .map(
       (pa) => `<li><a href="/partenaires/${e(pa.id)}">${e(pa.name)}</a>
-<div class="m">${e(pa.benefit)}${pa.address ? ` — ${e(pa.address)}` : ''}</div></li>`
+<div class="m">${e(pa.benefit)}${pa.address ? ` · ${e(pa.address)}` : ''}</div></li>`
     )
     .join('')
 
@@ -158,9 +180,9 @@ function partenaire(pa) {
 
   return page(`<h1>${e(pa.name)}</h1>
 <p><strong>${e(pa.benefit)}</strong></p>
-${pa.address ? `<p class="m">${e(pa.address)}${pa.phone ? ` — ${e(pa.phone)}` : ''}</p>` : ''}
-${pa.description ? `<p>${e(pa.description).replace(/\n+/g, '</p><p>')}</p>` : ''}
-${pa.website_url ? `<p><a href="${e(pa.website_url)}" rel="noopener">Site du partenaire</a></p>` : ''}
+${pa.address ? `<p class="m">${e(pa.address)}${pa.phone ? ` · ${e(pa.phone)}` : ''}</p>` : ''}
+${pa.description ? texteRiche(pa.description) : ''}
+${pa.website_url ? `<p><a href="${e(pa.website_url)}" rel="noopener">${/billetterie|helloasso/i.test(pa.website_url) ? 'Billetterie' : 'Site du partenaire'}</a></p>` : ''}
 <p><a href="/partenaires">Tous les partenaires</a></p>`)
 }
 
@@ -180,8 +202,8 @@ function bars() {
       .filter(Boolean)
       .join(' · ')
 
-    return `<li><strong>${e(lieu.nom)}</strong> — ${e(lieu.adresse)}
-<div class="m">${e(details)}${lieu.concept ? ` — ${e(lieu.concept)}` : ''}</div></li>`
+    return `<li><strong>${e(lieu.nom)}</strong>, ${e(lieu.adresse)}
+<div class="m">${e(details)}${lieu.concept ? ` · ${e(lieu.concept)}` : ''}</div></li>`
   }
 
   const pasChers = donneesBars.lieux.filter((l) => l.type === 'bar')

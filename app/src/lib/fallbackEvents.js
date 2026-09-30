@@ -7,9 +7,9 @@ import { R2_MEDIA_BASE, WEICUP_EVENT_ID, WEICUP_TICKET_URL } from './media'
 export const FALLBACK_EVENTS = [
   {
     id: WEICUP_EVENT_ID,
-    title: 'WEICUP — Latino Edition',
+    title: 'WEICUP Latino Edition',
     description:
-      "Le week-end d'intégration du BDE, édition Latino ! Toutes les infos sur la WEICUP.",
+      "Le week-end d'intégration du BDE, édition Latino.",
     starts_at: '2026-09-25T19:00:00+02:00',
     ends_at: '2026-09-27T18:00:00+02:00',
     image_url: R2_MEDIA_BASE + 'wei.mov',

@@ -1,29 +1,24 @@
 export default function IosInstallSheet({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 sm:items-center" onClick={onClose}>
       <div
         role="dialog"
         aria-label="Comment installer l'application"
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[480px] rounded-t-2xl bg-surface p-6 pb-8 sm:max-w-xl"
+        className="w-full max-w-[480px] border-2 border-b-0 border-ink bg-white p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:max-w-md sm:border-b-2 sm:mb-6 sm:shadow-[8px_8px_0_var(--color-ink)]"
       >
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line" />
-        <h2 className="font-display text-lg font-semibold text-fg">Installer l'application</h2>
-        <ol className="mt-4 flex flex-col gap-4">
+        <h2 className="masthead text-4xl">Installer sur iPhone</h2>
+        <ol className="mt-5 border-t-2 border-ink">
           <Step number={1}>
-            Appuie sur l'icône <ShareIcon /> <strong>Partager</strong> de ton navigateur
+            Touchez l'icône <ShareIcon /> Partager du navigateur.
           </Step>
-          <Step number={2}>
-            Fais défiler et choisis <strong>"Sur l'écran d'accueil"</strong>
-          </Step>
-          <Step number={3}>
-            Appuie sur <strong>"Ajouter"</strong> en haut à droite
-          </Step>
+          <Step number={2}>Faites défiler et choisissez « Sur l'écran d'accueil ».</Step>
+          <Step number={3}>Touchez « Ajouter » en haut à droite.</Step>
         </ol>
         <button
           type="button"
           onClick={onClose}
-          className="mt-6 w-full rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="btn mt-6 w-full"
         >
           Compris
         </button>
@@ -34,11 +29,9 @@ export default function IosInstallSheet({ onClose }) {
 
 function Step({ number, children }) {
   return (
-    <li className="flex items-start gap-3">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white">
-        {number}
-      </span>
-      <p className="text-fg-muted">{children}</p>
+    <li className="flex items-start gap-4 border-b-2 border-ink py-3">
+      <span className="masthead w-7 shrink-0 text-2xl">{String(number).padStart(2, '0')}</span>
+      <p className="pt-0.5 text-fg-muted">{children}</p>
     </li>
   )
 }

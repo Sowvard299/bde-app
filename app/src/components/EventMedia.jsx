@@ -29,7 +29,7 @@ function attachRetryListener() {
 // points at a video file, or as a plain image otherwise — same field, same
 // callers, no schema change needed.
 //
-// The size/shape className (h-16 w-16, aspect-[4/3], rounded-xl, etc.) goes
+// The size/shape className (h-16 w-16, aspect-[4/3], etc.) goes
 // on a wrapper div, and the media itself always fills that wrapper at
 // 100%/100% via inline style — iOS Safari sometimes ignores the Tailwind
 // object-fit class directly on <video>, and an inline style would otherwise
@@ -143,7 +143,7 @@ export default function EventMedia({
       style={{
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: isVideo && !poster && !logoFallback ? '#1e1e2a' : undefined,
+        backgroundColor: isVideo && !poster && !logoFallback ? '#0f1564' : undefined,
       }}
       onClick={isVideo && !isPlaying ? handleTap : undefined}
     >
@@ -168,7 +168,7 @@ export default function EventMedia({
       ) : imgFailed ? (
         <div className="flex h-full w-full items-center justify-center bg-ink px-4">
           {fallbackLabel && (
-            <span className="text-center font-display text-base font-semibold leading-tight text-white/80">
+            <span className="masthead text-center text-lg text-white">
               {fallbackLabel}
             </span>
           )}
@@ -193,8 +193,8 @@ export default function EventMedia({
         </div>
       )}
       {needsTap && (
-        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50">
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink/20">
+          <span className="flex h-11 w-11 items-center justify-center border-2 border-white bg-ink">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="white" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -202,7 +202,7 @@ export default function EventMedia({
         </span>
       )}
       {badge && (
-        <span className="absolute bottom-1 right-1 rounded bg-black/30 px-1.5 py-0.5 text-[10px] font-bold text-white/90 backdrop-blur-sm">
+        <span className="label absolute bottom-1 right-1 bg-ink px-1.5 py-0.5 text-[10px] text-white">
           {badge}
         </span>
       )}

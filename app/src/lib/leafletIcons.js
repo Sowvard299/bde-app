@@ -13,48 +13,55 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
-// A distinct pin for the school itself, with the BDE mark on it — set apart
-// from the plain default pins used for partners.
+const ENCRE = '#0f1564'
+
+// L'école : un carré bleu nuit avec l'écusson du BDE, ombre franche comme
+// le reste du site.
 export const bdeIcon = L.divIcon({
   className: '',
   html: `
     <div style="
-      width: 40px; height: 40px;
+      width: 38px; height: 38px;
       display: flex; align-items: center; justify-content: center;
-      background: #0f1564;
-      border: 3px solid #fff;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      background: ${ENCRE};
+      border: 2px solid ${ENCRE};
+      box-shadow: 3px 3px 0 #ffc300;
     ">
-      <img src="${logoWhite}" alt="" style="width: 20px; height: 20px; transform: rotate(45deg);" />
+      <img src="${logoWhite}" alt="" style="width: 22px; height: 22px;" />
     </div>
   `,
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-  popupAnchor: [0, -36],
+  iconSize: [38, 38],
+  iconAnchor: [19, 38],
+  popupAnchor: [0, -38],
 })
 
-function makePinIcon(color) {
+// Épingle carrée : un aplat de couleur cerclé d'encre, posé sur une petite
+// pointe pour marquer l'adresse exacte.
+export function makePinIcon(color) {
   return L.divIcon({
     className: '',
     html: `
-      <div style="
-        width: 28px; height: 28px;
-        background: ${color};
-        border: 2px solid #fff;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-      "></div>
+      <div style="position: relative; width: 24px; height: 30px;">
+        <div style="
+          width: 24px; height: 24px;
+          background: ${color};
+          border: 2px solid ${ENCRE};
+          box-shadow: 2px 2px 0 ${ENCRE};
+        "></div>
+        <div style="
+          position: absolute; left: 10px; top: 24px;
+          width: 2px; height: 6px; background: ${ENCRE};
+        "></div>
+      </div>
     `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -26],
+    iconSize: [24, 30],
+    iconAnchor: [11, 30],
+    popupAnchor: [0, -30],
   })
 }
 
-// Partenaires (accord officiel) vs bons plans (adresses repérées par le BDE) —
-// distinguished by pin color, matching the same split used in the list.
+// Partenaires (accord officiel) et bons plans (adresses repérées par le
+// BDE), distingués par la couleur, comme dans la liste.
 export const partenaireIcon = makePinIcon('#ff4214')
 export const bonPlanIcon = makePinIcon('#ffc300')
+export const simpleIcon = makePinIcon('#ffffff')

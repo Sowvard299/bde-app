@@ -162,7 +162,7 @@ export default function BarsMap({ lieux, selectionId, onSelect, position }) {
   }
 
   return (
-    <div className="bars-map relative h-full w-full overflow-hidden rounded-2xl border border-line">
+    <div className="bars-map relative h-full w-full overflow-hidden border-2 border-ink">
       <MapContainer
         center={CENTRE_PARIS}
         zoom={12}
@@ -171,13 +171,10 @@ export default function BarsMap({ lieux, selectionId, onSelect, position }) {
         className="h-full w-full"
         ref={setMap}
       >
-        {/* Les tuiles sont celles d'OpenStreetMap, comme sur la carte des
-            partenaires : c'est la seule source vraiment libre et sans clé
-            d'API. Elles sont claires, et sur un fond clair les pastilles
-            dorées et orange se noient dans les rues jaunes du rendu par
-            défaut — on les retourne donc en CSS (voir .bars-map dans
-            index.css) plutôt que de dépendre d'un fournisseur de fond
-            sombre qui peut fermer son robinet du jour au lendemain. */}
+        {/* Tuiles OpenStreetMap, seule source vraiment libre et sans clé
+            d'API. Passées en niveaux de gris en CSS (voir .bars-map dans
+            index.css) : sur un fond sans couleur, les pastilles dorées et
+            orange ressortent au lieu de se noyer dans les rues jaunes. */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -193,11 +190,11 @@ export default function BarsMap({ lieux, selectionId, onSelect, position }) {
       {/* Legende en bas a gauche, cadrage en haut a droite : cote a cote
           en bas, les deux passaient a la ligne sur telephone et venaient
           recouvrir l'attribution d'OpenStreetMap. */}
-      <ul className="absolute bottom-3 left-3 z-[500] flex gap-3 rounded-full border border-white/10 bg-canvas/85 px-3 py-1.5 text-[11px] font-semibold text-fg-muted backdrop-blur">
+      <ul className="label absolute bottom-3 left-3 z-[500] flex gap-3 border-2 border-ink bg-white px-3 py-2">
         {Object.values(TYPES).map((t) => (
           <li key={t.cle} className="flex items-center gap-1.5">
             <span
-              className="h-2.5 w-2.5 rounded-full"
+              className="h-3 w-3 border-2 border-ink"
               style={{ background: t.couleur }}
               aria-hidden="true"
             />
@@ -209,13 +206,13 @@ export default function BarsMap({ lieux, selectionId, onSelect, position }) {
       <button
         type="button"
         onClick={ajusterVue}
-        className="absolute right-3 top-3 z-[500] rounded-full border border-white/10 bg-canvas/85 px-3 py-1.5 text-[11px] font-semibold text-fg-muted backdrop-blur transition hover:text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="label absolute right-3 top-3 z-[500] border-2 border-ink bg-white px-3 py-2 transition hover:bg-accent-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         Cadrer sur les résultats
       </button>
 
       {lieux.length === 0 && (
-        <p className="pointer-events-none absolute inset-x-6 top-16 z-[500] rounded-xl border border-line bg-canvas/95 px-4 py-3 text-center text-sm text-fg-faint backdrop-blur">
+        <p className="pointer-events-none absolute inset-x-6 top-16 z-[500] border-2 border-ink bg-white px-4 py-3 text-center text-sm text-fg-muted">
           Aucun lieu ne correspond à ces filtres
         </p>
       )}

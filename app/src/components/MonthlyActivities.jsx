@@ -4,86 +4,100 @@ import { R2_MEDIA_BASE } from '../lib/media'
 
 const BASE = R2_MEDIA_BASE + 'activities/'
 
-const ACTIVITIES = [
+// Couleurs des séries de la charte (voir lib/series.js).
+const NIGHT = 'var(--color-accent-pink)'
+const SPORT = 'var(--color-accent-gold)'
+const CULTURE = 'var(--color-accent)'
+
+const ACTIVITES = [
   {
-    title: 'Sorbonne Night',
-    description: 'La soirée mensuelle du BDE, tous les mois.',
+    titre: 'Sorbonne Night',
+    serie: 'Night',
+    couleur: NIGHT,
+    texte: 'La soirée mensuelle du BDE.',
     photo: BASE + 'sorbonne-night.jpeg',
   },
   {
-    title: 'Sorbonne Game',
-    description: 'Jeux de société, FIFA…',
+    titre: 'Sorbonne Game',
+    serie: 'Night',
+    couleur: NIGHT,
+    texte: 'Jeux de société et tournois FIFA.',
     photo: BASE + 'sorbonne-game.png',
   },
   {
-    title: 'Sorties culturelles',
-    description: 'Théâtre, festivals, cinéma, musées…',
+    titre: 'Sorties culturelles',
+    serie: 'Culture',
+    couleur: CULTURE,
+    texte: 'Théâtre, festivals, cinéma et musées.',
     photo: BASE + 'culture.jpeg',
   },
   {
-    title: 'Team running',
-    description: 'Run en groupe, challenges, courses organisées (Ekiden, Marathon de Paris)…',
+    titre: 'Sorbonne Running',
+    serie: 'Sport',
+    couleur: SPORT,
+    texte: "Sorties en groupe et courses organisées, dont l'Ekiden et le Marathon de Paris.",
     photo: BASE + 'running.jpeg',
   },
   {
-    title: 'Sorbonne Climb',
-    description: 'Sessions grimpe entre étudiants, tous niveaux.',
+    titre: 'Sorbonne Climb',
+    serie: 'Sport',
+    couleur: SPORT,
+    texte: "Sessions d'escalade entre étudiants, tous niveaux, à tarif partenaire.",
     photo: BASE + 'escalade.jpeg',
     to: '/partenaires/6b7d0bd5-779f-41df-9149-dc676674e486',
   },
   {
-    title: 'Soirées matchs',
-    description: 'Matchs de basket, foot, rugby…',
+    titre: 'Soirées matchs',
+    serie: 'Sport',
+    couleur: SPORT,
+    texte: 'Retransmissions de basket, de football et de rugby.',
     photo: matchsPhoto,
   },
 ]
 
 export default function MonthlyActivities() {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-      {ACTIVITIES.map((activity) => {
-        const Tag = activity.to ? Link : 'div'
+    <ul className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-12">
+      {ACTIVITES.map((activite) => {
+        const Tag = activite.to ? Link : 'div'
         return (
-          <Tag
-            key={activity.title}
-            {...(activity.to ? { to: activity.to } : {})}
-            className="lift zoom-media group relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink ring-1 ring-white/10"
-          >
-            <img
-              src={activity.photo}
-              alt=""
-              // Ces vignettes sont sous la ligne de flottaison : sans cet
-              // attribut, le navigateur telechargeait les six photos des
-              // l'ouverture de l'accueil, avant meme qu'on ait defile.
-              // Les fichiers eux-memes ne changent pas.
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
-              onError={(event) => {
-                // Photo unreachable (offline, storage outage): drop it and let
-                // the branded tile show through instead of a broken-image icon.
-                event.currentTarget.style.display = 'none'
-              }}
-            />
-            {/* Deux voiles superposés : un noir pour la lisibilité du texte,
-                un orange très léger qui réchauffe la photo et raccroche la
-                vignette à la charte. */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
-            <div className="absolute inset-0 bg-accent/10 mix-blend-overlay" />
-            <div className="absolute inset-x-0 bottom-0 p-3">
-              <p className="font-display text-sm font-bold uppercase leading-tight text-white">
-                {activity.title}
-              </p>
-              <p className="mt-0.5 text-xs leading-snug text-white/75">{activity.description}</p>
-              {activity.to && (
-                <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-accent-gold">
-                  Découvrir →
+          <li key={activite.titre}>
+            <Tag
+              {...(activite.to ? { to: activite.to } : {})}
+              className={`group block ${activite.to ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent' : ''}`}
+            >
+              <div className="zoom-media relative aspect-[4/5] overflow-hidden border-2 border-ink bg-ink">
+                <img
+                  src={activite.photo}
+                  alt=""
+                  // Sous la ligne de flottaison : sans cet attribut, les six
+                  // photos partaient dès l'ouverture de l'accueil.
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onError={(event) => {
+                    // Photo injoignable : on laisse voir le fond bleu nuit
+                    // plutôt que l'icône d'image cassée.
+                    event.currentTarget.style.display = 'none'
+                  }}
+                />
+                <span className="tag absolute left-2 top-2" style={{ '--tag-bg': activite.couleur }}>
+                  {activite.serie}
                 </span>
-              )}
-            </div>
-          </Tag>
+              </div>
+              <p className="mt-3 font-display text-2xl uppercase leading-[0.92] lg:text-3xl">
+                {activite.titre}
+                {activite.to && (
+                  <span aria-hidden="true" className="ml-2 inline-block transition group-hover:translate-x-1">
+                    →
+                  </span>
+                )}
+              </p>
+              <p className="mt-1.5 text-sm leading-snug text-fg-muted">{activite.texte}</p>
+            </Tag>
+          </li>
         )
       })}
-    </div>
+    </ul>
   )
 }

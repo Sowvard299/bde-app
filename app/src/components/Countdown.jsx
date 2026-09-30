@@ -3,39 +3,18 @@ import { useEffect, useState } from 'react'
 function parts(msLeft) {
   const total = Math.max(0, Math.floor(msLeft / 1000))
   return {
-    days: Math.floor(total / 86400),
-    hours: Math.floor((total % 86400) / 3600),
+    jours: Math.floor(total / 86400),
+    heures: Math.floor((total % 86400) / 3600),
     minutes: Math.floor((total % 3600) / 60),
-    seconds: total % 60,
+    secondes: total % 60,
   }
 }
 
-function Cell({ value, label, cellClassName, valueClassName, labelClassName }) {
-  return (
-    <div className={cellClassName}>
-      <span className={valueClassName}>{String(value).padStart(2, '0')}</span>
-      <span className={labelClassName}>{label}</span>
-    </div>
-  )
-}
-
-const DEFAULT_CLASSES = {
-  cell: 'flex min-w-[52px] flex-col items-center rounded-xl bg-white/10 px-2 py-2 backdrop-blur-sm',
-  value: 'font-display text-2xl font-bold leading-none tabular-nums text-white',
-  label: 'mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/60',
-}
-
 // Compte à rebours vers une date. Isolé dans son propre composant pour que
-// le tic de chaque seconde ne re-rende que ces quatre cases, et pas toute
-// la page d'accueil autour.
-//
-// `classes` permet à un événement avec sa propre charte (le WEI, rouge et
-// jaune plutôt que la charte générique du site) d'imposer ses couleurs sans
-// dupliquer tout le composant.
-export default function Countdown({ target, classes }) {
+// le tic de chaque seconde ne redessine que ces quatre cases, pas la page.
+export default function Countdown({ target }) {
   const targetMs = new Date(target).getTime()
   const [left, setLeft] = useState(() => targetMs - Date.now())
-  const c = { ...DEFAULT_CLASSES, ...classes }
 
   useEffect(() => {
     const id = setInterval(() => setLeft(targetMs - Date.now()), 1000)
@@ -44,14 +23,22 @@ export default function Countdown({ target, classes }) {
 
   if (!Number.isFinite(targetMs) || left <= 0) return null
 
-  const { days, hours, minutes, seconds } = parts(left)
+  const { jours, heures, minutes, secondes } = parts(left)
+  const cases = [
+    [jours, 'jours'],
+    [heures, 'h'],
+    [minutes, 'min'],
+    [secondes, 's'],
+  ]
 
   return (
-    <div className="flex gap-2" role="timer" aria-live="off">
-      <Cell value={days} label="jours" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
-      <Cell value={hours} label="h" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
-      <Cell value={minutes} label="min" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
-      <Cell value={seconds} label="sec" cellClassName={c.cell} valueClassName={c.value} labelClassName={c.label} />
+    <div className="grid grid-cols-4 border-l-2 border-t-2 border-ink" role="timer" aria-live="off">
+      {cases.map(([valeur, unite]) => (
+        <div key={unite} className="flex flex-col items-center border-b-2 border-r-2 border-ink bg-white py-2">
+          <span className="masthead text-3xl tabular-nums">{String(valeur).padStart(2, '0')}</span>
+          <span className="label mt-1 text-[9.5px] text-fg-subtle">{unite}</span>
+        </div>
+      ))}
     </div>
   )
 }

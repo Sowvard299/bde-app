@@ -2,14 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isLogoFile } from '../lib/media'
 import Reveal from './Reveal'
-
-function CocheIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  )
-}
+import { tailleMasthead } from '../lib/masthead'
 
 function initiales(nom) {
   return nom
@@ -20,23 +13,17 @@ function initiales(nom) {
     .toUpperCase()
 }
 
-// Le partenaire mis en avant en tête de la page Partenaires.
-//
-// C'est la même identité visuelle que l'en-tête d'une fiche partenaire
-// (bloc encre, halo orange, grain) en plus grand, pour que la carte se lise
-// comme « la fiche, en vitrine » et non comme un corps étranger dans la
-// page. Tout ce qui s'affiche vient de la base : rien n'est écrit en dur
-// ici, donc si l'offre change dans Supabase, la vitrine change avec elle.
+// Le partenaire mis en avant en tête de la page Partenaires : un grand
+// bloc bleu nuit, le nom en très grand et chaque offre sur sa ligne. Tout
+// vient de la base, donc si l'offre change dans Supabase, la vitrine
+// change avec elle.
 export default function PartnerSpotlight({ partner }) {
-  // Un logo peut pointer vers un hôte injoignable : on retombe sur les
-  // initiales plutôt que sur l'icône d'image cassée.
   const [logoFailed, setLogoFailed] = useState(false)
   const showLogo = partner.logo_url && !logoFailed
+  const logo = showLogo && isLogoFile(partner.logo_url)
 
-  // L'avantage réunit parfois plusieurs offres autour d'un « + »
-  // (« Frais d'adhésion offerts + 29,99€/mois au lieu de 39,99€ »). En vitrine,
-  // chacune gagne sa ligne : deux offres lues d'un coup d'œil valent mieux
-  // qu'une phrase de trois lignes à déchiffrer.
+  // L'avantage réunit parfois plusieurs offres autour d'un « + ». En
+  // vitrine, chacune gagne sa ligne.
   const offres = partner.benefit
     .split(' + ')
     .map((offre) => offre.trim())
@@ -46,67 +33,54 @@ export default function PartnerSpotlight({ partner }) {
     <Reveal>
       <Link
         to={`/partenaires/${partner.id}`}
-        className="group grain relative block overflow-hidden rounded-3xl bg-ink p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:p-10"
+        className="group relative block border-2 border-ink bg-ink text-white shadow-[6px_6px_0_var(--color-accent-gold)] transition hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_var(--color-accent-gold)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
-        <div
-          className="aurora aurora-slow -right-16 -top-24 h-72 w-72"
-          style={{ background: 'radial-gradient(circle, #ff4214 0%, transparent 70%)' }}
-        />
-        <div
-          className="aurora aurora-slower -bottom-28 -left-16 h-64 w-64 opacity-40"
-          style={{ background: 'radial-gradient(circle, #ffc300 0%, transparent 70%)' }}
-        />
+        <span
+          className="tag sticker absolute -top-3 right-4 z-10 lg:right-8"
+          style={{ '--tag-bg': 'var(--color-accent-gold)' }}
+        >
+          À la une
+        </span>
 
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
-          {showLogo ? (
-            <span
-              className={`flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-3xl shadow-xl shadow-black/40 lg:h-40 lg:w-40 ${
-                isLogoFile(partner.logo_url) ? 'bg-white p-4' : ''
-              }`}
-            >
+        <div className="grid gap-6 p-5 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center lg:gap-10 lg:p-10">
+          <span
+            className={`flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden border-2 border-white lg:h-44 lg:w-44 ${
+              logo ? 'bg-white p-4' : 'bg-white/10'
+            }`}
+          >
+            {showLogo ? (
               <img
                 src={partner.logo_url}
                 alt=""
-                className={`h-full w-full ${
-                  isLogoFile(partner.logo_url) ? 'object-contain' : 'rounded-3xl object-cover'
-                }`}
+                className={`h-full w-full ${logo ? 'object-contain' : 'object-cover'}`}
                 onError={() => setLogoFailed(true)}
               />
-            </span>
-          ) : (
-            <span className="flex h-28 w-28 shrink-0 items-center justify-center rounded-3xl bg-white/10 font-display text-3xl font-bold text-white/80 lg:h-40 lg:w-40">
-              {initiales(partner.name)}
-            </span>
-          )}
+            ) : (
+              <span className="masthead text-4xl">{initiales(partner.name)}</span>
+            )}
+          </span>
 
-          <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-accent-gold">
-              <span className="h-px w-6 bg-accent-gold" />
-              À la une
-              {partner.partner_categories && (
-                <span className="text-white/50">· {partner.partner_categories.name}</span>
-              )}
-            </p>
-
-            <h2 className="mt-2 font-display text-4xl font-semibold leading-none text-white lg:text-6xl">
+          <div className="@container min-w-0">
+            {partner.partner_categories && (
+              <p className="label text-accent-gold">{partner.partner_categories.name}</p>
+            )}
+            <h2 className="masthead mt-2" style={{ fontSize: tailleMasthead(partner.name, { max: '6.5rem' }) }}>
               {partner.name}
             </h2>
 
-            <ul className="mt-5 flex flex-col gap-2.5">
+            <ul className="mt-6 border-t border-white/30">
               {offres.map((offre) => (
                 <li
                   key={offre}
-                  className="flex items-start gap-2.5 font-display text-xl font-semibold leading-snug text-white lg:text-2xl"
+                  className="flex items-start gap-3 border-b border-white/30 py-3 text-lg font-semibold leading-snug lg:text-2xl"
                 >
-                  <span className="mt-1 shrink-0 text-accent-gold">
-                    <CocheIcon />
-                  </span>
+                  <span aria-hidden="true" className="mt-2 h-2.5 w-2.5 shrink-0 bg-accent-gold lg:mt-3" />
                   {offre}
                 </li>
               ))}
             </ul>
 
-            <span className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition group-hover:opacity-90">
+            <span className="label mt-6 inline-flex items-center gap-2 border-2 border-white px-4 py-3 text-[12px] transition group-hover:bg-white group-hover:text-ink">
               Voir l'offre
               <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
                 →

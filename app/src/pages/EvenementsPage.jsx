@@ -1,21 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchUpcomingEvents } from '../lib/events'
 import { getParisDateParts } from '../lib/formatDate'
-import EventCard from '../components/EventCard'
+import EventRow from '../components/EventRow'
 import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
 import ViewToggle from '../components/ViewToggle'
-import AppFooter from '../components/AppFooter'
 import PageHeader from '../components/PageHeader'
 
-const todayParts = getParisDateParts(new Date().toISOString())
-const todayKey = `${todayParts.year}-${String(todayParts.month).padStart(2, '0')}-${String(todayParts.day).padStart(2, '0')}`
+const aujourdhui = getParisDateParts(new Date().toISOString())
+const cleAujourdhui = `${aujourdhui.year}-${String(aujourdhui.month).padStart(2, '0')}-${String(aujourdhui.day).padStart(2, '0')}`
+
+function cleJour(iso) {
+  const p = getParisDateParts(iso)
+  return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`
+}
 
 export default function EvenementsPage() {
   const [events, setEvents] = useState(null)
   const [error, setError] = useState(null)
   const [view, setView] = useState('liste')
-  const [cursor, setCursor] = useState({ year: todayParts.year, month: todayParts.month - 1 })
+  const [cursor, setCursor] = useState({ year: aujourdhui.year, month: aujourdhui.month - 1 })
   const [selectedDay, setSelectedDay] = useState(null)
 
   useEffect(() => {
@@ -27,105 +31,101 @@ export default function EvenementsPage() {
       })
   }, [])
 
-  // Jump the calendar to the month of the next event once loaded — opening
-  // on today's real calendar month (often empty) looked broken.
+  // Le calendrier s'ouvre sur le mois du prochain événement : le mois en
+  // cours est souvent vide, ce qui donnait l'impression d'un agenda cassé.
   useEffect(() => {
     if (!events || events.length === 0) return
-    const parts = getParisDateParts(events[0].starts_at)
-    setCursor({ year: parts.year, month: parts.month - 1 })
+    const p = getParisDateParts(events[0].starts_at)
+    setCursor({ year: p.year, month: p.month - 1 })
   }, [events])
 
-  const eventsByDay = useMemo(() => {
+  const parJour = useMemo(() => {
     const map = new Map()
-    if (!events) return map
-    for (const event of events) {
-      const parts = getParisDateParts(event.starts_at)
-      const key = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`
-      if (!map.has(key)) map.set(key, [])
-      map.get(key).push(event)
+    for (const event of events ?? []) {
+      const cle = cleJour(event.starts_at)
+      if (!map.has(cle)) map.set(cle, [])
+      map.get(cle).push(event)
     }
     return map
   }, [events])
 
-  const eventDaysInMonth = useMemo(() => {
+  const joursDuMois = useMemo(() => {
     const set = new Set()
-    for (const key of eventsByDay.keys()) {
-      const [y, m] = key.split('-').map(Number)
-      if (y === cursor.year && m === cursor.month + 1) set.add(key)
+    for (const cle of parJour.keys()) {
+      const [y, m] = cle.split('-').map(Number)
+      if (y === cursor.year && m === cursor.month + 1) set.add(cle)
     }
     return set
-  }, [eventsByDay, cursor])
+  }, [parJour, cursor])
 
-  const dayEvents = selectedDay ? eventsByDay.get(selectedDay) ?? [] : []
+  const evenementsDuJour = selectedDay ? parJour.get(selectedDay) ?? [] : []
 
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-4 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-3xl lg:px-10 lg:pb-16 lg:pt-12">
+    <main className="mx-auto w-full max-w-6xl px-5 lg:px-10">
       <PageHeader
-        eyebrow="Agenda du BDE"
-        title="Événements"
-        subtitle="Soirées, sport, sorties : tout ce qui arrive, dans l'ordre."
+        title="Agenda"
+        intro="Soirées, sport et sorties organisés par le BDE."
+        meta={events?.length ? `${events.length} ${events.length > 1 ? 'dates à venir' : 'date à venir'}` : null}
       />
 
-      <ViewToggle
-        options={[
-          { value: 'liste', label: 'Frise' },
-          { value: 'calendrier', label: 'Calendrier' },
-        ]}
-        value={view}
-        onChange={setView}
-      />
+      <div className="mt-6 lg:mt-8">
+        <ViewToggle
+          options={[
+            { value: 'liste', label: 'Liste' },
+            { value: 'calendrier', label: 'Calendrier' },
+          ]}
+          value={view}
+          onChange={setView}
+        />
+      </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">
-          Impossible de charger les événements. Réessaie plus tard.
-        </p>
-      )}
+      <div className="mt-8 lg:mt-10">
+        {error && <p className="alert">Impossible de charger l'agenda. Réessaie dans quelques instants.</p>}
 
-      {!error && events === null && <p className="text-fg-faint">Chargement…</p>}
+        {!error && events === null && <p className="label text-fg-subtle">Chargement</p>}
 
-      {!error && events !== null && events.length === 0 && (
-        <p className="rounded-lg bg-surface px-4 py-6 text-center text-fg-faint">
-          Pas encore d'événement — reviens vite
-        </p>
-      )}
+        {!error && events?.length === 0 && (
+          <p className="border-2 border-ink px-5 py-8 text-center text-fg-muted">
+            Aucun événement annoncé pour le moment.
+          </p>
+        )}
 
-      {!error && events !== null && events.length > 0 && view === 'liste' && (
-        <EventTimeline events={events} />
-      )}
+        {!error && events?.length > 0 && view === 'liste' && <EventTimeline events={events} />}
 
-      {!error && events !== null && events.length > 0 && view === 'calendrier' && (
-        <div className="flex flex-col gap-4">
-          <MonthCalendar
-            year={cursor.year}
-            month={cursor.month}
-            eventDays={eventDaysInMonth}
-            selectedDay={selectedDay}
-            todayKey={todayKey}
-            onSelectDay={setSelectedDay}
-            onChangeMonth={(delta) => {
-              setSelectedDay(null)
-              setCursor((prev) => {
-                const date = new Date(prev.year, prev.month + delta, 1)
-                return { year: date.getFullYear(), month: date.getMonth() }
-              })
-            }}
-          />
+        {!error && events?.length > 0 && view === 'calendrier' && (
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+            <MonthCalendar
+              year={cursor.year}
+              month={cursor.month}
+              eventDays={joursDuMois}
+              selectedDay={selectedDay}
+              todayKey={cleAujourdhui}
+              onSelectDay={setSelectedDay}
+              onChangeMonth={(delta) => {
+                setSelectedDay(null)
+                setCursor((prev) => {
+                  const date = new Date(prev.year, prev.month + delta, 1)
+                  return { year: date.getFullYear(), month: date.getMonth() }
+                })
+              }}
+            />
 
-          {selectedDay ? (
-            <ul className="flex flex-col gap-4">
-              {dayEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </ul>
-          ) : (
-            <p className="text-center text-sm text-fg-subtle">
-              Touche une date avec un point pour voir les événements du jour
-            </p>
-          )}
-        </div>
-      )}
-
-      <AppFooter />
+            <div>
+              {selectedDay ? (
+                <ol className="border-t-2 border-ink">
+                  {evenementsDuJour.map((event) => (
+                    <EventRow key={event.id} event={event} />
+                  ))}
+                </ol>
+              ) : (
+                <p className="border-2 border-dashed border-ink px-5 py-8 text-center text-sm text-fg-muted">
+                  Les jours en doré ont un événement. Choisis-en un pour l'afficher ici.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   )
 }

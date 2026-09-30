@@ -1,82 +1,119 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AnnualMilestones from '../components/AnnualMilestones'
-import MonthlyActivities from '../components/MonthlyActivities'
-import AppFooter from '../components/AppFooter'
+import EventRow from '../components/EventRow'
 import HomeHero from '../components/HomeHero'
+import Marquee from '../components/Marquee'
+import MonthlyActivities from '../components/MonthlyActivities'
 import Reveal from '../components/Reveal'
 import SectionHeading from '../components/SectionHeading'
 import { fetchUpcomingEvents } from '../lib/events'
-import { WEICUP_EVENT_ID } from '../lib/media'
-import logoWhite from '../assets/logo-mark-white.png'
+import { fetchPartners } from '../lib/partners'
+import { isLogoFile } from '../lib/media'
 
+function LienSection({ to, children }) {
+  return (
+    <Link to={to} className="label inline-flex items-center gap-1.5 px-1 py-1 transition hover:bg-accent-gold">
+      {children} <span aria-hidden="true">→</span>
+    </Link>
+  )
+}
 
 export default function AccueilPage() {
-  const [heroEvent, setHeroEvent] = useState(null)
-  const [heroIsWeicup, setHeroIsWeicup] = useState(false)
+  const [evenements, setEvenements] = useState(null)
+  const [partenaires, setPartenaires] = useState([])
 
-  // Sert uniquement au compte à rebours de l'affiche. Un échec n'a aucune
-  // conséquence visible : l'affiche s'affiche simplement sans le bloc.
+  // Deux chargements indépendants : si l'un échoue, la page s'affiche
+  // quand même, sans la section correspondante.
   useEffect(() => {
-    let cancelled = false
+    let annule = false
     fetchUpcomingEvents()
-      .then((events) => {
-        if (cancelled) return
-        // Le compte a rebours vise le WEI, qui est LE rendez-vous de
-        // l'annee. On retombe sur le prochain evenement seulement si le
-        // WEI est passe ou absent, pour ne jamais afficher un bloc vide.
-        const weicup = events?.find((event) => event.id === WEICUP_EVENT_ID)
-        setHeroEvent(weicup ?? events?.[0] ?? null)
-        setHeroIsWeicup(Boolean(weicup))
-      })
+      .then((data) => !annule && setEvenements(data ?? []))
+      .catch(() => !annule && setEvenements([]))
+    fetchPartners()
+      .then((data) => !annule && setPartenaires((data ?? []).filter((p) => p.kind === 'partenaire')))
       .catch(() => {})
     return () => {
-      cancelled = true
+      annule = true
     }
   }, [])
 
+  const prochain = evenements?.[0] ?? null
+  const aVenir = evenements?.slice(0, 4) ?? []
+
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-[480px] flex-col gap-10 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-6xl lg:px-10 lg:pb-16 lg:pt-12">
-      <HomeHero nextEvent={heroEvent} isWeicup={heroIsWeicup} />
+    <main>
+      <div className="mx-auto w-full max-w-6xl px-5 lg:px-10">
+        <HomeHero nextEvent={prochain} />
+      </div>
 
-      <Reveal as="section" className="flex flex-col gap-4">
-        <SectionHeading eyebrow="Toute l'année" title="L'année en un coup d'œil" />
-        <AnnualMilestones />
-      </Reveal>
+      <Marquee
+        texte="Sorbonne Night / Sorbonne Sport / Sorbonne Culture"
+        className="mt-10 bg-ink text-white lg:mt-14"
+      />
 
-      <Reveal>
-        <Link
-          to="/partenaires"
-          className="lift grain relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl bg-ink p-6 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <div
-            className="aurora aurora-slow -right-10 -top-16 h-56 w-56"
-            style={{ background: 'radial-gradient(circle, #ff4214 0%, transparent 70%)' }}
-          />
-          <img
-            src={logoWhite}
-            alt=""
-            className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 opacity-[0.12]"
-          />
-          <div className="relative">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
-              Ta carte étudiante suffit
-            </p>
-            <p className="mt-1 font-display text-2xl font-semibold">Partenaires</p>
-            <p className="mt-0.5 text-sm text-white/70">Toutes les réductions près de toi</p>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-5 pt-16 lg:gap-28 lg:px-10 lg:pt-24">
+        {aVenir.length > 0 && (
+          <Reveal as="section">
+            <SectionHeading title="À venir" action={<LienSection to="/evenements">Agenda complet</LienSection>} />
+            <ol>
+              {aVenir.map((evenement) => (
+                <EventRow key={evenement.id} event={evenement} />
+              ))}
+            </ol>
+          </Reveal>
+        )}
+
+        <Reveal as="section">
+          <SectionHeading title="Chaque mois" />
+          <div className="mt-8">
+            <MonthlyActivities />
           </div>
-          <span className="relative shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-semibold">
-            Voir
-          </span>
-        </Link>
-      </Reveal>
+        </Reveal>
 
-      <Reveal as="section" className="flex flex-col gap-4">
-        <SectionHeading eyebrow="Chaque mois" title="Ce qui revient tout le temps" />
-        <MonthlyActivities />
-      </Reveal>
+        <Reveal as="section">
+          <SectionHeading title="L'année" />
+          <div className="mt-8">
+            <AnnualMilestones />
+          </div>
+        </Reveal>
 
-      <AppFooter />
+        {partenaires.length > 0 && (
+          <Reveal as="section">
+            <SectionHeading title="Partenaires" action={<LienSection to="/partenaires">Tous</LienSection>} />
+            <p className="mt-5 max-w-xl text-fg-muted">
+              Des réductions négociées par le BDE pour les étudiants de l'IAE, sur présentation de la
+              carte étudiante.
+            </p>
+            <ul className="mt-8 grid grid-cols-3 border-l-2 border-t-2 border-ink sm:grid-cols-4 lg:grid-cols-6">
+              {partenaires.slice(0, 12).map((p) => (
+                <li key={p.id} className="border-b-2 border-r-2 border-ink">
+                  <Link
+                    to={`/partenaires/${p.id}`}
+                    title={p.name}
+                    className="group relative flex aspect-square items-center justify-center overflow-hidden bg-white transition hover:bg-accent-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-accent"
+                  >
+                    {p.logo_url ? (
+                      <img
+                        src={p.logo_url}
+                        alt={p.name}
+                        loading="lazy"
+                        className={
+                          isLogoFile(p.logo_url)
+                            ? 'h-3/5 w-3/5 object-contain'
+                            : 'h-full w-full object-cover transition duration-300 group-hover:scale-105'
+                        }
+                      />
+                    ) : (
+                      <span className="label px-2 text-center">{p.name}</span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        )}
+      </div>
     </main>
   )
 }

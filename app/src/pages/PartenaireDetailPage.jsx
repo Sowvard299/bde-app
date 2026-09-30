@@ -5,29 +5,38 @@ import { metaPartenaire } from '../lib/seo'
 import { useSeoDonnees } from '../hooks/useSeo'
 import { isLogoFile } from '../lib/media'
 import PartnerMiniMap from '../components/PartnerMiniMap'
-import PartnerDescription from '../components/PartnerDescription'
-import AppFooter from '../components/AppFooter'
+import RichText from '../components/RichText'
 import AddressLink from '../components/AddressLink'
 import { nomAppCartes } from '../lib/maps'
+import { tailleMasthead } from '../lib/masthead'
 
-const SHELL =
-  'mx-auto flex min-h-svh max-w-[480px] flex-col gap-6 px-4 pb-24 pt-6 sm:max-w-xl lg:max-w-2xl lg:px-10 lg:pb-16 lg:pt-12'
+const SHELL = 'mx-auto w-full max-w-6xl px-5 lg:px-10'
 
-function PinIcon() {
+function Info({ label, children }) {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
+    <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-4 border-b-2 border-ink py-3">
+      <dt className="label pt-0.5 text-fg-subtle">{label}</dt>
+      <dd className="text-fg">{children}</dd>
+    </div>
   )
 }
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z" />
-    </svg>
-  )
+// Libellé du bouton vers le site du partenaire : quand le lien mène à une
+// billetterie, on le dit, plutôt qu'un « Voir le site » qui ne dit pas ce
+// qu'on va y trouver.
+function libelleSite(url) {
+  if (url.includes('helloasso.com')) return 'Acheter un billet'
+  if (/billetterie|ticket/i.test(url)) return 'Billetterie'
+  return 'Site du partenaire'
+}
+
+function initiales(nom) {
+  return nom
+    .split(' ')
+    .slice(0, 2)
+    .map((mot) => mot[0])
+    .join('')
+    .toUpperCase()
 }
 
 export default function PartenaireDetailPage() {
@@ -54,196 +63,135 @@ export default function PartenaireDetailPage() {
 
   if (status === 'loading') {
     return (
-      <main className={SHELL}>
-        <p className="text-fg-faint">Chargement…</p>
+      <main className={`${SHELL} pt-10`}>
+        <p className="label text-fg-subtle">Chargement</p>
       </main>
     )
   }
 
   if (status === 'error' || !partner) {
     return (
-      <main className={SHELL}>
-        <Link to="/partenaires" className="text-sm font-medium text-accent">
-          ‹ Retour aux partenaires
+      <main className={`${SHELL} pt-8`}>
+        <Link to="/partenaires" className="label inline-block py-2 hover:bg-accent-gold">
+          ← Partenaires
         </Link>
-        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">Ce partenaire est introuvable.</p>
-        <AppFooter />
+        <p className="alert mt-4">Ce partenaire est introuvable.</p>
       </main>
     )
   }
 
   const hasMap = partner.latitude && partner.longitude
-  const hasPractical = hasMap || partner.address || partner.phone
+  const showLogo = partner.logo_url && !logoFailed
+  const logo = showLogo && isLogoFile(partner.logo_url)
 
   return (
     <main className={SHELL}>
-      <Link
-        to="/partenaires"
-        className="text-sm font-medium text-accent transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        ‹ Retour aux partenaires
-      </Link>
+      <div className="flex items-center justify-between border-b-2 border-ink py-3">
+        <Link to="/partenaires" className="label px-1 py-1 transition hover:bg-accent-gold">
+          ← Partenaires
+        </Link>
+        {partner.kind === 'partenaire' ? (
+          <span className="tag" style={{ '--tag-bg': 'var(--color-accent)' }}>Partenaire officiel</span>
+        ) : (
+          <span className="tag">Bon plan</span>
+        )}
+      </div>
 
-      {/* Identité et avantage forment un seul bloc : c'est le couple « qui
-          c'est / ce que ça te rapporte », et les séparer obligeait l'œil à
-          faire deux arrêts pour une seule information utile. */}
-      <div className="grain relative overflow-hidden rounded-3xl bg-ink">
-        <div
-          className="aurora aurora-slow -right-16 -top-20 h-64 w-64"
-          style={{ background: 'radial-gradient(circle, #ff4214 0%, transparent 70%)' }}
-        />
-
-        <div className="relative p-6 lg:p-8">
+      <div className="grid gap-8 pt-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-14 lg:pt-12">
+        <div className="@container flex flex-col">
           <div className="flex items-center gap-5">
-            {partner.logo_url && !logoFailed ? (
-              <span
-                className={`flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${
-                  isLogoFile(partner.logo_url) ? 'bg-white p-3' : ''
-                }`}
-              >
+            <span
+              className={`flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden border-2 border-ink lg:h-32 lg:w-32 ${
+                logo ? 'bg-white p-3' : 'bg-surface'
+              }`}
+            >
+              {showLogo ? (
                 <img
                   src={partner.logo_url}
                   alt=""
-                  className={`h-full w-full ${
-                    isLogoFile(partner.logo_url) ? 'object-contain' : 'rounded-2xl object-cover'
-                  }`}
+                  className={`h-full w-full ${logo ? 'object-contain' : 'object-cover'}`}
                   onError={() => setLogoFailed(true)}
                 />
-              </span>
-            ) : (
-              <span className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white/10 font-display text-2xl font-bold text-white/80">
-                {partner.name
-                  .split(' ')
-                  .slice(0, 2)
-                  .map((w) => w[0])
-                  .join('')
-                  .toUpperCase()}
-              </span>
+              ) : (
+                <span className="masthead text-3xl">{initiales(partner.name)}</span>
+              )}
+            </span>
+            {partner.partner_categories && (
+              <p className="label text-fg-subtle">{partner.partner_categories.name}</p>
             )}
-
-            <div className="min-w-0">
-              {partner.partner_categories && (
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
-                  {partner.partner_categories.name}
-                </p>
-              )}
-              <h1 className="mt-1.5 font-display text-2xl font-semibold leading-tight text-white lg:text-3xl">
-                {partner.name}
-              </h1>
-              {partner.kind === 'partenaire' && (
-                <span className="mt-2 inline-block rounded-full bg-accent-gold px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
-                  Partenaire officiel
-                </span>
-              )}
-            </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-accent-gold/30 bg-white/5 p-5 backdrop-blur-sm">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
-              Ton avantage
-            </p>
-            {/* Pas de mention générique du type « sur présentation de ta
-                carte étudiante » ici : les conditions varient d'un
-                partenaire à l'autre (billet envoyé par mail chez Arkose,
-                réservation en ligne pour le Pass Jeunes). Chaque fiche
-                décrit les siennes dans sa description. */}
-            <p className="mt-2 font-display text-xl font-semibold leading-snug text-white lg:text-2xl">
-              {partner.benefit}
-            </p>
+          <h1 className="masthead mt-6" style={{ fontSize: tailleMasthead(partner.name, { max: '6.5rem' }) }}>
+            {partner.name}
+          </h1>
+
+          {/* Pas de mention générique du type « sur présentation de la
+              carte étudiante » : les conditions varient d'un partenaire à
+              l'autre, chaque fiche décrit les siennes dans sa description. */}
+          <div className="mt-8 border-2 border-ink bg-accent-gold p-5 shadow-[5px_5px_0_var(--color-ink)]">
+            <p className="label">Avantage étudiant</p>
+            <p className="mt-2 font-display text-2xl uppercase leading-[0.95] lg:text-3xl">{partner.benefit}</p>
           </div>
-        </div>
-      </div>
 
-      {partner.description && <PartnerDescription text={partner.description} />}
-
-      {hasPractical && (
-        <section className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5">
-          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-fg-faint">
-            Infos pratiques
-          </h2>
-
-          {hasMap && (
-            <div className="overflow-hidden rounded-xl">
-              <PartnerMiniMap latitude={partner.latitude} longitude={partner.longitude} />
-            </div>
-          )}
-
-          {partner.address && (
-            // L'adresse entière est le lien, avec l'application nommée
-            // dessous : un texte souligné seul ne dit pas où il mène, et
-            // sur téléphone on veut savoir si c'est Plans ou Google Maps
-            // qui va s'ouvrir avant d'appuyer.
-            <AddressLink
-              nom={partner.name}
-              adresse={partner.address}
-              lat={partner.latitude}
-              lon={partner.longitude}
-              className="group flex gap-3 text-fg-muted transition hover:text-fg"
-            >
-              <span className="mt-0.5 shrink-0 text-accent">
-                <PinIcon />
-              </span>
-              <span>
-                <span className="underline decoration-line underline-offset-4 transition group-hover:decoration-fg-subtle">
-                  {partner.address}
-                </span>
-                <span className="mt-0.5 block text-xs text-fg-subtle">
-                  Ouvrir dans {nomAppCartes()} ↗
-                </span>
-              </span>
-            </AddressLink>
-          )}
-
-          {/* Certains partenaires ont des coordonnées sans adresse écrite
-              (le Théâtre Dunois) : la carte s'affichait, mais rien n'était
-              cliquable. Le lien passe alors par les coordonnées. */}
-          {!partner.address && hasMap && (
-            <AddressLink
-              nom={partner.name}
-              lat={partner.latitude}
-              lon={partner.longitude}
-              className="group flex gap-3 text-fg-muted transition hover:text-fg"
-            >
-              <span className="mt-0.5 shrink-0 text-accent">
-                <PinIcon />
-              </span>
-              <span>
-                <span className="underline decoration-line underline-offset-4 transition group-hover:decoration-fg-subtle">
-                  Voir sur la carte
-                </span>
-                <span className="mt-0.5 block text-xs text-fg-subtle">
-                  Ouvrir dans {nomAppCartes()} ↗
-                </span>
-              </span>
-            </AddressLink>
-          )}
-
-          {partner.phone && (
+          {partner.website_url && (
             <a
-              href={`tel:${partner.phone.replace(/\s+/g, '')}`}
-              className="flex gap-3 text-fg-muted transition hover:text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              href={partner.website_url}
+              target="_blank"
+              rel="noreferrer"
+              className="btn mt-8 self-start"
             >
-              <span className="mt-0.5 shrink-0 text-accent">
-                <PhoneIcon />
-              </span>
-              {partner.phone}
+              {libelleSite(partner.website_url)}
+              <span aria-hidden="true">↗</span>
             </a>
           )}
+        </div>
+
+        {(hasMap || partner.address || partner.phone) && (
+          <div>
+            {hasMap && <PartnerMiniMap latitude={partner.latitude} longitude={partner.longitude} />}
+            <dl className={hasMap ? 'mt-6 border-t-2 border-ink' : 'border-t-2 border-ink'}>
+              {(partner.address || hasMap) && (
+                // Certains partenaires ont des coordonnées sans adresse
+                // écrite (le Théâtre Dunois) : le lien passe alors par les
+                // coordonnées.
+                <Info label="Adresse">
+                  <AddressLink
+                    nom={partner.name}
+                    adresse={partner.address}
+                    lat={partner.latitude}
+                    lon={partner.longitude}
+                    className="group block"
+                  >
+                    <span className="underline decoration-2 underline-offset-4 transition group-hover:bg-accent-gold">
+                      {partner.address || 'Voir sur la carte'}
+                    </span>
+                    <span className="label mt-1.5 block text-fg-subtle">Ouvrir dans {nomAppCartes()} ↗</span>
+                  </AddressLink>
+                </Info>
+              )}
+              {partner.phone && (
+                <Info label="Téléphone">
+                  <a
+                    href={`tel:${partner.phone.replace(/\s+/g, '')}`}
+                    className="underline decoration-2 underline-offset-4 transition hover:bg-accent-gold"
+                  >
+                    {partner.phone}
+                  </a>
+                </Info>
+              )}
+            </dl>
+          </div>
+        )}
+      </div>
+
+      {partner.description && (
+        <section className="mt-12 grid gap-6 border-t-2 border-ink pt-8 lg:mt-16 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-14">
+          <h2 className="label text-[12px]">Détails de l'offre</h2>
+          <RichText text={partner.description} className="max-w-2xl text-[17px]" />
         </section>
       )}
 
-      {partner.website_url && (
-        <a
-          href={partner.website_url}
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-full bg-accent px-4 py-4 text-center text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          {partner.website_url.includes('helloasso.com') ? 'Acheter un billet' : 'Voir le site'}
-        </a>
-      )}
-
-      <AppFooter />
+      <div className="h-16 lg:h-24" />
     </main>
   )
 }

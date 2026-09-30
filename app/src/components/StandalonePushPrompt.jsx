@@ -44,37 +44,35 @@ export default function StandalonePushPrompt() {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-black/60"
+      className="fixed inset-0 z-40 flex items-end justify-center bg-ink/60 sm:items-center"
       onClick={close}
     >
       <div
         role="dialog"
         aria-label="Activer les notifications"
         onClick={(event) => event.stopPropagation()}
-        className="w-full max-w-[480px] rounded-t-2xl bg-surface p-6 pb-8"
+        className="w-full max-w-[480px] border-2 border-b-0 border-ink bg-white p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:max-w-md sm:border-b-2 sm:mb-6 sm:shadow-[8px_8px_0_var(--color-ink)]"
       >
-        <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line" />
-
-        <h2 className="font-display text-lg font-semibold text-fg">Active les notifications</h2>
-        <p className="mt-1 text-sm text-fg-faint">
-          Sois prévenu dès qu'un nouvel événement du BDE est annoncé.
+        <h2 className="masthead text-4xl">Notifications</h2>
+        <p className="mt-2 text-fg-muted">
+          Une alerte à chaque nouvel événement annoncé par le BDE. Rien d'autre.
         </p>
 
-        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="alert mt-4">{error}</p>}
 
-        <div className="mt-5 flex flex-col gap-2">
+        <div className="mt-6 flex flex-col gap-3">
           <button
             type="button"
             onClick={handleActivate}
             disabled={busy}
-            className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white transition disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="btn w-full"
           >
-            {busy ? 'Activation…' : 'Activer les notifications'}
+            {busy ? 'Activation en cours' : 'Activer les notifications'}
           </button>
           <button
             type="button"
             onClick={close}
-            className="px-4 py-2 text-center text-sm font-medium text-fg-faint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="label px-4 py-2 text-center text-fg-muted underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Plus tard
           </button>

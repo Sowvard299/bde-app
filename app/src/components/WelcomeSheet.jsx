@@ -3,7 +3,7 @@ import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { usePushSubscription } from '../hooks/usePushSubscription'
 import { isIos, isInAppBrowser, isMobileOrTablet, isStandalone } from '../lib/platform'
 import IosInstallSheet from './IosInstallSheet'
-import logoWhite from '../assets/logo-mark-white.png'
+import LogoMark from './LogoMark'
 
 const SEEN_KEY = 'bde-welcome-seen'
 
@@ -56,39 +56,30 @@ export default function WelcomeSheet() {
   return (
     <>
       <div
-        className="fixed inset-0 z-40 flex items-end justify-center bg-black/60 p-0"
+        className="fixed inset-0 z-40 flex items-end justify-center bg-ink/60 p-0 sm:items-center"
         onClick={close}
       >
         <div
           role="dialog"
           aria-label="Bienvenue"
           onClick={(event) => event.stopPropagation()}
-          className="w-full max-w-[480px] rounded-t-2xl bg-surface p-6 pb-8"
+          className="w-full max-w-[480px] border-2 border-b-0 border-ink bg-white p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:max-w-md sm:border-b-2 sm:mb-6 sm:shadow-[8px_8px_0_var(--color-ink)]"
         >
-          <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line" />
+          <LogoMark className="h-10 w-10 text-ink" />
+          <h2 className="masthead mt-4 text-4xl">BDE IAE Paris Sorbonne</h2>
+          <p className="mt-2 text-fg-muted">
+            Ajoutez le site à l'écran d'accueil pour retrouver l'agenda et les partenaires en un
+            geste.
+          </p>
 
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ink">
-              <img src={logoWhite} alt="" className="h-8 w-8" />
-            </span>
-            <div>
-              <h2 className="font-display text-lg font-semibold text-fg">
-                Bienvenue au BDE IAE Paris Sorbonne
-              </h2>
-              <p className="text-sm text-fg-faint">
-                Installe l'app pour un accès rapide à tes événements
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-col gap-2">
+          <div className="mt-6 flex flex-col gap-3">
             {canOfferInstall && (
               <button
                 type="button"
                 onClick={ios ? () => setShowIosSteps(true) : promptInstall}
-                className="rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="btn w-full"
               >
-                Ajouter à mon écran d'accueil
+                Ajouter à l'écran d'accueil
               </button>
             )}
 
@@ -96,29 +87,29 @@ export default function WelcomeSheet() {
               <button
                 type="button"
                 onClick={handlePush}
-                className="rounded-full border border-line px-4 py-3 text-center text-sm font-semibold text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="btn-ghost w-full"
               >
                 Activer les notifications
               </button>
             )}
 
             {pushDone && (
-              <p className="rounded-full bg-surface-muted px-4 py-3 text-center text-sm text-fg-muted">
-                Notifications activées ✓
+              <p className="label border-2 border-ink bg-accent-gold px-4 py-3 text-center">
+                Notifications activées
               </p>
             )}
 
             {ios && (
-              <p className="px-1 text-xs text-fg-subtle">
-                Sur iPhone, les notifications ne sont disponibles qu'une fois l'app ajoutée
-                à l'écran d'accueil.
+              <p className="text-xs text-fg-subtle">
+                Sur iPhone, les notifications ne sont disponibles qu'une fois le site ajouté à
+                l'écran d'accueil.
               </p>
             )}
 
             <button
               type="button"
               onClick={close}
-              className="mt-1 px-4 py-2 text-center text-sm font-medium text-fg-faint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="label mt-1 px-4 py-2 text-center text-fg-muted underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Plus tard
             </button>

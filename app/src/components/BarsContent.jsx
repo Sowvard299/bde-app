@@ -143,24 +143,22 @@ export default function BarsContent() {
 
   if (erreur) {
     return (
-      <p className="rounded-xl bg-red-950 px-4 py-3 text-red-300">
-        Impossible de charger la carte des bars. Vérifie ta connexion et réessaie.
-      </p>
+      <p className="alert">Impossible de charger la carte des bars. Vérifiez la connexion et réessayez.</p>
     )
   }
 
   if (!donnees) {
-    return <p className="text-fg-faint">Chargement des adresses…</p>
+    return <p className="label text-fg-subtle">Chargement des adresses</p>
   }
 
   const liste = (
-    <div className="flex flex-col gap-2">
+    <div>
       {resultats.length === 0 ? (
-        <p className="rounded-xl bg-surface px-4 py-6 text-center text-sm text-fg-faint">
-          Aucune adresse ne correspond. Enlève un filtre pour élargir.
+        <p className="border-2 border-dashed border-ink px-4 py-8 text-center text-sm text-fg-muted">
+          Aucune adresse ne correspond. Retirez un filtre pour élargir la recherche.
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="border-t-2 border-ink">
           {resultats.map(({ lieu, km }) => (
             <BarCard
               key={lieu.id}
@@ -206,8 +204,8 @@ export default function BarsContent() {
         // déplace la pastille correspondante sous les yeux, ce qui est
         // tout l'intérêt d'avoir les deux. La carte reste collée en haut
         // pendant qu'on fait défiler les 193 adresses.
-        <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-4">
-          <div className="sticky top-6 h-[calc(100svh-8rem)]">{carte}</div>
+        <div className="grid grid-cols-[minmax(0,1fr)_380px] gap-6">
+          <div className="sticky top-24 h-[calc(100svh-8rem)]">{carte}</div>
           <div className="max-h-[calc(100svh-8rem)] overflow-y-auto pr-1">{liste}</div>
         </div>
       ) : (
@@ -239,20 +237,21 @@ export default function BarsContent() {
           sur la carte ou dans la barre de filtres : la liste doit rester
           concentrée sur ses 193 adresses, pas sur la façon d'en ajouter
           une. */}
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-line bg-surface/60 px-4 py-3.5">
-        <p className="text-sm text-fg-muted">Ton bar préféré n'y est pas ?</p>
-        <button
-          type="button"
-          onClick={ouvrirProposition}
-          className="shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          Le proposer
+      <div className="flex flex-col items-start justify-between gap-4 border-2 border-ink bg-surface p-5 sm:flex-row sm:items-center">
+        <div>
+          <p className="font-display text-2xl uppercase leading-none">Une adresse manque</p>
+          <p className="mt-1.5 text-sm text-fg-muted">
+            Proposez un bar ou mettez à jour les prix d'un bar existant, photo de la carte à l'appui.
+          </p>
+        </div>
+        <button type="button" onClick={ouvrirProposition} className="btn shrink-0">
+          Proposer un bar
         </button>
       </div>
 
       {proposerOuvert && <ProposerBarSheet onClose={fermerProposition} />}
 
-      <p className="text-[11px] leading-relaxed text-fg-subtle">
+      <p className="text-xs leading-relaxed text-fg-subtle">
         {donnees.lieux.length} adresses. Données du {dateMaj} : prix pouvant avoir changé.{' '}
         {donnees.avertissement}
       </p>

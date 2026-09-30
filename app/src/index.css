@@ -24,28 +24,37 @@
   font-display: swap;
 }
 
+/* =====================================================================
+   Charte
+   Couleurs et polices de la charte graphique 2026-2027 du BDE, en aplats.
+   Le bleu nuit sert de noir : texte, traits, blocs. Le doré, l'orange et
+   le rose ne servent qu'à marquer (étiquettes, boutons, états), jamais en
+   fond de page ni en dégradé.
+   ===================================================================== */
 @theme {
   --color-ink: #0f1564;
   --color-accent: #ff4214;
   --color-accent-gold: #ffc300;
+  --color-accent-pink: #ff66c4;
 
-  /* Dark theme surfaces/text, near-black with a faint navy tint. */
-  --color-canvas: #0a0a12;
-  --color-surface: #16161f;
-  --color-surface-muted: #1e1e2a;
-  --color-line: #2b2b38;
-  --color-fg: #f5f5f7;
-  --color-fg-muted: #c7c7d1;
-  --color-fg-faint: #94949f;
-  --color-fg-subtle: #6b6b78;
+  --color-canvas: #ffffff;
+  --color-surface: #f3f2ee;
+  --color-surface-muted: #e8e6df;
+  --color-line: #0f1564;
+  --color-hairline: #d8d7e2;
+
+  --color-fg: #0f1564;
+  --color-fg-muted: #3a3f73;
+  --color-fg-faint: #555a8a;
+  --color-fg-subtle: #6e7199;
 
   --font-display: "Advercase", ui-serif, Georgia, serif;
   --font-sans: "Neue Montreal", system-ui, sans-serif;
-  --font-handwritten: "Permanent Marker", cursive;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -54,14 +63,21 @@ body {
   background: var(--color-canvas);
   color: var(--color-fg);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
+  font-weight: 400;
 }
 
-/* Horizontal carousels scroll on their own and stay swipeable — the visible
-   scrollbar just added a grey band under them on desktop. */
+::selection {
+  background: var(--color-accent-gold);
+  color: var(--color-ink);
+}
+
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -72,61 +88,207 @@ h1, h2, h3 {
 }
 
 /* =====================================================================
-   Boîte à outils visuelle
-   Le site est un BDE : l'ambiance visée est l'affiche de soirée
-   étudiante — encre profonde, halos de couleur, grain d'impression et
-   typo surdimensionnée. Tout est en CSS pur, aucun asset à télécharger.
+   Primitives
+   Dans une couche `components` pour que les utilitaires Tailwind posés
+   sur le même élément gardent la main (une marge, une largeur...).
    ===================================================================== */
-
-/* Grain d'impression posé par-dessus un bloc. Le parent doit être en
-   position: relative. Purement décoratif, jamais cliquable. */
-.grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.22;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* Halos de couleur qui dérivent lentement derrière le contenu. Le flou
-   est ce qui fait tout le travail : sans lui ce sont des ronds moches. */
-.aurora {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(64px);
-  opacity: 0.55;
-  pointer-events: none;
-  will-change: transform;
-}
-
-@keyframes aurora-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+@layer components {
+  /* Titre de une : Advercase en capitales, interligne serré. C'est la
+     voix du site, à réserver aux vrais titres. */
+  .masthead {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.86;
+    letter-spacing: -0.01em;
   }
-  33% {
-    transform: translate3d(6%, -8%, 0) scale(1.12);
+
+  /* Métadonnée : date, catégorie, compteur. Petite, grasse, en capitales,
+     jamais utilisée comme décoration au-dessus d'un titre. */
+  .label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
-  66% {
-    transform: translate3d(-5%, 6%, 0) scale(0.94);
+
+  /* Bouton principal : bloc bleu nuit, ombre portée franche en doré. Au
+     survol il « s'enfonce » vers son ombre, comme une touche. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.25rem;
+    border: 2px solid var(--color-ink);
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: 4px 4px 0 var(--color-accent-gold);
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease,
+      background-color 0.12s ease;
+  }
+
+  .btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--color-accent-gold);
+  }
+
+  .btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    transform: none;
+    box-shadow: 4px 4px 0 var(--color-accent-gold);
+  }
+
+  /* Bouton secondaire : trait seul, se remplit au survol. */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.25rem;
+    border: 2px solid var(--color-ink);
+    background: #fff;
+    color: var(--color-ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition:
+      background-color 0.12s ease,
+      color 0.12s ease;
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-ink);
+    color: #fff;
+  }
+
+  /* Étiquette en aplat de couleur. La couleur se règle par
+     `--tag-bg` pour suivre les séries de la charte (Sport en doré, Night
+     en rose, Culture en orange). */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.55rem 0.24rem;
+    border: 1.5px solid var(--color-ink);
+    background: var(--tag-bg, var(--color-accent-gold));
+    color: var(--color-ink);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* L'étiquette « collée » : légèrement de travers, avec son ombre. La
+     touche punk, à utiliser une fois par écran au plus. */
+  .sticker {
+    transform: rotate(-3deg);
+    box-shadow: 2px 2px 0 var(--color-ink);
+  }
+
+  /* Champ de saisie : trait plein, pas d'arrondi. */
+  .field {
+    width: 100%;
+    border: 2px solid var(--color-ink);
+    background: #fff;
+    color: var(--color-ink);
+    padding: 0.8rem 0.95rem;
+    font-size: 16px;
+    border-radius: 0;
+    transition: box-shadow 0.12s ease;
+  }
+
+  .field::placeholder {
+    color: var(--color-fg-subtle);
+  }
+
+  .field:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 var(--color-accent-gold);
+  }
+
+  /* Bloc cliquable (carte, ligne) : au survol il se soulève sur une ombre
+     franche plutôt que sur un flou coloré. */
+  .lift {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .lift:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--color-ink);
+  }
+
+  .zoom-media img,
+  .zoom-media video {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lift:hover .zoom-media img,
+  .lift:hover .zoom-media video {
+    transform: scale(1.04);
+  }
+
+  /* Message d'erreur : même langage que le reste (trait, aplat), pas un
+     encadré rouge générique. */
+  .alert {
+    border: 2px solid var(--color-accent);
+    background: #fff1ec;
+    color: var(--color-ink);
+    padding: 0.8rem 1rem;
+    font-size: 14px;
   }
 }
 
-.aurora-slow {
-  animation: aurora-drift 26s ease-in-out infinite;
+/* =====================================================================
+   Bandeau défilant
+   Repris de la couverture de la charte (« IAE PARIS SORBONNE - IAE PARIS
+   SORBONNE - ... »). Le contenu est posé deux fois à la suite ; la piste
+   recule de la moitié de sa largeur, ce qui boucle sans à-coup.
+   ===================================================================== */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.aurora-slower {
-  animation: aurora-drift 34s ease-in-out infinite reverse;
+.marquee__track {
+  display: inline-flex;
+  animation: marquee 32s linear infinite;
 }
 
-/* Apparition au défilement, déclenchée par IntersectionObserver. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Apparition au défilement, déclenchée par IntersectionObserver. Courte
+   et sans rebond : le contenu arrive, il ne danse pas. */
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -139,55 +301,50 @@ h1, h2, h3 {
 }
 
 .reveal.is-visible {
-  animation: reveal-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: reveal-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Les cartes se soulèvent au survol et l'image zoome légèrement. */
-.lift {
-  transition:
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+/* =====================================================================
+   Écran d'ouverture
+   La vidéo du blason, sur le même blanc que le site : quand elle
+   s'efface, on ne voit pas de raccord, le site était déjà là derrière.
+   ===================================================================== */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  opacity: 1;
+  transition: opacity 0.45s ease;
+  cursor: pointer;
 }
 
-.lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+.intro--sortie {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.zoom-media img,
-.zoom-media video {
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.lift:hover .zoom-media img,
-.lift:hover .zoom-media video {
-  transform: scale(1.06);
-}
-
-/* Mot mis en avant dans un titre : un seul dégradé à deux teintes, doré
-   vers orange, repris partout où le site utilise un texte en dégradé —
-   trois couleurs (avec un rose qui n'apparaît nulle part ailleurs sur le
-   site) rendait le titre d'accueil criard plutôt qu'élégant. */
-.text-gradient {
-  background: linear-gradient(100deg, var(--color-accent-gold), var(--color-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.intro video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora-slow,
-  .aurora-slower {
-    animation: none !important;
+  .marquee__track {
+    animation: none;
   }
 
   .reveal {
     opacity: 1;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -196,135 +353,103 @@ h1, h2, h3 {
 }
 
 /* =====================================================================
-   Ecran d'ouverture
-   Le blason grandit a l'ecran, puis s'efface pour laisser le site.
+   Cartes Leaflet (bars et partenaires)
+   Tuiles OpenStreetMap passées en niveaux de gris : sur un fond neutre,
+   les pastilles de couleur de la charte sont la seule chose qui se voit.
    ===================================================================== */
 
-.intro-splash {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Meme navy que le fond du fichier logo, pour que l'image se fonde dans
-     l'ecran au lieu de former un carre visible. */
-  background: #0f1564;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.5s ease;
+/* Les calques de Leaflet ont des z-index de 400 à 1000 : sans contexte
+   d'empilement propre, la carte passe par-dessus la barre de navigation
+   fixe du bas et l'en-tête collant. */
+.bars-map,
+.carte-site {
+  isolation: isolate;
 }
 
-.intro-splash--leaving {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.intro-splash__logo {
-  width: min(72vw, 52vh);
-  height: auto;
-  animation: intro-grow 1.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes intro-grow {
-  from {
-    transform: scale(0.72);
-    opacity: 0;
-  }
-  35% {
-    opacity: 1;
-  }
-  to {
-    transform: scale(1.06);
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .intro-splash__logo {
-    animation: none;
-  }
-}
-
-/* =====================================================================
-   Carte des bars
-   Leaflet dessine ses couches avec ses propres styles : tout ce qui suit
-   sert a les raccorder a la charte sombre du site, et a habiller les
-   pastilles posees par barIcons.js.
-   ===================================================================== */
-
-.bars-map .leaflet-container {
+.bars-map .leaflet-container,
+.carte-site .leaflet-container {
   background: var(--color-surface);
   font-family: var(--font-sans);
 }
 
-/* Les tuiles OpenStreetMap sont claires : inversees puis reteintees,
-   elles donnent un fond sombre sans dependre d'un fournisseur a cle
-   d'API. Le filtre ne porte que sur le calque des tuiles — les pastilles
-   et les amas vivent dans d'autres calques et gardent leurs couleurs. */
-.bars-map .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.86) saturate(0.6);
+.bars-map .leaflet-tile-pane,
+.carte-site .leaflet-tile-pane {
+  filter: grayscale(1) contrast(1.04) brightness(1.03);
 }
 
-/* Boutons de zoom : ceux de Leaflet sont blancs a bord gris clair, une
-   tache lumineuse en haut a gauche d'une carte sombre. */
+.bars-map .leaflet-bar,
+.carte-site .leaflet-bar {
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .bars-map .leaflet-bar a,
-.bars-map .leaflet-bar a:hover {
-  background: var(--color-surface);
-  border-bottom-color: var(--color-line);
-  color: var(--color-fg-muted);
+.carte-site .leaflet-bar a {
+  border-radius: 0 !important;
+  background: #fff;
+  border-bottom-color: var(--color-ink);
+  color: var(--color-ink);
 }
 
-.bars-map .leaflet-bar a:hover {
-  color: var(--color-fg);
+.bars-map .leaflet-bar a:hover,
+.carte-site .leaflet-bar a:hover {
+  background: var(--color-accent-gold);
+  color: var(--color-ink);
 }
 
-/* Zoom arriere au niveau minimum : Leaflet repasse le bouton en gris
-   clair, une tache blanche sur la carte sombre. */
 .bars-map .leaflet-bar a.leaflet-disabled,
-.bars-map .leaflet-bar a.leaflet-disabled:hover {
-  background: var(--color-surface);
+.carte-site .leaflet-bar a.leaflet-disabled {
+  background: #fff;
   color: var(--color-fg-subtle);
 }
 
-.bars-map .leaflet-bar {
-  border: 1px solid var(--color-line);
-  box-shadow: 0 6px 18px -10px rgb(0 0 0 / 0.9);
-}
-
-.bars-map .leaflet-control-attribution {
-  background: rgb(10 10 18 / 0.75);
-  color: var(--color-fg-subtle);
+.bars-map .leaflet-control-attribution,
+.carte-site .leaflet-control-attribution {
+  background: rgb(255 255 255 / 0.85);
+  color: var(--color-fg-faint);
   font-size: 10px;
 }
 
-.bars-map .leaflet-control-attribution a {
-  color: var(--color-fg-faint);
+.bars-map .leaflet-control-attribution a,
+.carte-site .leaflet-control-attribution a {
+  color: var(--color-fg-muted);
 }
 
-/* Infobulle de survol : celle de Leaflet est blanche avec une fleche
-   blanche, illisible sur un fond de carte sombre. */
 .bars-map .leaflet-tooltip {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: 10px;
-  box-shadow: 0 10px 25px -12px rgb(0 0 0 / 0.9);
-  color: var(--color-fg);
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--color-ink);
+  color: var(--color-ink);
   font-size: 12px;
   padding: 6px 9px;
 }
 
 .bars-map .leaflet-tooltip-top::before {
-  border-top-color: var(--color-line);
+  border-top-color: var(--color-ink);
 }
 
 .bars-map .leaflet-tooltip em {
-  color: #6ee7b7;
+  color: #0b7a44;
   font-style: normal;
+  font-weight: 700;
 }
 
-/* Pastilles. Le conteneur est un divIcon nu : c'est le <span> interieur
-   qui porte la forme, pour que l'agrandissement de la selection parte du
+.carte-site .leaflet-popup-content-wrapper {
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--color-ink);
+  color: var(--color-ink);
+}
+
+.carte-site .leaflet-popup-tip {
+  border: 2px solid var(--color-ink);
+  box-shadow: none;
+}
+
+/* Pastilles. Le conteneur est un divIcon nu : c'est le <span> intérieur
+   qui porte la forme, pour que l'agrandissement de la sélection parte du
    centre du point et non de son coin. */
 .bar-pin {
   background: none;
@@ -341,16 +466,12 @@ h1, h2, h3 {
 }
 
 .bar-pin__dot {
-  border: 2px solid rgb(10 10 18 / 0.85);
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
+  border: 2px solid var(--color-ink);
   transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .bar-pin__dot--actif {
-  border-color: #fff;
-  box-shadow:
-    0 0 0 4px rgb(255 255 255 / 0.18),
-    0 4px 12px rgb(0 0 0 / 0.7);
+  box-shadow: 3px 3px 0 var(--color-ink);
 }
 
 .bar-pin__iae {
@@ -361,7 +482,7 @@ h1, h2, h3 {
   justify-content: center;
   background: var(--color-ink);
   border: 2px solid #fff;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.6);
+  box-shadow: 0 0 0 2px var(--color-ink);
 }
 
 .bar-pin__iae img {
@@ -369,7 +490,7 @@ h1, h2, h3 {
   height: 18px;
 }
 
-/* Position de l'utilisateur : le point bleu que tout le monde reconnait,
+/* Position de l'utilisateur : le point bleu que tout le monde reconnaît,
    volontairement hors charte pour ne pas passer pour un bar. */
 .bar-pin__moi {
   width: 18px;
@@ -379,8 +500,6 @@ h1, h2, h3 {
   box-shadow: 0 0 0 6px rgb(59 130 246 / 0.25);
 }
 
-/* Amas : un anneau colore selon ce qu'il contient (voir iconeAmas), et un
-   disque sombre au centre qui porte le compte. */
 .bar-cluster {
   background: none;
   border: none;
@@ -391,7 +510,7 @@ h1, h2, h3 {
   align-items: center;
   justify-content: center;
   padding: 3px;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.55);
+  border: 2px solid var(--color-ink);
 }
 
 .bar-cluster__count {
@@ -401,17 +520,15 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   border-radius: 9999px;
-  background: var(--color-canvas);
-  color: var(--color-fg);
-  font-family: var(--font-display);
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* La fiche monte du bas sur telephone, apparait au centre sur grand
-   ecran. Deux mouvements pour un meme composant, parce que ce n'est pas
-   le meme geste : on pousse une feuille vers le haut au pouce, on ouvre
-   une boite au milieu de l'ecran a la souris. */
+/* Feuille modale : monte du bas sur téléphone, apparaît au centre sur
+   grand écran. */
 @keyframes bar-sheet-up {
   from {
     transform: translateY(24px);
@@ -424,11 +541,5 @@ h1, h2, h3 {
 }
 
 .bar-sheet {
-  animation: bar-sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bar-sheet {
-    animation: none;
-  }
+  animation: bar-sheet-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
 }

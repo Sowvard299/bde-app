@@ -26,7 +26,7 @@ export async function envoyerSuggestion({ type, nom, adresse, notes, contact, fi
     const compressee = await comprimerImage(fichier)
     if (compressee.size > TAILLE_MAX_OCTETS) {
       throw new Error(
-        `Une photo dépasse ${Math.round(TAILLE_MAX_OCTETS / 1024 / 1024)} Mo même compressée — réessaie avec une autre.`
+        `Une photo dépasse ${Math.round(TAILLE_MAX_OCTETS / 1024 / 1024)} Mo même compressée. Essayez avec une autre photo.`
       )
     }
 

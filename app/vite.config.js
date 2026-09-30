@@ -22,8 +22,8 @@ export default defineConfig({
         short_name: 'BDE Sorbonne',
         description:
           "Événements, partenaires et carte du BDE de l'IAE Paris Sorbonne",
-        theme_color: '#0A0A12',
-        background_color: '#0A0A12',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
         display: 'standalone',
         // Pointe l'adresse canonique : « / » redirige desormais (301).
         start_url: '/accueil',

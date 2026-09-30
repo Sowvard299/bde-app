@@ -6,13 +6,24 @@ import CategoryChips from './CategoryChips'
 import PartnersMap from './PartnersMap'
 import ViewToggle from './ViewToggle'
 
-// Plusieurs cartes partagent une ligne ici, contrairement à la frise des
-// événements (un seul par ligne) : un délai croissant sans limite ferait
-// arriver la dixième carte visiblement après les trois premières alors
-// qu'elles sont toutes déjà à l'écran. Le plafond fait lire l'apparition
-// comme un balayage rapide de la grille plutôt qu'un défilé un par un.
+// Plusieurs cartes partagent une ligne ici : un délai croissant sans
+// limite ferait arriver la dixième carte visiblement après les trois
+// premières alors qu'elles sont toutes déjà à l'écran. Le plafond fait
+// lire l'apparition comme un balayage rapide de la grille.
 function revealDelay(index) {
   return Math.min(index, 9) * 45
+}
+
+function Groupe({ titre, nombre, children }) {
+  return (
+    <section>
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-ink pb-2">
+        <h2 className="masthead text-3xl lg:text-4xl">{titre}</h2>
+        <span className="label text-fg-subtle">{nombre}</span>
+      </div>
+      <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{children}</ul>
+    </section>
+  )
 }
 
 export default function PartenairesContent() {
@@ -59,13 +70,11 @@ export default function PartenairesContent() {
   )
 
   // Vitrine en vue liste seulement : sur la carte, l'écran appartient à la
-  // carte. Le sélecteur Liste/Carte reste au-dessus de la vitrine, donc il ne
-  // bouge pas quand on bascule d'une vue à l'autre.
+  // carte.
   const vitrineVisible = aLaUne !== null && view === 'liste'
 
   // Un partenaire affiché en vitrine n'est pas répété dans la grille juste
-  // en dessous : la même carte deux fois dans la même page se lit comme un
-  // doublon, pas comme une mise en avant.
+  // en dessous.
   const partenaires = useMemo(
     () =>
       filtered.filter(
@@ -79,7 +88,7 @@ export default function PartenairesContent() {
   )
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8 pt-6 lg:pt-8">
       <ViewToggle
         options={[
           { value: 'liste', label: 'Liste' },
@@ -91,69 +100,58 @@ export default function PartenairesContent() {
 
       {!error && vitrineVisible && <PartnerSpotlight partner={aLaUne} />}
 
-      <input
-        type="search"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-        placeholder="Rechercher un partenaire"
-        className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-fg placeholder:text-fg-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:max-w-sm"
-      />
+      <div className="flex flex-col gap-4">
+        <label className="block lg:max-w-sm">
+          <span className="sr-only">Rechercher un partenaire</span>
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Rechercher un partenaire"
+            className="field"
+          />
+        </label>
 
-      {categories.length > 0 && (
-        <CategoryChips categories={categories} activeSlug={activeSlug} onSelect={setActiveSlug} />
-      )}
+        {categories.length > 0 && (
+          <CategoryChips categories={categories} activeSlug={activeSlug} onSelect={setActiveSlug} />
+        )}
+      </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-950 px-4 py-3 text-red-300">
-          Impossible de charger les partenaires. Réessaie plus tard.
-        </p>
-      )}
+      {error && <p className="alert">Impossible de charger les partenaires. Réessayez plus tard.</p>}
 
-      {!error && partners === null && <p className="text-fg-faint">Chargement…</p>}
+      {!error && partners === null && <p className="label text-fg-subtle">Chargement</p>}
 
-      {!error && partners !== null && filtered.length === 0 && (
-        <p className="rounded-lg bg-surface px-4 py-6 text-center text-fg-faint">
+      {!error && partners !== null && filtered.length === 0 && view === 'liste' && (
+        <p className="border-2 border-dashed border-ink px-4 py-8 text-center text-fg-muted">
           {partners.length === 0
-            ? 'Pas encore de partenaire — reviens vite'
-            : 'Aucun partenaire ne correspond à ta recherche'}
+            ? 'Aucun partenaire pour le moment.'
+            : 'Aucun partenaire ne correspond à cette recherche.'}
         </p>
       )}
 
       {!error && filtered.length > 0 && view === 'liste' && (
-        <div className="flex flex-col gap-9">
+        <div className="flex flex-col gap-14">
           {partenaires.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent-gold">
-                <span className="h-px w-6 bg-accent-gold" />
-                {vitrineVisible ? 'Autres partenaires' : 'Partenaires'}
-                <span className="font-sans text-fg-subtle">({partenaires.length})</span>
-              </h3>
-              <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
-                {partenaires.map((partner, index) => (
-                  <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
-                ))}
-              </ul>
-            </div>
+            <Groupe titre={vitrineVisible ? 'Autres partenaires' : 'Partenaires'} nombre={partenaires.length}>
+              {partenaires.map((partner, index) => (
+                <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
+              ))}
+            </Groupe>
           )}
 
           {bonsPlans.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-fg-faint">
-                <span className="h-px w-6 bg-line" />
-                Bons plans
-                <span className="text-fg-subtle">({bonsPlans.length})</span>
-              </h3>
-              <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
-                {bonsPlans.map((partner, index) => (
-                  <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
-                ))}
-              </ul>
-            </div>
+            <Groupe titre="Bons plans" nombre={bonsPlans.length}>
+              {bonsPlans.map((partner, index) => (
+                <PartnerRow key={partner.id} partner={partner} delay={revealDelay(index)} />
+              ))}
+            </Groupe>
           )}
         </div>
       )}
 
-      {!error && filtered.length > 0 && view === 'carte' && <PartnersMap partners={filtered} />}
+      {/* La carte reste affichée même sans résultat : elle dit elle-même
+          qu'aucun partenaire de cette catégorie n'est à afficher. */}
+      {!error && partners !== null && view === 'carte' && <PartnersMap partners={filtered} />}
     </div>
   )
 }

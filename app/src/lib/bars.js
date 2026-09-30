@@ -42,7 +42,7 @@ export const TYPES = {
     libelle: 'Bars pas chers',
     court: 'Pas cher',
     couleur: '#ffc300',
-    surCouleur: '#1a1a1a',
+    surCouleur: '#0f1564',
   },
   insolite: {
     cle: 'insolite',

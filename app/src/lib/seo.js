@@ -44,41 +44,41 @@ function tronquer(texte, max) {
 // pas une paraphrase du titre.
 const PAGES = {
   '/accueil': {
-    titre: 'BDE IAE Paris Sorbonne — Bureau des étudiants',
+    titre: 'BDE IAE Paris Sorbonne | Bureau des étudiants',
     description:
       "Site officiel du Bureau des étudiants de l'IAE Paris-Sorbonne (NBDE IAE Paris) : soirées, WEI, sport, sorties et réductions étudiantes. Association loi 1901 depuis 2008.",
   },
   '/evenements': {
-    titre: 'Soirées et événements étudiants — BDE IAE Paris Sorbonne',
+    titre: 'Soirées et événements étudiants | BDE IAE Paris Sorbonne',
     description:
       "Toutes les soirées, sorties et activités du BDE de l'IAE Paris-Sorbonne : dates, lieux, tarifs et billetterie. WEI, soirées étudiantes, running, escalade.",
   },
   '/partenaires': {
-    titre: 'Réductions étudiantes à Paris — BDE IAE Paris Sorbonne',
+    titre: 'Réductions étudiantes à Paris | BDE IAE Paris Sorbonne',
     description:
-      "Les réductions négociées par le BDE de l'IAE Paris-Sorbonne : restauration, sport, culture, beauté. Ta carte étudiante suffit, aucune inscription.",
+      "Les réductions négociées par le BDE de l'IAE Paris-Sorbonne : restauration, sport, culture, beauté. La carte étudiante suffit, sans inscription.",
   },
   '/bars': {
     // La page la plus susceptible d'attirer des visiteurs qui ne
     // cherchaient pas le BDE : « bar pas cher Paris » et « bar insolite
     // Paris » sont des recherches à gros volume, et on a 193 adresses à
     // leur opposer. Le titre les vise explicitement.
-    titre: 'Bars pas chers et insolites à Paris — 193 adresses',
+    titre: 'Bars pas chers et insolites à Paris | 193 adresses',
     description:
       "193 bars de Paris repérés par le BDE IAE Paris-Sorbonne : pinte dès 2,50 €, happy hours en cours en temps réel, 43 bars insolites. Carte et filtres par prix.",
   },
   '/a-propos': {
-    titre: 'Qui sommes-nous — BDE IAE Paris Sorbonne',
+    titre: 'Qui sommes-nous | BDE IAE Paris Sorbonne',
     description:
       "Le Nouveau Bureau des Étudiants de l'IAE Paris, association loi 1901 fondée en 2008 : qui nous sommes, ce que nous organisons pour les étudiants de l'IAE Paris-Sorbonne, et comment nous joindre.",
   },
   '/mentions-legales': {
-    titre: 'Mentions légales — BDE IAE Paris Sorbonne',
+    titre: 'Mentions légales | BDE IAE Paris Sorbonne',
     description: "Mentions légales du site du Bureau des étudiants de l'IAE Paris-Sorbonne.",
     indexable: false,
   },
   '/confidentialite': {
-    titre: 'Confidentialité — BDE IAE Paris Sorbonne',
+    titre: 'Confidentialité | BDE IAE Paris Sorbonne',
     description:
       "Politique de confidentialité et traitement des données personnelles sur le site du BDE de l'IAE Paris-Sorbonne.",
     indexable: false,
@@ -203,10 +203,26 @@ function dateFr(iso) {
   }
 }
 
+// Les descriptions saisies en base ont une mise en forme légère (voir
+// RichText) : intertitres en « # », puces, et d'anciens emoji en tête de
+// ligne. Pour un extrait de moteur de recherche on n'en garde que le
+// texte : les intertitres sautent, les puces deviennent des phrases.
+const EMOJI_TETE = /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\u200d|\ufe0f|\s)+/u
+
+export function texteBrut(texte) {
+  return String(texte ?? '')
+    .split('\n')
+    .map((ligne) => ligne.trim().replace(EMOJI_TETE, ''))
+    .filter((ligne) => ligne && !/^#{1,3}\s/.test(ligne))
+    .map((ligne) => ligne.replace(/^(?:[•\-–]|\d+[.)])\s+/, ''))
+    .map((ligne) => (/[.:;!?)]$/.test(ligne) ? ligne : `${ligne}.`))
+    .join(' ')
+}
+
 // Coupe proprement à la limite d'un mot : une description tronquée en
 // plein milieu d'un mot fait négligé dans les résultats de recherche.
 export function resumer(texte, max = 160) {
-  const propre = String(texte ?? '')
+  const propre = texteBrut(texte)
     .replace(/\s+/g, ' ')
     .trim()
   if (propre.length <= max) return propre
@@ -276,9 +292,9 @@ export function metaEvenement(evenement) {
     : undefined
 
   // La date n'est ajoutée que si elle tient en entier. Tronquée, elle
-  // donnait « WEICUP — Latino Edition — 25 | BDE IAE Paris Sorbonne » :
+  // donnait « WEICUP Latino Edition, 25 | BDE IAE Paris Sorbonne » :
   // un « 25 » orphelin dit moins que pas de date du tout.
-  const avecDate = `${evenement.title} — ${quand}`
+  const avecDate = `${evenement.title}, ${quand}`
   const titreBase = quand && avecDate.length <= 40 ? avecDate : evenement.title
 
   return {
@@ -345,11 +361,11 @@ export function metaPartenaire(partenaire) {
   const chemin = `/partenaires/${partenaire.id}`
 
   return {
-    titre: avecMarque(`${partenaire.name} — ${tronquer(partenaire.benefit, 30)}`),
+    titre: avecMarque(`${partenaire.name} : ${tronquer(partenaire.benefit, 30)}`),
     description: resumer(
       `${partenaire.benefit} pour les étudiants de l'IAE Paris-Sorbonne chez ${partenaire.name}${
         partenaire.address ? `, ${partenaire.address}` : ''
-      }. ${partenaire.description || ''}`
+      }. ${texteBrut(partenaire.description)}`
     ),
     canonical: `${SITE}${chemin}`,
     image: imagePartageable(partenaire.logo_url) ?? IMAGE_PARTAGE,
