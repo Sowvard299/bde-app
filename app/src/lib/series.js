@@ -17,8 +17,8 @@ const SERIES = {
 // pas une soirée du BDE.
 const MOTS = [
   ['sport', /run|running|escalade|climb|sport|match|foot|basket|rugby|handball|stade|psg|tournoi/i],
-  ['culture', /culture|th[ée][âa]tre|mus[ée]e|louvre|nocturne|impro|humour|expo|cin[ée]ma|concert|visite|[ée]loquence/i],
-  ['night', /night|party|soir[ée]e|wei|gala|afterwork|halloween|games?\b/i],
+  ['culture', /culture|th[ée][âa]tre|mus[ée]e|louvre|nocturne|impro|humour|games?\b|expo|cin[ée]ma|concert|visite|[ée]loquence/i],
+  ['night', /night|party|soir[ée]e|wei|gala|afterwork|halloween/i],
 ]
 
 export function serieEvenement(evenement) {

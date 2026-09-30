@@ -19,8 +19,8 @@ const ACTIVITES = [
   },
   {
     titre: 'Sorbonne Game',
-    serie: 'Night',
-    couleur: NIGHT,
+    serie: 'Culture',
+    couleur: CULTURE,
     texte: 'Jeux de société et tournois FIFA.',
     photo: BASE + 'sorbonne-game.png',
   },

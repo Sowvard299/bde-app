@@ -107,7 +107,7 @@ export default function EvenementDetailPage() {
             <Info label="Date">
               <span className="first-letter:uppercase">{DATE_LONGUE.format(new Date(event.starts_at))}</span>
             </Info>
-            <Info label="Heure">{formatEventTime(event.starts_at)}</Info>
+            <Info label="Heure">{formatEventTime(event.starts_at) || 'Communiquée prochainement'}</Info>
             {lieu.length > 0 && (
               <Info label="Lieu">
                 <AddressLink

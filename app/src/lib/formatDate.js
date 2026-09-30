@@ -13,6 +13,13 @@ function formatTime(date) {
   return `${hour}h${minute}`
 }
 
+// Un événement enregistré à minuit (heure de Paris) n'a pas encore
+// d'horaire annoncé : on affiche la date seule plutôt qu'un « 00h00 »
+// qui passerait pour une vraie heure.
+export function horaireConnu(isoString) {
+  return formatTime(new Date(isoString)) !== '00h00'
+}
+
 export function formatEventDateTime(isoString) {
   const date = new Date(isoString)
   const day = new Intl.DateTimeFormat('fr-FR', {
@@ -22,7 +29,7 @@ export function formatEventDateTime(isoString) {
     timeZone: TIMEZONE,
   }).format(date)
 
-  return `${day}, ${formatTime(date)}`
+  return horaireConnu(isoString) ? `${day}, ${formatTime(date)}` : day
 }
 
 export function formatEventDateShort(isoString) {
@@ -36,7 +43,7 @@ export function formatEventDateShort(isoString) {
 }
 
 export function formatEventTime(isoString) {
-  return formatTime(new Date(isoString))
+  return horaireConnu(isoString) ? formatTime(new Date(isoString)) : ''
 }
 
 export function getParisDateParts(isoString) {
