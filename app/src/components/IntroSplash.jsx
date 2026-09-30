@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import introLarge from '../assets/intro/intro-large.mp4'
-import introCarre from '../assets/intro/intro-carre.mp4'
+import introMobile from '../assets/intro/intro-mobile.mp4'
 
 const SEEN_KEY = 'bde-intro-seen'
 const FONDU_MS = 450
@@ -8,15 +8,24 @@ const FONDU_MS = 450
 // économie d'énergie, qui bloque toute lecture automatique), on laisse
 // directement la place au site : un écran blanc figé serait pire que pas
 // d'intro du tout.
+// Un peu plus long sur téléphone, où le réseau est souvent plus lent.
 const DEMARRAGE_MAX_MS = 1500
+const DEMARRAGE_MAX_MOBILE_MS = 3000
 // Garde-fou absolu, quelle que soit la raison d'un blocage.
-const DUREE_MAX_MS = 6000
+const DUREE_MAX_MS = 8000
 
-// La vidéo est composée en 16/9 avec le blason au centre. Sur un écran en
-// hauteur, elle tiendrait dans une bande étroite et le blason serait
-// minuscule : on sert alors une version recadrée en carré sur le blason.
+// Sur un écran en hauteur (téléphone, app installée), la version
+// verticale livrée par le BDE (bde_intro_app_mobile_1080x1920), réencodée
+// en 720×1280 à 30 images/s : 2,4 Mo au lieu de 31, sans différence
+// visible sur un téléphone. Sur un écran large, la version 16/9.
+const INTRO_MOBILE = introMobile
+
+function estEnHauteur() {
+  return window.matchMedia('(max-aspect-ratio: 1/1)').matches
+}
+
 function sourceAdaptee() {
-  return window.matchMedia('(max-aspect-ratio: 1/1)').matches ? introCarre : introLarge
+  return estEnHauteur() ? INTRO_MOBILE : introLarge
 }
 
 // Écran d'ouverture : la vidéo du blason, une fois par session.
@@ -59,7 +68,7 @@ export default function IntroSplash() {
 
     const demarrage = setTimeout(() => {
       if (!demarreRef.current) sortir()
-    }, DEMARRAGE_MAX_MS)
+    }, estEnHauteur() ? DEMARRAGE_MAX_MOBILE_MS : DEMARRAGE_MAX_MS)
     const plafond = setTimeout(sortir, DUREE_MAX_MS)
 
     return () => {
