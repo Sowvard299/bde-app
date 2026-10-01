@@ -102,7 +102,7 @@ siège au ${e(ASSOCIATION.adresse)}, ${e(ASSOCIATION.codePostal)} ${e(ASSOCIATIO
 sorties culturelles, club running, escalade) et négocie des réductions auprès de commerçants
 pour les étudiants.</p>
 <h2>Le bureau</h2>
-<p>L'équipe change à chaque élection. Elle est présentée sur le compte Instagram du BDE.
+<p>L'équipe change à chaque élection. Elle est présentée sur le compte de l'IAE Paris Sorbonne.
 <a href="${e(ASSOCIATION.membres)}" rel="noopener">Voir les membres du bureau</a></p>
 <h2>Contact</h2>
 <p>Courriel : <a href="mailto:${e(ASSOCIATION.email)}">${e(ASSOCIATION.email)}</a><br>

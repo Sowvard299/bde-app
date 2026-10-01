@@ -90,7 +90,7 @@ export default function AProposPage() {
 
       <Bloc titre="Le bureau">
         <p>
-          L'équipe change à chaque élection. Elle est présentée sur le compte Instagram du BDE.
+          L'équipe change à chaque élection. Elle est présentée sur le compte de l'IAE Paris Sorbonne.
         </p>
         <a href={ASSOCIATION.membres} target="_blank" rel="noreferrer" className="btn-ghost self-start">
           Voir les membres du bureau <span aria-hidden="true">↗</span>
