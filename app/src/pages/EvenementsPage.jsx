@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchUpcomingEvents } from '../lib/events'
 import { getParisDateParts } from '../lib/formatDate'
+import { serieEvenement } from '../lib/series'
 import EventRow from '../components/EventRow'
 import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
@@ -49,13 +50,17 @@ export default function EvenementsPage() {
     return map
   }, [events])
 
+  // Pour chaque jour du mois affiché : les séries de ses événements, sans
+  // doublon, pour colorer la case.
   const joursDuMois = useMemo(() => {
-    const set = new Set()
-    for (const cle of parJour.keys()) {
+    const map = new Map()
+    for (const [cle, liste] of parJour) {
       const [y, m] = cle.split('-').map(Number)
-      if (y === cursor.year && m === cursor.month + 1) set.add(cle)
+      if (y === cursor.year && m === cursor.month + 1) {
+        map.set(cle, [...new Set(liste.map(serieEvenement))])
+      }
     }
-    return set
+    return map
   }, [parJour, cursor])
 
   const evenementsDuJour = selectedDay ? parJour.get(selectedDay) ?? [] : []

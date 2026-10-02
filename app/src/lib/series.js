@@ -6,7 +6,7 @@
 // les titres suivent déjà ces noms (« Sorbonne Night #1 », « Sorbonne
 // Running × ASICS »). Un titre qui ne dit rien de sa série tombe
 // simplement dans « BDE », sans erreur.
-const SERIES = {
+export const SERIES = {
   sport: { label: 'Sorbonne Sport', couleur: 'var(--color-accent-gold)' },
   night: { label: 'Sorbonne Night', couleur: 'var(--color-accent-pink)' },
   culture: { label: 'Sorbonne Culture', couleur: 'var(--color-accent)' },
