@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { ASSOCIATION } from '../lib/seo'
 import AddressLink from './AddressLink'
-import LogoMark from './LogoMark'
 import Marquee from './Marquee'
+import PhenixChrome from './PhenixChrome'
 import { RUBRIQUES } from './SiteHeader'
 
 // Pied de page commun à toutes les pages : le bandeau de la charte, puis
@@ -19,7 +19,7 @@ export default function AppFooter() {
       <div className="bg-ink text-white">
         <div className="mx-auto max-w-6xl px-5 pb-10 pt-12 lg:px-10 lg:pb-14 lg:pt-16">
           <div className="flex items-end gap-4">
-            <LogoMark className="h-14 w-14 text-white lg:h-20 lg:w-20" />
+            <PhenixChrome className="h-20 w-20 lg:h-32 lg:w-32" />
             <p className="masthead text-[13vw] leading-[0.82] sm:text-6xl lg:text-8xl">
               BDE IAE
               <br />

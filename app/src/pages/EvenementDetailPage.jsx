@@ -10,6 +10,8 @@ import { serieEvenement } from '../lib/series'
 import { tailleMasthead } from '../lib/masthead'
 import AddressLink from '../components/AddressLink'
 import EventMedia from '../components/EventMedia'
+import OmbreTramee from '../components/OmbreTramee'
+import Trame from '../components/Trame'
 import RichText from '../components/RichText'
 import { InstagramIcon, WhatsAppIcon } from '../components/BrandIcons'
 
@@ -143,16 +145,22 @@ export default function EvenementDetailPage() {
 
         <div>
           {event.image_url ? (
-            <EventMedia
-              src={event.image_url}
-              logoFallback={isWeicup(event) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
-              className="aspect-[4/5] w-full border-2 border-ink object-cover"
-              fallbackLabel={event.title}
-            />
+            <OmbreTramee serie={serie}>
+              <EventMedia
+                src={event.image_url}
+                logoFallback={isWeicup(event) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
+                className="aspect-[4/5] w-full border-2 border-ink bg-white object-cover"
+                fallbackLabel={event.title}
+              />
+            </OmbreTramee>
           ) : (
-            <div className="flex aspect-[4/5] w-full items-center justify-center border-2 border-ink bg-ink p-8">
-              <span className="masthead text-center text-5xl text-white">{event.title}</span>
-            </div>
+            // Pas de visuel : l'affiche est la trame de la série, avec le
+            // titre posé dessus comme une étiquette.
+            <Trame serie={serie} taille={4} className="flex aspect-[4/5] w-full items-end border-2 border-ink p-5">
+              <span className="masthead border-2 border-ink bg-white px-3 pb-1 pt-2 text-4xl lg:text-5xl">
+                {event.title}
+              </span>
+            </Trame>
           )}
           {isReusedMedia(event) && (
             <p className="label mt-2 text-fg-subtle">Images de l'édition précédente</p>

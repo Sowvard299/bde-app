@@ -6,11 +6,16 @@
 // les titres suivent déjà ces noms (« Sorbonne Night #1 », « Sorbonne
 // Running × ASICS »). Un titre qui ne dit rien de sa série tombe
 // simplement dans « BDE », sans erreur.
+//
+// `hex` sert aux effets WebGL, qui ne lisent pas les variables CSS.
+// `trame` est le motif de la trame animée propre à la série (voir
+// components/Trame.jsx) : la même technique partout, un mouvement par
+// univers.
 export const SERIES = {
-  sport: { label: 'Sorbonne Sport', couleur: 'var(--color-accent-gold)' },
-  night: { label: 'Sorbonne Night', couleur: 'var(--color-accent-pink)' },
-  culture: { label: 'Sorbonne Culture', couleur: 'var(--color-accent)' },
-  bde: { label: 'BDE', couleur: '#ffffff' },
+  sport: { label: 'Sorbonne Sport', couleur: 'var(--color-accent-gold)', hex: '#ffc300', trame: 'wave' },
+  night: { label: 'Sorbonne Night', couleur: 'var(--color-accent-pink)', hex: '#ff66c4', trame: 'ripple' },
+  culture: { label: 'Sorbonne Culture', couleur: 'var(--color-accent)', hex: '#ff4214', trame: 'swirl' },
+  bde: { label: 'BDE', couleur: '#ffffff', hex: '#ffffff', trame: 'simplex' },
 }
 
 // Culture passe avant Night : « Soirée impro » est une sortie culturelle,

@@ -10,6 +10,7 @@ import SectionHeading from '../components/SectionHeading'
 import { fetchUpcomingEvents } from '../lib/events'
 import { fetchPartners } from '../lib/partners'
 import { isLogoFile } from '../lib/media'
+import { SERIES } from '../lib/series'
 
 function LienSection({ to, children }) {
   return (
@@ -48,7 +49,7 @@ export default function AccueilPage() {
       </div>
 
       <Marquee
-        texte="Sorbonne Night / Sorbonne Sport / Sorbonne Culture"
+        texte={[SERIES.night, SERIES.sport, SERIES.culture].map((s) => ({ texte: s.label, couleur: s.couleur }))}
         className="mt-10 bg-ink text-white lg:mt-14"
       />
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Countdown from './Countdown'
 import EventMedia from './EventMedia'
+import OmbreTramee from './OmbreTramee'
 import { formatEventDateTime } from '../lib/formatDate'
 import { isWeicup, WEICUP_LOGO } from '../lib/media'
 import { serieEvenement } from '../lib/series'
@@ -49,46 +50,48 @@ export default function HomeHero({ nextEvent }) {
       </div>
 
       {nextEvent && (
-        <Link
-          to={`/evenements/${nextEvent.id}`}
-          className="lift group flex flex-col self-start border-2 border-ink bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <div className="flex items-center justify-between border-b-2 border-ink px-3 py-2">
-            <span className="label">Prochain rendez-vous</span>
-            <span aria-hidden="true" className="transition group-hover:translate-x-1">
-              →
-            </span>
-          </div>
-
-          <div className="zoom-media overflow-hidden border-b-2 border-ink">
-            {nextEvent.image_url ? (
-              <EventMedia
-                src={nextEvent.image_url}
-                logoFallback={isWeicup(nextEvent) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
-                className="aspect-[5/4] w-full object-cover"
-                fallbackLabel={nextEvent.title}
-              />
-            ) : (
-              <div className="flex aspect-[5/4] w-full items-center justify-center bg-ink">
-                <span className="label text-white">BDE</span>
-              </div>
-            )}
-          </div>
-
-          <div className="p-4">
-            <span className="tag" style={{ '--tag-bg': serie.couleur }}>
-              {serie.label}
-            </span>
-            <p className="mt-3 font-display text-3xl uppercase leading-[0.9]">{nextEvent.title}</p>
-            <p className="mt-2 text-sm text-fg-muted first-letter:uppercase">
-              {formatEventDateTime(nextEvent.starts_at)}
-              {nextEvent.location_name ? ` · ${nextEvent.location_name}` : ''}
-            </p>
-            <div className="mt-4">
-              <Countdown target={nextEvent.starts_at} />
+        <OmbreTramee serie={serie} survol className="self-start">
+          <Link
+            to={`/evenements/${nextEvent.id}`}
+            className="group flex flex-col border-2 border-ink bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <div className="flex items-center justify-between border-b-2 border-ink px-3 py-2">
+              <span className="label">Prochain rendez-vous</span>
+              <span aria-hidden="true" className="transition group-hover:translate-x-1">
+                →
+              </span>
             </div>
-          </div>
-        </Link>
+
+            <div className="zoom-media overflow-hidden border-b-2 border-ink">
+              {nextEvent.image_url ? (
+                <EventMedia
+                  src={nextEvent.image_url}
+                  logoFallback={isWeicup(nextEvent) ? { src: WEICUP_LOGO, background: '#f7b422' } : undefined}
+                  className="aspect-[5/4] w-full object-cover"
+                  fallbackLabel={nextEvent.title}
+                />
+              ) : (
+                <div className="flex aspect-[5/4] w-full items-center justify-center bg-ink">
+                  <span className="label text-white">BDE</span>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4">
+              <span className="tag" style={{ '--tag-bg': serie.couleur }}>
+                {serie.label}
+              </span>
+              <p className="mt-3 font-display text-3xl uppercase leading-[0.9]">{nextEvent.title}</p>
+              <p className="mt-2 text-sm text-fg-muted first-letter:uppercase">
+                {formatEventDateTime(nextEvent.starts_at)}
+                {nextEvent.location_name ? ` · ${nextEvent.location_name}` : ''}
+              </p>
+              <div className="mt-4">
+                <Countdown target={nextEvent.starts_at} />
+              </div>
+            </div>
+          </Link>
+        </OmbreTramee>
       )}
     </section>
   )

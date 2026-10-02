@@ -259,6 +259,48 @@ h3 {
 }
 
 /* =====================================================================
+   Ombre tramée (components/OmbreTramee.jsx)
+   Même géométrie que l'ombre pleine de `.lift`, plus marquée : la trame
+   est posée sous le contenu et décalée vers le bas à droite. La marge
+   réserve la place du décalage pour que rien ne déborde du conteneur.
+   ===================================================================== */
+.ombre-tramee {
+  --decalage: 14px;
+  position: relative;
+  isolation: isolate;
+  margin-right: var(--decalage);
+  margin-bottom: var(--decalage);
+}
+
+@media (min-width: 1024px) {
+  .ombre-tramee {
+    --decalage: 20px;
+  }
+}
+
+.ombre-tramee__trame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(var(--decalage), var(--decalage));
+}
+
+.ombre-tramee__contenu {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ombre-tramee--survol:hover .ombre-tramee__contenu,
+.ombre-tramee--survol:focus-within .ombre-tramee__contenu {
+  transform: translate(-6px, -6px);
+}
+
+.ombre-tramee--survol:hover .zoom-media img,
+.ombre-tramee--survol:hover .zoom-media video {
+  transform: scale(1.04);
+}
+
+/* =====================================================================
    Bandeau défilant
    Repris de la couverture de la charte (« IAE PARIS SORBONNE - IAE PARIS
    SORBONNE - ... »). Le contenu est posé deux fois à la suite ; la piste
@@ -336,6 +378,11 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   .marquee__track {
     animation: none;
+  }
+
+  .ombre-tramee--survol:hover .ombre-tramee__contenu,
+  .ombre-tramee--survol:focus-within .ombre-tramee__contenu {
+    transform: none;
   }
 
   .reveal {
