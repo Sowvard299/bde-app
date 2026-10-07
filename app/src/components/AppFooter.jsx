@@ -2,12 +2,10 @@ import { Link } from 'react-router-dom'
 import { ASSOCIATION } from '../lib/seo'
 import AddressLink from './AddressLink'
 import { InstagramIcon, LinkedInIcon } from './BrandIcons'
-import Marquee from './Marquee'
 import PhenixChrome from './PhenixChrome'
 import { RUBRIQUES } from './SiteHeader'
 
-// Pied de page commun à toutes les pages : le bandeau de la charte, puis
-// un bloc bleu nuit avec le nom en grand et les informations de
+// Pied de page commun à toutes les pages : un bloc bleu nuit avec le nom en grand et les informations de
 // l'association. Rendu une seule fois, par App, plutôt que recopié au bas
 // de chaque page.
 export default function AppFooter() {
@@ -15,8 +13,6 @@ export default function AppFooter() {
 
   return (
     <footer className="mt-20 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:mt-28 lg:pb-0">
-      <Marquee texte="IAE Paris Sorbonne" className="bg-accent-gold text-ink" />
-
       <div className="bg-ink text-white">
         <div className="mx-auto max-w-6xl px-5 pb-10 pt-12 lg:px-10 lg:pb-14 lg:pt-16">
           <div className="flex items-end gap-4">
