@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { fetchEventById } from '../lib/events'
+import { fetchEventById, fetchUpcomingEvents } from '../lib/events'
 import { metaEvenement } from '../lib/seo'
 import { useSeoDonnees } from '../hooks/useSeo'
 import { formatEventTime } from '../lib/formatDate'
@@ -13,6 +13,8 @@ import EventMedia from '../components/EventMedia'
 import OmbreTramee from '../components/OmbreTramee'
 import Trame from '../components/Trame'
 import RichText from '../components/RichText'
+import EventRow from '../components/EventRow'
+import SectionHeading from '../components/SectionHeading'
 import { InstagramIcon, WhatsAppIcon } from '../components/BrandIcons'
 
 const DATE_LONGUE = new Intl.DateTimeFormat('fr-FR', {
@@ -49,6 +51,20 @@ export default function EvenementDetailPage() {
   // les écrit déjà pour une arrivée directe, pas pour quelqu'un qui ouvre
   // la fiche depuis l'agenda sans recharger la page.
   useSeoDonnees(useMemo(() => metaEvenement(event), [event]))
+
+  // Les autres dates à venir, sous la fiche : on enchaîne d'un événement
+  // à l'autre sans repasser par l'agenda, et chaque fiche relie les autres
+  // (c'est par ces liens que Google découvre et classe les pages).
+  const [autres, setAutres] = useState([])
+  useEffect(() => {
+    let annule = false
+    fetchUpcomingEvents()
+      .then((liste) => !annule && setAutres(liste.filter((e) => e.id !== id).slice(0, 4)))
+      .catch(() => {})
+    return () => {
+      annule = true
+    }
+  }, [id])
 
   useEffect(() => {
     setStatus('loading')
@@ -198,6 +214,24 @@ export default function EvenementDetailPage() {
               )}
             </div>
           </div>
+        </section>
+      )}
+
+      {autres.length > 0 && (
+        <section className="mt-16 lg:mt-24">
+          <SectionHeading
+            title="À venir aussi"
+            action={
+              <Link to="/evenements" className="label inline-flex items-center gap-1.5 px-1 py-1 transition hover:bg-accent-gold">
+                Agenda complet <span aria-hidden="true">→</span>
+              </Link>
+            }
+          />
+          <ol>
+            {autres.map((ev) => (
+              <EventRow key={ev.id} event={ev} />
+            ))}
+          </ol>
         </section>
       )}
 

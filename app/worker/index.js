@@ -1,5 +1,7 @@
 import {
   IMAGE_PARTAGE,
+  ROBOTS_INDEX,
+  ROBOTS_NOINDEX,
   ROUTES_STATIQUES,
   SITE,
   metaEvenement,
@@ -16,6 +18,7 @@ import {
 } from './supabase'
 import { rendu } from './rendu'
 import { BUILD_ID } from './env.generated'
+import donneesBars from '../src/data/bars-paris.json'
 
 // Worker placé devant les fichiers statiques du site.
 //
@@ -92,24 +95,33 @@ async function pagePour(chemin) {
     let donnees = {}
     if (normalise === '/evenements') donnees = { evenements: await listerEvenementsComplets() }
     if (normalise === '/partenaires') donnees = { partenaires: await listerPartenairesComplets() }
+    // L'accueil, la page la plus forte du site, relie directement chaque
+    // événement à venir et chaque partenaire : c'est le chemin le plus
+    // court pour que Google découvre et explore les fiches.
+    if (normalise === '/accueil') {
+      const [evenements, partenaires] = await Promise.all([listerEvenementsComplets(), listerPartenairesComplets()])
+      donnees = { evenements, partenaires }
+    }
 
     return { meta: statique, corps: rendu(normalise, donnees), introuvable: false }
   }
 
   const idEvenement = normalise.match(/^\/evenements\/([^/]+)$/)
   if (idEvenement) {
-    const evenement = await lireEvenement(idEvenement[1])
+    // La fiche et la liste en parallèle : la liste sert au bloc « À venir
+    // aussi », qui relie les fiches entre elles.
+    const [evenement, evenements] = await Promise.all([lireEvenement(idEvenement[1]), listerEvenementsComplets()])
     if (evenement) {
-      return { meta: metaEvenement(evenement), corps: rendu(normalise, { evenement }), introuvable: false }
+      return { meta: metaEvenement(evenement), corps: rendu(normalise, { evenement, evenements }), introuvable: false }
     }
     return introuvablePage()
   }
 
   const idPartenaire = normalise.match(/^\/partenaires\/([^/]+)$/)
   if (idPartenaire) {
-    const partenaire = await lirePartenaire(idPartenaire[1])
+    const [partenaire, partenaires] = await Promise.all([lirePartenaire(idPartenaire[1]), listerPartenairesComplets()])
     if (partenaire) {
-      return { meta: metaPartenaire(partenaire), corps: rendu(normalise, { partenaire }), introuvable: false }
+      return { meta: metaPartenaire(partenaire), corps: rendu(normalise, { partenaire, partenaires }), introuvable: false }
     }
     return introuvablePage()
   }
@@ -191,9 +203,9 @@ function injecter(reponse, meta, corps, introuvable) {
       .on('head', {
         element: (el) => {
           el.append(`<link rel="canonical" href="${echapper(meta.canonical)}">`, { html: true })
-          if (!meta.indexable) {
-            el.append('<meta name="robots" content="noindex, follow">', { html: true })
-          }
+          // Toujours une directive explicite : sur les pages publiques elle
+          // autorise la grande vignette et des extraits complets.
+          el.append(`<meta name="robots" content="${meta.indexable ? ROBOTS_INDEX : ROBOTS_NOINDEX}">`, { html: true })
         },
       })
       // Le contenu de la page, ecrit dans le conteneur que React vide
@@ -240,9 +252,24 @@ async function sitemap(ctx) {
 
   const { evenements, partenaires } = await listerPourSitemap()
 
+  // <lastmod> des pages fixes : la dernière modification de ce qu'elles
+  // affichent. L'agenda change avec les événements, la page partenaires
+  // avec les partenaires, l'accueil avec les deux, les bars avec le relevé
+  // des prix. Google n'utilise ce champ que s'il est exact.
+  const plusRecent = (lignes) => lignes.map((l) => l.updated_at).filter(Boolean).sort().at(-1) ?? null
+  const majEvenements = plusRecent(evenements)
+  const majPartenaires = plusRecent(partenaires)
+  const majStatique = {
+    '/accueil': [majEvenements, majPartenaires].filter(Boolean).sort().at(-1) ?? null,
+    '/evenements': majEvenements,
+    '/partenaires': majPartenaires,
+    '/bars': donneesBars.maj,
+  }
+
   const entrees = [
     ...ROUTES_STATIQUES.map((route) => ({
       url: `${SITE}${route.chemin}`,
+      modifie: route.modifie ?? majStatique[route.chemin] ?? null,
       frequence: route.frequence,
       priorite: route.priorite,
     })),

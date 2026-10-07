@@ -28,6 +28,10 @@ function avecMarque(titre, budget = 65) {
   return `${titre.length > place ? tronquer(titre, place) : titre}${suffixe}`
 }
 
+// Petits mots qui ne peuvent pas finir un titre : « 10,50 € la séance
+// au | BDE… » se lit comme une phrase coupée net.
+const MOT_SUSPENDU = /\s+(?:à|au|aux|de|du|des|d'|la|le|les|l'|un|une|et|ou|sur|en|pour|par|avec|dès|chez|dans|\+|×|&)$/iu
+
 // Coupe sur un mot entier, sans ajouter de points de suspension : dans un
 // titre ils font croire à un bug d'affichage.
 function tronquer(texte, max) {
@@ -36,7 +40,96 @@ function tronquer(texte, max) {
   const espace = coupe.lastIndexOf(' ')
   // La ponctuation restée en bout de coupe (« Happy hour de 16h à 22h : »)
   // se lit comme une phrase interrompue, surtout juste avant la marque.
-  return (espace > max * 0.6 ? coupe.slice(0, espace) : coupe).replace(/[\s:;,.–—-]+$/u, '')
+  let propre = (espace > max * 0.6 ? coupe.slice(0, espace) : coupe).replace(/[\s:;,.–—-]+$/u, '')
+  while (MOT_SUSPENDU.test(propre)) propre = propre.replace(MOT_SUSPENDU, '').replace(/[\s:;,.–—-]+$/u, '')
+  return propre
+}
+
+// Directive d'indexation des pages publiques : on autorise en plus la
+// grande vignette (Discover, résultats enrichis) et des extraits sans
+// limite de longueur, que Google réduit sinon à un format minimal.
+export const ROBOTS_INDEX = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+export const ROBOTS_NOINDEX = 'noindex, follow'
+
+const TZ = 'Europe/Paris'
+
+// Heure d'un événement à Paris (« 19h00 »), ou null quand elle n'est pas
+// encore annoncée : un événement saisi à minuit n'a pas d'horaire connu
+// (même convention que l'application, voir lib/formatDate.js).
+export function heureParis(iso) {
+  try {
+    const parts = new Intl.DateTimeFormat('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZone: TZ,
+    }).formatToParts(new Date(iso))
+    const h = parts.find((p) => p.type === 'hour').value
+    const m = parts.find((p) => p.type === 'minute').value
+    return h === '00' && m === '00' ? null : `${h}h${m}`
+  } catch {
+    return null
+  }
+}
+
+// « mercredi 28 octobre 2026 », dans le fuseau de Paris.
+export function jourParis(iso) {
+  try {
+    return new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: TZ,
+    }).format(new Date(iso))
+  } catch {
+    return ''
+  }
+}
+
+// « 2026-10-28 » à Paris : la forme qu'attend schema.org pour une date
+// sans heure.
+function dateIsoParis(iso) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ }).format(
+      new Date(iso)
+    )
+  } catch {
+    return null
+  }
+}
+
+// Prix stocké en centimes : « Gratuit », « 10 € », « 7,50 € ».
+export function prixEvenement(cents) {
+  if (cents == null) return null
+  if (cents === 0) return 'Gratuit'
+  const euros = cents / 100
+  return `${Number.isInteger(euros) ? euros : euros.toFixed(2).replace('.', ',')} €`
+}
+
+// Une phrase qui donne les faits d'un événement (quand, où, combien).
+// Elle complète les descriptions trop courtes : « Visite du musée du
+// Louvre en nocturne. », seule, ne dit ni la date ni le lieu à qui la lit
+// dans une page de résultats.
+export function phraseEvenement(ev) {
+  const heure = heureParis(ev.starts_at)
+  const jour = jourParis(ev.starts_at)
+  const lieu = [ev.location_name, ev.location_address].filter(Boolean).join(', ')
+  const prix = prixEvenement(ev.price_cents)
+  return [
+    jour && `Le ${jour}${heure ? ` à ${heure}` : ''}${lieu ? `, ${lieu}` : ''}.`,
+    prix && `Tarif : ${prix.toLowerCase() === 'gratuit' ? 'gratuit' : prix}.`,
+    "Organisé par le BDE de l'IAE Paris-Sorbonne.",
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
+// Un événement dont la description contient la phrase « Complet. » n'a
+// plus de places. La phrase seule, pas le mot : « un menu complet » ne
+// doit pas fermer la billetterie.
+export function estComplet(ev) {
+  return /(?:^|[.!?]\s+)complet\s*[.!]?\s*(?:$|\n)/im.test(String(ev?.description ?? ''))
 }
 
 // Les pages fixes. Chaque description est écrite pour être lue dans une
@@ -90,12 +183,16 @@ const PAGES = {
 // elles sont en noindex, et soumettre au robot une page qu'on lui
 // demande ensuite d'ignorer ne fait que remplir la Search Console
 // d'avertissements.
+//
+// `modifie` : date de la dernière vraie modification du contenu, pour le
+// <lastmod> du sitemap. Google ne se fie à ce champ que s'il est exact ;
+// l'accueil, l'agenda et les partenaires prennent celle de leurs données.
 export const ROUTES_STATIQUES = [
   { chemin: '/accueil', frequence: 'daily', priorite: '1.0' },
   { chemin: '/evenements', frequence: 'daily', priorite: '0.9' },
   { chemin: '/partenaires', frequence: 'weekly', priorite: '0.9' },
   { chemin: '/bars', frequence: 'monthly', priorite: '0.8' },
-  { chemin: '/a-propos', frequence: 'yearly', priorite: '0.6' },
+  { chemin: '/a-propos', frequence: 'yearly', priorite: '0.6', modifie: '2026-10-07' },
 ]
 
 // Les faits de l'association, tels qu'ils figurent dans les mentions
@@ -112,6 +209,7 @@ export const ASSOCIATION = {
   ville: 'Paris',
   email: 'bde.iaeparis@gmail.com',
   instagram: 'https://www.instagram.com/bde.iaeparissorbonne',
+  linkedin: 'https://www.linkedin.com/company/bde-iae-paris-sorbonne-business-school/',
   // Présentation du bureau en cours. À remplacer à chaque élection —
   // c'est tout l'intérêt de pointer un post plutôt que de recopier les
   // noms dans la page.
@@ -160,7 +258,10 @@ function organisation() {
       '@type': 'CollegeOrUniversity',
       name: ASSOCIATION.ecole,
     },
-    sameAs: [ASSOCIATION.instagram],
+    // Les profils officiels : c'est ce qui permet à Google de rattacher
+    // le site, la page LinkedIn et le compte Instagram à une seule et
+    // même organisation (panneau de connaissances, recherches de marque).
+    sameAs: [ASSOCIATION.instagram, ASSOCIATION.linkedin],
   }
 }
 
@@ -297,14 +398,21 @@ export function metaEvenement(evenement) {
   const avecDate = `${evenement.title}, ${quand}`
   const titreBase = quand && avecDate.length <= 40 ? avecDate : evenement.title
 
+  // Les descriptions saisies en base sont parfois d'une ligne (« Visite du
+  // musée du Louvre en nocturne. ») : trop maigre pour un extrait Google,
+  // et c'est ce genre de page que Google laisse « détectée, non indexée ».
+  // On complète alors avec la date, le lieu et le prix.
+  const texte = texteBrut(evenement.description)
+  const description = texte.length >= 110 ? texte : `${texte} ${phraseEvenement(evenement)}`.trim()
+
+  // Sans heure annoncée, schema.org accepte une date seule : mieux qu'un
+  // « 00:00 » que Google afficherait comme l'heure de début.
+  const debut = heureParis(evenement.starts_at) ? evenement.starts_at : dateIsoParis(evenement.starts_at)
+  const complet = estComplet(evenement)
+
   return {
     titre: avecMarque(titreBase),
-    description: resumer(
-      evenement.description ||
-        `${evenement.title}${quand ? `, le ${quand}` : ''}${
-          evenement.location_name ? ` à ${evenement.location_name}` : ''
-        }. Un événement du BDE de l'IAE Paris-Sorbonne.`
-    ),
+    description: resumer(description),
     canonical: `${SITE}${chemin}`,
     image: affiche ?? IMAGE_PARTAGE,
     typeOg: 'article',
@@ -322,23 +430,28 @@ export function metaEvenement(evenement) {
         {
           '@type': 'Event',
           name: evenement.title,
-          startDate: evenement.starts_at,
+          startDate: debut,
           ...(evenement.ends_at && { endDate: evenement.ends_at }),
           eventStatus: 'https://schema.org/EventScheduled',
           eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-          ...(evenement.description && { description: resumer(evenement.description, 500) }),
-          ...(affiche && { image: affiche }),
+          description: resumer(description, 500),
+          image: affiche ?? IMAGE_PARTAGE,
           ...(lieu && { location: lieu }),
           organizer: organisation(),
           url: `${SITE}${chemin}`,
+          inLanguage: 'fr-FR',
           // Le prix est stocké en centimes ; 0 est un tarif valable
           // (événement gratuit) et doit être annoncé comme tel, pas omis.
-          ...(evenement.price_cents != null && {
+          // Une billetterie sans prix connu est quand même déclarée : c'est
+          // le lien que Google affiche sous « Billets ».
+          ...((evenement.price_cents != null || evenement.ticket_url || complet) && {
             offers: {
               '@type': 'Offer',
-              price: (evenement.price_cents / 100).toFixed(2),
-              priceCurrency: 'EUR',
-              availability: 'https://schema.org/InStock',
+              ...(evenement.price_cents != null && {
+                price: (evenement.price_cents / 100).toFixed(2),
+                priceCurrency: 'EUR',
+              }),
+              availability: complet ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
               url: evenement.ticket_url || `${SITE}${chemin}`,
             },
           }),

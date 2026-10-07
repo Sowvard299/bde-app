@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import AddressLink from '../components/AddressLink'
+import { InstagramIcon, LinkedInIcon } from '../components/BrandIcons'
 import { ASSOCIATION } from '../lib/seo'
 
 // Page « Le BDE ».
@@ -103,8 +104,13 @@ export default function AProposPage() {
           <a href={`mailto:${ASSOCIATION.email}`} className="btn normal-case tracking-normal">
             {ASSOCIATION.email}
           </a>
-          <a href={ASSOCIATION.instagram} target="_blank" rel="noreferrer" className="btn-ghost">
+          <a href={ASSOCIATION.instagram} target="_blank" rel="noreferrer me" className="btn-ghost">
+            <InstagramIcon />
             Instagram
+          </a>
+          <a href={ASSOCIATION.linkedin} target="_blank" rel="noreferrer me" className="btn-ghost">
+            <LinkedInIcon />
+            LinkedIn
           </a>
         </div>
       </Bloc>
@@ -116,6 +122,10 @@ export default function AProposPage() {
           réseaux de l'association. Écrivez à{' '}
           <a href={`mailto:${ASSOCIATION.email}`} className={LIEN}>
             {ASSOCIATION.email}
+          </a>{' '}
+          ou contactez le BDE sur{' '}
+          <a href={ASSOCIATION.linkedin} target="_blank" rel="noreferrer" className={LIEN}>
+            LinkedIn
           </a>
           .
         </p>

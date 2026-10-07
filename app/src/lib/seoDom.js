@@ -1,4 +1,4 @@
-import { metaParDefaut, metaStatique } from './seo'
+import { ROBOTS_INDEX, ROBOTS_NOINDEX, metaParDefaut, metaStatique } from './seo'
 
 // Écriture des métadonnées dans le document courant.
 //
@@ -37,10 +37,12 @@ export function appliquerMeta(meta) {
   })
 
   // Une page qu'on ne veut pas voir dans l'index doit le dire, et
-  // surtout cesser de le dire quand on en repart : sans le retrait, une
+  // surtout cesser de le dire quand on en repart : sans ce changement, une
   // visite aux mentions légales laisserait le `noindex` sur toutes les
-  // pages visitées ensuite dans la même session.
-  poserBalise('meta[name="robots"]', 'content', meta.indexable ? null : 'noindex, follow', () => {
+  // pages visitées ensuite dans la même session. Même directive que celle
+  // posée par le Worker, pour que Google lise la même chose avant et
+  // après le démarrage de React.
+  poserBalise('meta[name="robots"]', 'content', meta.indexable ? ROBOTS_INDEX : ROBOTS_NOINDEX, () => {
     const el = document.createElement('meta')
     el.setAttribute('name', 'robots')
     return el
@@ -72,11 +74,12 @@ export function appliquerMeta(meta) {
     })
   }
 
-  // Le balisage JSON-LD est remplacé en bloc plutôt que modifié : il est
-  // marqué pour être retrouvé, et deux graphes concurrents dans la même
-  // page valent mieux zéro.
-  const ancien = document.head.querySelector('script[data-seo="jsonld"]')
-  if (ancien) ancien.remove()
+  // Le balisage JSON-LD est remplacé en bloc plutôt que modifié. Tous les
+  // blocs existants sont retirés, y compris celui écrit par le Worker dans
+  // le HTML : sans ça, Google voyait deux fois le même graphe une fois la
+  // page rendue (deux Organization, deux Event), ce que la Search Console
+  // signale comme données structurées en double.
+  for (const ancien of document.head.querySelectorAll('script[type="application/ld+json"]')) ancien.remove()
   if (meta.jsonLd) {
     const script = document.createElement('script')
     script.type = 'application/ld+json'

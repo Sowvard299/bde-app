@@ -3,6 +3,7 @@ import { fetchUpcomingEvents } from '../lib/events'
 import { getParisDateParts } from '../lib/formatDate'
 import { serieEvenement } from '../lib/series'
 import EventRow from '../components/EventRow'
+import EvenementsPasses from '../components/EvenementsPasses'
 import EventTimeline from '../components/EventTimeline'
 import MonthCalendar from '../components/MonthCalendar'
 import ViewToggle from '../components/ViewToggle'
@@ -131,6 +132,8 @@ export default function EvenementsPage() {
           </div>
         )}
       </div>
+
+      <EvenementsPasses />
     </main>
   )
 }

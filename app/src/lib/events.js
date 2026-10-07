@@ -24,6 +24,28 @@ export async function fetchUpcomingEvents() {
   }
 }
 
+// Les événements déjà passés de la saison, du plus récent au plus ancien.
+// Ils restent en ligne : leurs fiches montrent ce que le BDE organise, et
+// sans lien depuis l'agenda elles n'étaient plus reliées au reste du site
+// (Google les classait alors « détectées, non indexées »). En cas de
+// panne, la liste est simplement vide.
+export async function fetchPastEvents(limite = 30) {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, title, starts_at, location_name')
+      .eq('is_published', true)
+      .lt('starts_at', new Date().toISOString())
+      .order('starts_at', { ascending: false })
+      .limit(limite)
+    if (error) throw error
+    return data ?? []
+  } catch (err) {
+    console.error('Past events unavailable', err)
+    return []
+  }
+}
+
 export async function fetchEventById(id) {
   try {
     const { data, error } = await supabase

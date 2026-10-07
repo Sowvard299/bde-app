@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { fetchPartnerById } from '../lib/partners'
+import { fetchPartnerById, fetchPartners } from '../lib/partners'
 import { metaPartenaire } from '../lib/seo'
 import { useSeoDonnees } from '../hooks/useSeo'
 import { isLogoFile } from '../lib/media'
 import PartnerMiniMap from '../components/PartnerMiniMap'
 import RichText from '../components/RichText'
+import SectionHeading from '../components/SectionHeading'
 import AddressLink from '../components/AddressLink'
 import { nomAppCartes } from '../lib/maps'
 import { tailleMasthead } from '../lib/masthead'
@@ -47,6 +48,19 @@ export default function PartenaireDetailPage() {
   // Un logo peut pointer vers un hôte injoignable (quota, hors ligne, URL
   // périmée) : on retombe sur les initiales plutôt que sur l'icône cassée.
   const [logoFailed, setLogoFailed] = useState(false)
+
+  // Les autres partenaires, sous la fiche : chaque offre relie les autres,
+  // pour l'étudiant qui compare comme pour Google qui parcourt le site.
+  const [autres, setAutres] = useState([])
+  useEffect(() => {
+    let annule = false
+    fetchPartners()
+      .then((liste) => !annule && setAutres((liste ?? []).filter((p) => p.id !== id)))
+      .catch(() => {})
+    return () => {
+      annule = true
+    }
+  }, [id])
 
   useEffect(() => {
     setStatus('loading')
@@ -188,6 +202,37 @@ export default function PartenaireDetailPage() {
         <section className="mt-12 grid gap-6 border-t-2 border-ink pt-8 lg:mt-16 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-14">
           <h2 className="label text-[12px]">Détails de l'offre</h2>
           <RichText text={partner.description} className="max-w-2xl text-[17px]" />
+        </section>
+      )}
+
+      {autres.length > 0 && (
+        <section className="mt-16 lg:mt-24">
+          <SectionHeading
+            title="Autres partenaires"
+            action={
+              <Link to="/partenaires" className="label inline-flex items-center gap-1.5 px-1 py-1 transition hover:bg-accent-gold">
+                Tous <span aria-hidden="true">→</span>
+              </Link>
+            }
+          />
+          <ul className="grid sm:grid-cols-2 sm:gap-x-8">
+            {autres.map((p) => (
+              <li key={p.id} className="border-b-2 border-ink">
+                <Link
+                  to={`/partenaires/${p.id}`}
+                  className="group flex items-baseline justify-between gap-4 py-3 transition hover:bg-surface sm:px-2"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-display text-lg uppercase leading-tight">{p.name}</span>
+                    <span className="mt-0.5 block truncate text-sm text-fg-muted">{p.benefit}</span>
+                  </span>
+                  <span aria-hidden="true" className="text-fg-subtle transition group-hover:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

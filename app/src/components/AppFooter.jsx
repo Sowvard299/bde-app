@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ASSOCIATION } from '../lib/seo'
 import AddressLink from './AddressLink'
+import { InstagramIcon, LinkedInIcon } from './BrandIcons'
 import Marquee from './Marquee'
 import PhenixChrome from './PhenixChrome'
 import { RUBRIQUES } from './SiteHeader'
@@ -59,14 +60,24 @@ export default function AppFooter() {
                     {ASSOCIATION.email}
                   </a>
                 </li>
-                <li>
+                <li className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
                   <a
                     href={ASSOCIATION.instagram}
                     target="_blank"
-                    rel="noreferrer"
-                    className="transition hover:text-accent-gold"
+                    rel="noreferrer me"
+                    className="inline-flex items-center gap-2 transition hover:text-accent-gold"
                   >
+                    <InstagramIcon />
                     Instagram
+                  </a>
+                  <a
+                    href={ASSOCIATION.linkedin}
+                    target="_blank"
+                    rel="noreferrer me"
+                    className="inline-flex items-center gap-2 transition hover:text-accent-gold"
+                  >
+                    <LinkedInIcon />
+                    LinkedIn
                   </a>
                 </li>
               </ul>
