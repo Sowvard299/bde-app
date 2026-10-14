@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { getParisDateParts, horaireConnu } from '../lib/formatDate'
 
 function parts(msLeft) {
   const total = Math.max(0, Math.floor(msLeft / 1000))
@@ -10,9 +11,34 @@ function parts(msLeft) {
   }
 }
 
+// Écart en jours de calendrier (heure de Paris) entre aujourd'hui et la date.
+function joursRestants(isoString) {
+  const j = (p) => Date.UTC(p.year, p.month - 1, p.day)
+  return Math.round((j(getParisDateParts(isoString)) - j(getParisDateParts(new Date().toISOString()))) / 86400000)
+}
+
+// Heure pas encore annoncée (starts_at à 00h00) : un décompte vers minuit
+// serait faux, on donne seulement le jour.
+function JourSeulement({ target }) {
+  const n = joursRestants(target)
+  if (n < 0) return null
+  const texte = n === 0 ? "Aujourd'hui" : n === 1 ? 'Demain' : `Dans ${n} jours`
+  return (
+    <div className="border-2 border-ink bg-white px-3 py-2 text-center">
+      <span className="masthead block text-3xl">{texte}</span>
+      <span className="label mt-1 block text-[9.5px] text-fg-subtle">Heure communiquée prochainement</span>
+    </div>
+  )
+}
+
 // Compte à rebours vers une date. Isolé dans son propre composant pour que
 // le tic de chaque seconde ne redessine que ces quatre cases, pas la page.
 export default function Countdown({ target }) {
+  if (!horaireConnu(target)) return <JourSeulement target={target} />
+  return <Decompte target={target} />
+}
+
+function Decompte({ target }) {
   const targetMs = new Date(target).getTime()
   const [left, setLeft] = useState(() => targetMs - Date.now())
 
