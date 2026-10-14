@@ -1,4 +1,5 @@
 import PageHeader from '../components/PageHeader'
+import { rouvrirChoix } from '../lib/mesure'
 
 const LIEN = 'underline decoration-2 underline-offset-4 transition hover:bg-accent-gold'
 
@@ -54,8 +55,24 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="Cookies">
-        <p>Le site n'utilise ni cookies publicitaires ni outils d'analyse tiers.</p>
+      <Section title="Mesure d'audience et cookies">
+        <p>
+          Si vous l'acceptez sur le bandeau affiché à votre première visite, le site utilise Google
+          Analytics (Google Ireland Ltd) pour mesurer sa fréquentation : pages vues, durée de
+          visite, type d'appareil, pays et ville approximatifs. Ces mesures servent uniquement à
+          savoir quelles pages sont utiles aux étudiants. Aucun usage publicitaire.
+        </p>
+        <p>
+          Google Analytics dépose des cookies (_ga) conservés 13 mois au plus. Les données peuvent
+          être traitées par Google hors de l'Union européenne, dans le cadre du Data Privacy
+          Framework. Sans votre accord, aucun outil de mesure n'est chargé. Le site n'utilise
+          aucun cookie publicitaire.
+        </p>
+        <p>
+          <button type="button" onClick={rouvrirChoix} className={LIEN}>
+            Modifier mon choix
+          </button>
+        </p>
       </Section>
 
       <Section title="Vos droits">

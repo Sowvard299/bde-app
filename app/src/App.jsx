@@ -9,6 +9,7 @@ import StandalonePushPrompt from './components/StandalonePushPrompt'
 import InAppBrowserNotice from './components/InAppBrowserNotice'
 import IntroSplash from './components/IntroSplash'
 import RetourEnHaut from './components/RetourEnHaut'
+import BandeauMesure from './components/BandeauMesure'
 import { useSeoRoute } from './hooks/useSeo'
 
 // Tout le site partait dans un seul fichier de 213 Ko compressés, Leaflet
@@ -52,6 +53,7 @@ function App() {
         <InAppBrowserNotice />
         <WelcomeSheet />
         <StandalonePushPrompt />
+        <BandeauMesure />
         <Suspense fallback={<EnChargement />}>
           <Routes>
             <Route path="/" element={<Navigate to="/accueil" replace />} />
