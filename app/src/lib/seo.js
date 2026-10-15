@@ -13,6 +13,7 @@
 
 import { formatEuro, prixRepere } from './bars'
 import { decouperAdresse, indexBars, resumeHappyHour, trierParPrix } from './barsSeo'
+import { faqArrondissement, faqBars, faqJsonLd } from './geo'
 
 export const SITE = 'https://bdeiaeparis.com'
 export const NOM_SITE = 'BDE IAE Paris Sorbonne'
@@ -135,6 +136,40 @@ export function estComplet(ev) {
   return /(?:^|[.!?]\s+)complet\s*[.!]?\s*(?:$|\n)/im.test(String(ev?.description ?? ''))
 }
 
+// Questions fréquentes des pages fixes, affichées sur la page et balisées
+// en FAQPage. Que des faits déjà publiés sur le site (mentions légales,
+// page Le BDE, page Partenaires) : une réponse inventée serait reprise
+// telle quelle par les assistants.
+export const FAQ_ASSOCIATION = [
+  {
+    q: "Qu'est-ce que le BDE IAE Paris Sorbonne ?",
+    r: "C'est le Nouveau Bureau des Étudiants de l'IAE Paris (NBDE IAE Paris), l'association étudiante de l'IAE Paris-Sorbonne Business School. Association loi 1901 fondée en 2008, son siège est au 11-15 rue Ponscarme, 75013 Paris.",
+  },
+  {
+    q: "Que fait le BDE de l'IAE Paris-Sorbonne ?",
+    r: "Il organise la vie étudiante de l'école : soirées (Sorbonne Night), week-end d'intégration, sport (Sorbonne Running, escalade, matchs), sorties culturelles et jeux. Il négocie aussi des réductions pour les étudiants auprès de commerces parisiens.",
+  },
+  {
+    q: 'Où trouver les prochains événements du BDE ?',
+    r: "Sur bdeiaeparis.com/evenements, avec la date, le lieu, le tarif et la billetterie de chaque événement. Les changements de dernière minute passent par le compte Instagram @bde.iaeparissorbonne.",
+  },
+  {
+    q: 'Comment contacter le BDE IAE Paris Sorbonne ?',
+    r: 'Par e-mail à bde.iaeparis@gmail.com, sur Instagram (@bde.iaeparissorbonne) ou sur LinkedIn (BDE IAE Paris Sorbonne Business School).',
+  },
+]
+
+export const FAQ_PARTENAIRES = [
+  {
+    q: 'Comment profiter des réductions du BDE IAE Paris Sorbonne ?',
+    r: "Il suffit de présenter sa carte étudiante de l'IAE Paris-Sorbonne chez le partenaire. Aucune inscription n'est nécessaire.",
+  },
+  {
+    q: 'Quels types de réductions étudiantes le BDE propose-t-il ?',
+    r: 'Des réductions négociées dans la restauration, le sport, la culture et la beauté, à Paris. Le détail de chaque avantage figure sur la fiche du partenaire.',
+  },
+]
+
 // Les pages fixes. Chaque description est écrite pour être lue dans une
 // page de résultats Google : ce qu'on trouve, où, et pourquoi cliquer —
 // pas une paraphrase du titre.
@@ -150,6 +185,7 @@ const PAGES = {
       "Toutes les soirées, sorties et activités du BDE de l'IAE Paris-Sorbonne : dates, lieux, tarifs et billetterie. WEI, soirées étudiantes, running, escalade.",
   },
   '/partenaires': {
+    faq: FAQ_PARTENAIRES,
     titre: 'Réductions étudiantes à Paris | BDE IAE Paris Sorbonne',
     description:
       "Les réductions négociées par le BDE de l'IAE Paris-Sorbonne : restauration, sport, culture, beauté. La carte étudiante suffit, sans inscription.",
@@ -164,6 +200,7 @@ const PAGES = {
       "193 bars de Paris repérés par le BDE IAE Paris-Sorbonne : pinte dès 2,50 €, happy hours en cours en temps réel, 43 bars insolites. Carte et filtres par prix.",
   },
   '/a-propos': {
+    faq: FAQ_ASSOCIATION,
     titre: 'Qui sommes-nous | BDE IAE Paris Sorbonne',
     description:
       "Le Nouveau Bureau des Étudiants de l'IAE Paris, association loi 1901 fondée en 2008 : qui nous sommes, ce que nous organisons pour les étudiants de l'IAE Paris-Sorbonne, et comment nous joindre.",
@@ -361,6 +398,7 @@ export function metaStatique(chemin) {
               { nom: 'Accueil', chemin: '/accueil' },
               { nom: page.titre, chemin: normalise },
             ]),
+            ...(page.faq ? [faqJsonLd(page.faq)] : []),
           ],
     },
   }
@@ -637,8 +675,19 @@ export function metaArrondissementBars(groupe, lieux, maj) {
           { nom: 'Bars', chemin: '/bars' },
           { nom: `Bars ${groupe.libelle}`, chemin },
         ]),
+        ...[faqJsonLd(faqArrondissement(groupe, lieux, maj))].filter(Boolean),
       ],
     },
+  }
+}
+
+// Page /bars une fois les données chargées : la même que metaStatique,
+// plus les questions fréquentes calculées sur le relevé.
+export function metaBarsPage(lieux, maj) {
+  const base = metaStatique('/bars')
+  return {
+    ...base,
+    jsonLd: { ...base.jsonLd, '@graph': [...base.jsonLd['@graph'], faqJsonLd(faqBars(lieux, maj))] },
   }
 }
 

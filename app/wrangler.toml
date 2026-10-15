@@ -39,6 +39,9 @@ run_worker_first = [
   "!/*.ico",
   "!/*.woff2",
   "!/*.otf",
-  "!/*.txt",
+  # Les .txt statiques passent directement ; /llms-full.txt, lui, est
+  # produit par le Worker et ne doit donc pas figurer ici.
+  "!/robots.txt",
+  "!/llms.txt",
   "!/*.webmanifest",
 ]

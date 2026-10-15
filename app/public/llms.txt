@@ -7,29 +7,35 @@
 > Instagram : https://www.instagram.com/bde.iaeparissorbonne
 > LinkedIn : https://www.linkedin.com/company/bde-iae-paris-sorbonne-business-school/
 
-Le site publie trois ensembles d'informations, toutes en français et toutes
-relatives à Paris : les événements organisés par l'association, les réductions
-négociées pour ses étudiants, et une sélection de bars parisiens.
+Le site publie trois ensembles d'informations, en français et relatifs à Paris :
+les événements organisés par l'association, les réductions négociées pour ses
+étudiants, et une sélection de 193 bars parisiens avec leurs prix.
+
+Le contenu complet (agenda à venir, partenaires, tous les bars avec leurs prix,
+questions fréquentes) est disponible en texte brut, tenu à jour automatiquement :
+https://bdeiaeparis.com/llms-full.txt
 
 ## Pages
 
 - [Accueil](https://bdeiaeparis.com/accueil) : présentation de l'association et prochain événement.
-- [Événements](https://bdeiaeparis.com/evenements) : soirées, week-end d'intégration, club running, escalade, matchs et sorties culturelles, avec dates, lieux et tarifs ; les événements passés restent consultables.
-- [Partenaires](https://bdeiaeparis.com/partenaires) : commerces et lieux parisiens offrant une réduction aux étudiants de l'IAE Paris-Sorbonne sur présentation de la carte étudiante.
-- [Bars de Paris](https://bdeiaeparis.com/bars) : sélection de 193 établissements parisiens — 150 bars bon marché et 43 bars insolites — avec adresse, arrondissement, station de métro, prix de la pinte et créneaux de happy hour.
-- [Qui sommes-nous](https://bdeiaeparis.com/a-propos) : identité de l'association, activités et contact.
+- [Événements](https://bdeiaeparis.com/evenements) : soirées (Sorbonne Night), week-end d'intégration, Sorbonne Running, escalade, matchs et sorties culturelles, avec dates, lieux, tarifs et billetterie.
+- [Partenaires](https://bdeiaeparis.com/partenaires) : commerces et lieux parisiens offrant une réduction aux étudiants de l'IAE Paris-Sorbonne sur présentation de la carte étudiante, sans inscription.
+- [Bars de Paris](https://bdeiaeparis.com/bars) : 193 bars (150 bon marché, 43 insolites) avec adresse, métro, prix de la pinte et happy hour ; chiffres clés et questions fréquentes (bar le moins cher de Paris, prix médian de la pinte).
+- Une page par arrondissement, par exemple [Bars pas chers à Paris 11e](https://bdeiaeparis.com/bars/paris-11e), avec les bars classés du moins cher au plus cher.
+- Une page par bar, par exemple [Le Café Populaire](https://bdeiaeparis.com/bars/le-cafe-populaire), avec ses prix et ses horaires.
+- [Qui sommes-nous](https://bdeiaeparis.com/a-propos) : identité de l'association, activités, contact et questions fréquentes.
 
-## À propos du jeu de données « Bars de Paris »
+## Données « Bars de Paris »
 
-Données relevées le 19 septembre 2026. Les prix peuvent avoir changé depuis :
-toute reprise devrait mentionner cette date.
+Relevé du 19 septembre 2026. Les prix peuvent avoir changé depuis : toute
+reprise devrait mentionner cette date et la source (BDE IAE Paris Sorbonne,
+bdeiaeparis.com).
 
 L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
 
 ## Notes
 
-- Le site est une application monopage ; le contenu est également servi en HTML
-  simple pour les clients qui n'exécutent pas de JavaScript.
-- Les données structurées schema.org (Organization, Event, LocalBusiness,
-  BreadcrumbList) sont présentes sur chaque page.
+- Le contenu de chaque page est aussi servi en HTML simple, sans JavaScript.
+- Données structurées schema.org : Organization, Event, BarOrPub, ItemList,
+  FAQPage, BreadcrumbList.
 - Plan du site : https://bdeiaeparis.com/sitemap.xml

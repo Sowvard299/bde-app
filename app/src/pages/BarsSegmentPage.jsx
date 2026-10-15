@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { TYPES, formatEuro, loadBars, prixRepere, tarifMaintenant } from '../lib/bars'
 import { indexBars, trierParPrix } from '../lib/barsSeo'
 import { metaArrondissementBars, metaBar } from '../lib/seo'
+import { faqArrondissement, resumeBar } from '../lib/geo'
+import QuestionsFrequentes from '../components/QuestionsFrequentes'
 import { useSeoDonnees } from '../hooks/useSeo'
 import { tailleMasthead } from '../lib/masthead'
 import AddressLink from '../components/AddressLink'
@@ -108,6 +110,8 @@ function FicheBar({ lieu, donnees }) {
             </p>
           </div>
 
+          <p className="text-lg leading-snug">{resumeBar(lieu, donnees.lieux, donnees.maj)}</p>
+
           <BarDetails lieu={lieu} libelles={donnees.libelles} maintenant={new Date()} maj={maj} avecNotes={false} />
         </div>
 
@@ -174,6 +178,8 @@ function BarsArrondissement({ groupe, donnees }) {
           La carte des {donnees.lieux.length} bars
         </Link>
       </div>
+
+      <QuestionsFrequentes items={faqArrondissement(groupe, donnees.lieux, donnees.maj)} className="mt-14" />
 
       <section className="mt-14 border-t-2 border-ink pt-8">
         <h2 className="label text-[12px]">Autres arrondissements</h2>

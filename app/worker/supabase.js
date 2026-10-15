@@ -89,3 +89,12 @@ export async function listerPartenairesComplets() {
     'partners?select=id,name,benefit,address&is_published=eq.true&order=name'
   )
 }
+
+// Pour llms-full.txt : les événements à venir avec tout ce qu'un
+// assistant peut citer (lieu, tarif, billetterie, programme).
+export async function listerEvenementsAVenir() {
+  const depuis = new Date(Date.now() - 6 * 3600 * 1000).toISOString()
+  return lireTable(
+    `events?select=id,title,starts_at,ends_at,location_name,location_address,price_cents,ticket_url,description&is_published=eq.true&starts_at=gte.${encodeURIComponent(depuis)}&order=starts_at.asc`
+  )
+}

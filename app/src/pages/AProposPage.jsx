@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import AddressLink from '../components/AddressLink'
 import { InstagramIcon, LinkedInIcon } from '../components/BrandIcons'
-import { ASSOCIATION } from '../lib/seo'
+import { ASSOCIATION, FAQ_ASSOCIATION } from '../lib/seo'
+import QuestionsFrequentes from '../components/QuestionsFrequentes'
 
 // Page « Le BDE ».
 //
@@ -130,6 +131,8 @@ export default function AProposPage() {
           .
         </p>
       </Bloc>
+
+      <QuestionsFrequentes items={FAQ_ASSOCIATION} className="mt-14 pb-16 lg:pb-24" />
     </main>
   )
 }

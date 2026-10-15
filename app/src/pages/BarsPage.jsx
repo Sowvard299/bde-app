@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import BarsContent from '../components/BarsContent'
 import PageHeader from '../components/PageHeader'
 import { loadBars } from '../lib/bars'
 import { indexBars } from '../lib/barsSeo'
+import { chiffresBars, faqBars } from '../lib/geo'
+import { metaBarsPage } from '../lib/seo'
+import { useSeoDonnees } from '../hooks/useSeo'
+import ChiffresCles from '../components/ChiffresCles'
+import QuestionsFrequentes from '../components/QuestionsFrequentes'
 
 // Un lien par arrondissement : pour qui cherche « bar pas cher Paris 11e »,
 // et pour que Google découvre les pages d'arrondissement et de bar.
-function ParArrondissement() {
-  const [groupes, setGroupes] = useState([])
-  useEffect(() => {
-    loadBars()
-      .then((d) => setGroupes(indexBars(d.lieux).arrondissements.filter((a) => a.aSaPage)))
-      .catch(() => {})
-  }, [])
-  if (!groupes.length) return null
+function ParArrondissement({ donnees }) {
+  if (!donnees) return null
+  const groupes = indexBars(donnees.lieux).arrondissements.filter((a) => a.aSaPage)
   return (
     <section className="mt-14 border-t-2 border-ink pt-8">
       <h2 className="label text-[12px]">Bars par arrondissement</h2>
@@ -32,6 +32,14 @@ function ParArrondissement() {
 }
 
 export default function BarsPage() {
+  const [donnees, setDonnees] = useState(null)
+  useEffect(() => {
+    loadBars()
+      .then(setDonnees)
+      .catch(() => {})
+  }, [])
+  useSeoDonnees(useMemo(() => (donnees ? metaBarsPage(donnees.lieux, donnees.maj) : null), [donnees]))
+
   return (
     <main className="mx-auto w-full max-w-[1400px] px-5 pb-16 lg:px-10 lg:pb-24">
       <PageHeader
@@ -41,7 +49,9 @@ export default function BarsPage() {
       <div className="pt-6 lg:pt-8">
         <BarsContent />
       </div>
-      <ParArrondissement />
+      {donnees && <ChiffresCles items={chiffresBars(donnees.lieux, donnees.maj)} />}
+      <ParArrondissement donnees={donnees} />
+      {donnees && <QuestionsFrequentes items={faqBars(donnees.lieux, donnees.maj)} className="mt-14" />}
     </main>
   )
 }

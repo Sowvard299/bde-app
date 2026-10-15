@@ -6,6 +6,7 @@ import {
   SITE,
   metaArrondissementBars,
   metaBar,
+  metaBarsPage,
   metaEvenement,
   metaParDefaut,
   metaPartenaire,
@@ -19,6 +20,7 @@ import {
   listerPourSitemap,
 } from './supabase'
 import { rendu } from './rendu'
+import { llmsComplet } from './llms'
 import { BUILD_ID } from './env.generated'
 import donneesBars from '../src/data/bars-paris.json'
 import { indexBars } from '../src/lib/barsSeo'
@@ -75,6 +77,12 @@ async function router(request, env, ctx) {
     return sitemap(ctx)
   }
 
+  if (url.pathname === '/llms-full.txt') {
+    return enCacheUneHeure(ctx, 'llms-full.txt', async () =>
+      new Response(await llmsComplet(), { headers: { 'content-type': 'text/plain; charset=utf-8' } })
+    )
+  }
+
   const reponse = await env.ASSETS.fetch(request)
 
   // Seules les pages HTML nous intéressent. Les images, scripts et
@@ -106,7 +114,10 @@ async function pagePour(chemin) {
       donnees = { evenements, partenaires }
     }
 
-    return { meta: statique, corps: rendu(normalise, donnees), introuvable: false }
+    // /bars : le balisage porte en plus les questions fréquentes calculées
+    // sur le relevé, comme la page une fois chargée.
+    const meta = normalise === '/bars' ? metaBarsPage(donneesBars.lieux, donneesBars.maj) : statique
+    return { meta, corps: rendu(normalise, donnees), introuvable: false }
   }
 
   const idEvenement = normalise.match(/^\/evenements\/([^/]+)$/)
@@ -256,6 +267,20 @@ function echapper(valeur) {
     /[&<>"']/g,
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   )
+}
+
+// Réponse produite à la demande puis gardée une heure au bord, comme le
+// sitemap : de quoi ne pas réinterroger Supabase à chaque passage de robot.
+async function enCacheUneHeure(ctx, nom, produire) {
+  const cache = caches.default
+  const cle = new Request(`${SITE}/${nom}?v=${encodeURIComponent(BUILD_ID)}`)
+  const enCache = await cache.match(cle)
+  if (enCache) return enCache
+  const brute = await produire()
+  const reponse = new Response(brute.body, brute)
+  reponse.headers.set('cache-control', 'public, max-age=3600')
+  ctx.waitUntil(cache.put(cle, reponse.clone()))
+  return reponse
 }
 
 // Le sitemap est produit à la demande plutôt que déposé dans les fichiers

@@ -14,6 +14,14 @@ import { serieEvenement } from '../src/lib/series'
 // la page dira une fois React demarre.
 import { formatEuro, prixRepere, tarifMaintenant } from '../src/lib/bars'
 import { cheminBar, indexBars, resumeHappyHour, trierParPrix } from '../src/lib/barsSeo'
+import { chiffresBars, faqArrondissement, faqBars, resumeBar } from '../src/lib/geo'
+import { FAQ_ASSOCIATION, FAQ_PARTENAIRES } from '../src/lib/seo'
+
+// Questions fréquentes : mêmes textes que la page (components/QuestionsFrequentes).
+function questions(items) {
+  if (!items?.length) return ''
+  return `<h2>Questions fréquentes</h2>${items.map(({ q, r }) => `<h3>${e(q)}</h3><p>${e(r)}</p>`).join('')}`
+}
 
 const LIGNES_PRIX = [
   ['pinte_hh', 'Pinte en happy hour'],
@@ -146,7 +154,8 @@ pour les étudiants.</p>
 <h2>Contact</h2>
 <p>Courriel : <a href="mailto:${e(ASSOCIATION.email)}">${e(ASSOCIATION.email)}</a><br>
 Instagram : <a href="${e(ASSOCIATION.instagram)}" rel="noopener me">@bde.iaeparissorbonne</a><br>
-LinkedIn : <a href="${e(ASSOCIATION.linkedin)}" rel="noopener me">BDE IAE Paris Sorbonne Business School</a></p>`)
+LinkedIn : <a href="${e(ASSOCIATION.linkedin)}" rel="noopener me">BDE IAE Paris Sorbonne Business School</a></p>
+${questions(FAQ_ASSOCIATION)}`)
 }
 
 function evenements(liste) {
@@ -224,7 +233,8 @@ function partenaires(liste) {
   return page(`<h1>Réductions étudiantes à Paris</h1>
 <p>Les partenariats négociés par le ${e(NOM_SITE)} pour ses étudiants. La carte étudiante suffit,
 aucune inscription n'est nécessaire.</p>
-<ul>${items}</ul>`)
+<ul>${items}</ul>
+${questions(FAQ_PARTENAIRES)}`)
 }
 
 function partenaire(pa, liste) {
@@ -269,12 +279,15 @@ function bars() {
 <p>${donneesBars.lieux.length} adresses à Paris, relevées par le ${e(NOM_SITE)}.
 Données du ${e(donneesBars.maj.split('-').reverse().join('/'))} : prix pouvant avoir changé.
 ${e(donneesBars.avertissement)}</p>
+<h2>En chiffres</h2>
+<ul>${chiffresBars(donneesBars.lieux, donneesBars.maj).map((c) => `<li><strong>${e(c.valeur)}</strong> : ${e(c.libelle)}</li>`).join('')}</ul>
 <h2>Par arrondissement</h2>
 <ul>${arrondissements.map((a) => `<li><a href="/bars/${e(a.slug)}">Bars ${e(a.libelle)}</a> <span class="m">(${a.lieux.length})</span></li>`).join('')}</ul>
 <h2>Bars pas chers (${pasChers.length})</h2>
 <ul>${pasChers.map(ligne).join('')}</ul>
 <h2>Bars insolites (${insolites.length})</h2>
-<ul>${insolites.map(ligne).join('')}</ul>`)
+<ul>${insolites.map(ligne).join('')}</ul>
+${questions(faqBars(donneesBars.lieux, donneesBars.maj))}`)
 }
 
 // Fiche d'un bar. Les notes de recherche internes du relevé (« notes »)
@@ -291,6 +304,7 @@ function barFiche(lieu) {
 
   return page(`<p class="m"><a href="/bars">Bars</a>${groupe?.aSaPage ? ` · <a href="/bars/${e(groupe.slug)}">${e(libelle)}</a>` : ''}</p>
 <h1>${e(lieu.nom)}</h1>
+<p><strong>${e(resumeBar(lieu, donneesBars.lieux, donneesBars.maj))}</strong></p>
 <p>${e(lieu.type === 'insolite' ? 'Bar insolite' : 'Bar pas cher')}, ${e(lieu.adresse)}${lieu.metro ? `, métro ${e(lieu.metro)}` : ''}.</p>
 ${lieu.concept ? `<p>${e(lieu.concept)}</p>` : ''}
 ${lieu.bon_plan ? `<p><strong>${e(lieu.bon_plan)}</strong></p>` : ''}
@@ -316,6 +330,7 @@ Prix relevés le ${e(dateReleve())}, pouvant avoir changé.</p>
 <div class="m">${[l.metro ? `métro ${l.metro}` : null, p ? `${formatEuro(p.valeur)} ${p.libelle}` : null, hh].filter(Boolean).map(e).join(' · ')}</div></li>`
     })
     .join('')}</ul>
+${questions(faqArrondissement(groupe, donneesBars.lieux, donneesBars.maj))}
 <p><a href="/bars">La carte des ${donneesBars.lieux.length} bars de Paris</a></p>
 <h2>Autres arrondissements</h2>
 <ul>${autres.map((a) => `<li><a href="/bars/${e(a.slug)}">Bars ${e(a.libelle)}</a> <span class="m">(${a.lieux.length})</span></li>`).join('')}</ul>
