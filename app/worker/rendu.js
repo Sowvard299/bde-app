@@ -13,6 +13,18 @@ import { serieEvenement } from '../src/lib/series'
 // hours dans l'application : le rendu serveur doit dire exactement ce que
 // la page dira une fois React demarre.
 import { formatEuro, prixRepere, tarifMaintenant } from '../src/lib/bars'
+import { cheminBar, indexBars, resumeHappyHour, trierParPrix } from '../src/lib/barsSeo'
+
+const LIGNES_PRIX = [
+  ['pinte_hh', 'Pinte en happy hour'],
+  ['pinte_hors_hh', 'Pinte hors happy hour'],
+  ['cocktail', 'Cocktail'],
+  ['verre_vin', 'Verre de vin'],
+  ['ticket_entree', 'Entrée'],
+  ['litre_meilleur', 'Le litre, au meilleur tarif'],
+  ['tournee_20_pers', 'Tournée pour 20 personnes'],
+]
+const dateReleve = () => donneesBars.maj.split('-').reverse().join('/')
 
 // Contenu HTML des pages, écrit par le serveur.
 //
@@ -244,9 +256,11 @@ function bars() {
       .filter(Boolean)
       .join(' · ')
 
-    return `<li><strong>${e(lieu.nom)}</strong>, ${e(lieu.adresse)}
+    return `<li><a href="${e(cheminBar(donneesBars.lieux, lieu))}"><strong>${e(lieu.nom)}</strong></a>, ${e(lieu.adresse)}
 <div class="m">${e(details)}${lieu.concept ? ` · ${e(lieu.concept)}` : ''}</div></li>`
   }
+
+  const arrondissements = indexBars(donneesBars.lieux).arrondissements.filter((a) => a.aSaPage)
 
   const pasChers = donneesBars.lieux.filter((l) => l.type === 'bar')
   const insolites = donneesBars.lieux.filter((l) => l.type === 'insolite')
@@ -255,10 +269,57 @@ function bars() {
 <p>${donneesBars.lieux.length} adresses à Paris, relevées par le ${e(NOM_SITE)}.
 Données du ${e(donneesBars.maj.split('-').reverse().join('/'))} : prix pouvant avoir changé.
 ${e(donneesBars.avertissement)}</p>
+<h2>Par arrondissement</h2>
+<ul>${arrondissements.map((a) => `<li><a href="/bars/${e(a.slug)}">Bars ${e(a.libelle)}</a> <span class="m">(${a.lieux.length})</span></li>`).join('')}</ul>
 <h2>Bars pas chers (${pasChers.length})</h2>
 <ul>${pasChers.map(ligne).join('')}</ul>
 <h2>Bars insolites (${insolites.length})</h2>
 <ul>${insolites.map(ligne).join('')}</ul>`)
+}
+
+// Fiche d'un bar. Les notes de recherche internes du relevé (« notes »)
+// ne sont pas reprises : elles ne s'adressent pas au public.
+function barFiche(lieu) {
+  const { arrondissements } = indexBars(donneesBars.lieux)
+  const groupe = arrondissements.find((a) => a.arr === lieu.arrondissement)
+  const prix = LIGNES_PRIX.filter(([cle]) => lieu.prix?.[cle] != null)
+  const hh = resumeHappyHour(lieu)
+  const voisins = trierParPrix(groupe?.lieux ?? [], prixRepere)
+    .filter((l) => l.id !== lieu.id)
+    .slice(0, 6)
+  const libelle = groupe?.libelle ?? lieu.arrondissement
+
+  return page(`<p class="m"><a href="/bars">Bars</a>${groupe?.aSaPage ? ` · <a href="/bars/${e(groupe.slug)}">${e(libelle)}</a>` : ''}</p>
+<h1>${e(lieu.nom)}</h1>
+<p>${e(lieu.type === 'insolite' ? 'Bar insolite' : 'Bar pas cher')}, ${e(lieu.adresse)}${lieu.metro ? `, métro ${e(lieu.metro)}` : ''}.</p>
+${lieu.concept ? `<p>${e(lieu.concept)}</p>` : ''}
+${lieu.bon_plan ? `<p><strong>${e(lieu.bon_plan)}</strong></p>` : ''}
+${prix.length ? `<h2>Prix</h2><ul>${prix.map(([cle, label]) => `<li>${e(label)} : ${e(formatEuro(lieu.prix[cle]))}</li>`).join('')}</ul>` : ''}
+${hh || lieu.horaires ? `<h2>Horaires</h2>${lieu.horaires ? `<p>${e(lieu.horaires)}</p>` : ''}${hh ? `<p>${e(hh.charAt(0).toUpperCase() + hh.slice(1))}.</p>` : ''}` : ''}
+<p class="m">Prix relevés par le ${e(NOM_SITE)} le ${e(dateReleve())}, pouvant avoir changé. ${e(donneesBars.avertissement)}</p>
+<p><a href="/bars?lieu=${e(lieu.id)}">Voir sur la carte des bars</a></p>
+${voisins.length ? `<h2>Autres bars à ${e(libelle)}</h2><ul>${voisins.map((l) => `<li><a href="${e(cheminBar(donneesBars.lieux, l))}">${e(l.nom)}</a><div class="m">${e(l.adresse)}${prixRepere(l) ? ` · ${e(formatEuro(prixRepere(l).valeur))} ${e(prixRepere(l).libelle)}` : ''}</div></li>`).join('')}</ul>` : ''}`)
+}
+
+function barsArrondissement(groupe) {
+  const tries = trierParPrix(groupe.lieux, prixRepere)
+  const autres = indexBars(donneesBars.lieux).arrondissements.filter((a) => a.aSaPage && a.slug !== groupe.slug)
+  return page(`<p class="m"><a href="/bars">Bars</a></p>
+<h1>Bars pas chers à ${e(groupe.libelle)}</h1>
+<p>Les ${groupe.lieux.length} bars repérés par le ${e(NOM_SITE)} à ${e(groupe.libelle)}, du moins cher au plus cher.
+Prix relevés le ${e(dateReleve())}, pouvant avoir changé.</p>
+<ul>${tries
+    .map((l) => {
+      const p = prixRepere(l)
+      const hh = resumeHappyHour(l)
+      return `<li><a href="${e(cheminBar(donneesBars.lieux, l))}"><strong>${e(l.nom)}</strong></a>, ${e(l.adresse)}
+<div class="m">${[l.metro ? `métro ${l.metro}` : null, p ? `${formatEuro(p.valeur)} ${p.libelle}` : null, hh].filter(Boolean).map(e).join(' · ')}</div></li>`
+    })
+    .join('')}</ul>
+<p><a href="/bars">La carte des ${donneesBars.lieux.length} bars de Paris</a></p>
+<h2>Autres arrondissements</h2>
+<ul>${autres.map((a) => `<li><a href="/bars/${e(a.slug)}">Bars ${e(a.libelle)}</a> <span class="m">(${a.lieux.length})</span></li>`).join('')}</ul>
+<p class="m">${e(donneesBars.avertissement)}</p>`)
 }
 
 function simple(titre, texte) {
@@ -297,6 +358,8 @@ export function rendu(chemin, donnees = {}) {
     default:
       if (donnees.evenement) return evenement(donnees.evenement, donnees.evenements)
       if (donnees.partenaire) return partenaire(donnees.partenaire, donnees.partenaires)
+      if (donnees.bar) return barFiche(donnees.bar)
+      if (donnees.groupe) return barsArrondissement(donnees.groupe)
       return null
   }
 }

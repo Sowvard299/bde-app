@@ -4,6 +4,8 @@ import {
   ROBOTS_NOINDEX,
   ROUTES_STATIQUES,
   SITE,
+  metaArrondissementBars,
+  metaBar,
   metaEvenement,
   metaParDefaut,
   metaPartenaire,
@@ -19,6 +21,7 @@ import {
 import { rendu } from './rendu'
 import { BUILD_ID } from './env.generated'
 import donneesBars from '../src/data/bars-paris.json'
+import { indexBars } from '../src/lib/barsSeo'
 
 // Worker placé devant les fichiers statiques du site.
 //
@@ -113,6 +116,25 @@ async function pagePour(chemin) {
     const [evenement, evenements] = await Promise.all([lireEvenement(idEvenement[1]), listerEvenementsComplets()])
     if (evenement) {
       return { meta: metaEvenement(evenement), corps: rendu(normalise, { evenement, evenements }), introuvable: false }
+    }
+    return introuvablePage()
+  }
+
+  // Une page par bar et une par arrondissement, sous /bars/.
+  const segmentBar = normalise.match(/^\/bars\/([^/]+)$/)
+  if (segmentBar) {
+    const { parSlug, arrParSlug } = indexBars(donneesBars.lieux)
+    const groupe = arrParSlug.get(segmentBar[1])
+    if (groupe) {
+      return {
+        meta: metaArrondissementBars(groupe, donneesBars.lieux, donneesBars.maj),
+        corps: rendu(normalise, { groupe }),
+        introuvable: false,
+      }
+    }
+    const lieu = parSlug.get(segmentBar[1])
+    if (lieu) {
+      return { meta: metaBar(lieu, donneesBars.lieux, donneesBars.maj), corps: rendu(normalise, { bar: lieu }), introuvable: false }
     }
     return introuvablePage()
   }
@@ -284,6 +306,17 @@ async function sitemap(ctx) {
       modifie: p.updated_at,
       frequence: 'monthly',
       priorite: '0.6',
+    })),
+    // Pages des arrondissements puis des bars : leur contenu change avec
+    // le relevé des prix, d'où sa date.
+    ...indexBars(donneesBars.lieux)
+      .arrondissements.filter((a) => a.aSaPage)
+      .map((a) => ({ url: `${SITE}/bars/${a.slug}`, modifie: donneesBars.maj, frequence: 'monthly', priorite: '0.7' })),
+    ...[...indexBars(donneesBars.lieux).slugDe.values()].map((slug) => ({
+      url: `${SITE}/bars/${slug}`,
+      modifie: donneesBars.maj,
+      frequence: 'monthly',
+      priorite: '0.5',
     })),
   ]
 

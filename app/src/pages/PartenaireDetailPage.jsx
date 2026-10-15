@@ -10,6 +10,7 @@ import SectionHeading from '../components/SectionHeading'
 import AddressLink from '../components/AddressLink'
 import { nomAppCartes } from '../lib/maps'
 import { tailleMasthead } from '../lib/masthead'
+import { suivre } from '../lib/mesure'
 
 const SHELL = 'mx-auto w-full max-w-6xl px-5 lg:px-10'
 
@@ -153,6 +154,7 @@ export default function PartenaireDetailPage() {
               target="_blank"
               rel="noreferrer"
               className="btn mt-8 self-start"
+              onClick={() => suivre('clic_site_partenaire', { partenaire: partner.name })}
             >
               {libelleSite(partner.website_url)}
               <span aria-hidden="true">↗</span>
@@ -187,6 +189,7 @@ export default function PartenaireDetailPage() {
                 <Info label="Téléphone">
                   <a
                     href={`tel:${partner.phone.replace(/\s+/g, '')}`}
+                    onClick={() => suivre('clic_telephone_partenaire', { partenaire: partner.name })}
                     className="underline decoration-2 underline-offset-4 transition hover:bg-accent-gold"
                   >
                     {partner.phone}

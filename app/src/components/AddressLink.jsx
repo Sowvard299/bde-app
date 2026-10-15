@@ -1,4 +1,5 @@
 import { lienCarte } from '../lib/maps'
+import { suivre } from '../lib/mesure'
 
 // Une adresse qui s'ouvre dans l'application de cartes.
 //
@@ -13,6 +14,7 @@ export default function AddressLink({ nom, adresse, lat, lon, className = '', ch
       href={lienCarte({ nom, adresse, lat, lon })}
       target="_blank"
       rel="noreferrer"
+      onClick={() => suivre('clic_itineraire', { lieu: nom || adresse })}
       className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
     >
       {children ?? adresse}

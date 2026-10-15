@@ -7,9 +7,14 @@
 //
 // GA4 compte lui-même les changements de page d'une application React
 // (mesure améliorée, « historique du navigateur », active par défaut).
+// Les actions qui comptent (billetterie, agenda, partenaires, appli…)
+// partent par suivre(), et seulement avec l'accord.
+
+import { isStandalone } from './platform'
 
 const ID = 'G-QCSSBRK0S9'
 const CLE = 'bde-mesure-audience'
+const CLE_PREMIER_LANCEMENT = 'bde-appli-premier-lancement'
 const DUREE_MS = 13 * 30 * 24 * 3600 * 1000
 
 const abonnes = new Set()
@@ -43,6 +48,12 @@ function chargerGA() {
     window.dataLayer.push(arguments)
   }
   window.gtag('js', new Date())
+  // Appli installée ou simple onglet : joint à chaque événement, pour
+  // compter les vrais utilisateurs de l'appli (dimension « mode_affichage »
+  // à déclarer dans Analytics pour l'afficher dans les rapports).
+  const mode = isStandalone() ? 'appli' : 'navigateur'
+  window.gtag('set', { mode_affichage: mode })
+  window.gtag('set', 'user_properties', { mode_affichage: mode })
   window.gtag('config', ID)
   const s = document.createElement('script')
   s.async = true
@@ -63,6 +74,27 @@ function effacerCookiesGA() {
   }
 }
 
+// Envoie une action à Analytics. Sans accord, ne fait rien.
+export function suivre(nom, parametres = {}) {
+  if (lireChoix() !== 'oui' || typeof window === 'undefined' || typeof window.gtag !== 'function') return
+  window.gtag('event', nom, parametres)
+}
+
+// Première ouverture de l'appli installée (depuis l'icône). Seul moyen de
+// compter les installations sur iPhone, où Safari ne prévient pas le site.
+// Le repère n'est posé qu'une fois l'événement réellement envoyé : si
+// l'accord arrive plus tard, l'installation est comptée à ce moment-là.
+function verifierPremierLancement() {
+  if (!isStandalone()) return
+  try {
+    if (localStorage.getItem(CLE_PREMIER_LANCEMENT)) return
+    suivre('premier_lancement_appli')
+    localStorage.setItem(CLE_PREMIER_LANCEMENT, String(Date.now()))
+  } catch {
+    // stockage bloqué : on ne compte pas, plutôt que de compter à chaque ouverture
+  }
+}
+
 export function enregistrerChoix(choix) {
   memoire = choix
   try {
@@ -72,8 +104,10 @@ export function enregistrerChoix(choix) {
   }
   // Drapeau officiel de GA pour couper l'envoi si le choix change en cours de visite.
   window[`ga-disable-${ID}`] = choix !== 'oui'
-  if (choix === 'oui') chargerGA()
-  else effacerCookiesGA()
+  if (choix === 'oui') {
+    chargerGA()
+    verifierPremierLancement()
+  } else effacerCookiesGA()
   prevenir()
 }
 
@@ -89,6 +123,14 @@ export function rouvrirChoix() {
 }
 
 // Au démarrage : recharge GA si l'accord a déjà été donné.
+let initialise = false
 export function initialiserMesure() {
-  if (lireChoix() === 'oui') chargerGA()
+  if (initialise) return
+  initialise = true
+  if (lireChoix() === 'oui') {
+    chargerGA()
+    verifierPremierLancement()
+  }
+  // Installation acceptée depuis le navigateur (Android, ordinateur).
+  window.addEventListener('appinstalled', () => suivre('installation_appli'))
 }

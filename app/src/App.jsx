@@ -25,6 +25,7 @@ const EvenementDetailPage = lazy(() => import('./pages/EvenementDetailPage'))
 const PartenairesPage = lazy(() => import('./pages/PartenairesPage'))
 const PartenaireDetailPage = lazy(() => import('./pages/PartenaireDetailPage'))
 const BarsPage = lazy(() => import('./pages/BarsPage'))
+const BarsSegmentPage = lazy(() => import('./pages/BarsSegmentPage'))
 const AProposPage = lazy(() => import('./pages/AProposPage'))
 const MentionsLegalesPage = lazy(() => import('./pages/MentionsLegalesPage'))
 const ConfidentialitePage = lazy(() => import('./pages/ConfidentialitePage'))
@@ -63,6 +64,7 @@ function App() {
             <Route path="/partenaires" element={<PartenairesPage />} />
             <Route path="/partenaires/:id" element={<PartenaireDetailPage />} />
             <Route path="/bars" element={<BarsPage />} />
+            <Route path="/bars/:segment" element={<BarsSegmentPage />} />
             <Route path="/a-propos" element={<AProposPage />} />
             <Route path="/carte-bde" element={<Navigate to="/partenaires" replace />} />
             <Route path="/mentions-legales" element={<MentionsLegalesPage />} />

@@ -11,6 +11,9 @@
 // `import.meta.env`. Que des fonctions pures. L'écriture dans le document
 // vit dans seoDom.js, l'injection serveur dans worker/index.js.
 
+import { formatEuro, prixRepere } from './bars'
+import { decouperAdresse, indexBars, resumeHappyHour, trierParPrix } from './barsSeo'
+
 export const SITE = 'https://bdeiaeparis.com'
 export const NOM_SITE = 'BDE IAE Paris Sorbonne'
 export const IMAGE_PARTAGE = `${SITE}/og-image.png`
@@ -514,6 +517,125 @@ export function metaPartenaire(partenaire) {
           { nom: 'Accueil', chemin: '/accueil' },
           { nom: 'Partenaires', chemin: '/partenaires' },
           { nom: partenaire.name, chemin },
+        ]),
+      ],
+    },
+  }
+}
+
+// « 2026-09-19 » -> « 19/09/2026 ».
+function dateCourte(iso) {
+  return String(iso ?? '').split('-').reverse().join('/')
+}
+
+// Fiche d'un bar (/bars/<nom>). Vise les recherches sur le nom du bar et
+// sur « prix pinte <bar> » / « happy hour <bar> ».
+export function metaBar(lieu, lieux, maj) {
+  if (!lieu) return null
+  const { slugDe, arrondissements } = indexBars(lieux)
+  const chemin = `/bars/${slugDe.get(lieu.id)}`
+  const groupe = arrondissements.find((a) => a.arr === lieu.arrondissement)
+  const libelle = groupe?.libelle ?? lieu.arrondissement
+  const prix = prixRepere(lieu)
+  const hh = resumeHappyHour(lieu)
+  const adresse = decouperAdresse(lieu.adresse)
+
+  const base =
+    lieu.type === 'insolite'
+      ? `${lieu.nom}, bar insolite à ${libelle}`
+      : prix
+        ? `${lieu.nom}, ${libelle} : ${prix.libelle.replace(/^la /, '')} à ${formatEuro(prix.valeur)}`
+        : `${lieu.nom}, bar pas cher à ${libelle}`
+
+  const phrases = [
+    `${lieu.nom}, ${lieu.adresse}${lieu.metro ? ` (métro ${lieu.metro})` : ''}.`,
+    lieu.concept ? `${lieu.concept.replace(/\.$/, '')}.` : null,
+    prix ? `${formatEuro(prix.valeur)} ${prix.libelle}.` : null,
+    hh ? `${hh.charAt(0).toUpperCase()}${hh.slice(1)}.` : null,
+    `Prix relevés par le BDE IAE Paris Sorbonne le ${dateCourte(maj)}.`,
+  ].filter(Boolean)
+
+  return {
+    titre: tronquer(base, 62),
+    description: resumer(phrases.join(' ')),
+    canonical: `${SITE}${chemin}`,
+    image: IMAGE_PARTAGE,
+    indexable: true,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'BarOrPub',
+          name: lieu.nom,
+          url: `${SITE}${chemin}`,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: adresse.rue,
+            ...(adresse.codePostal && { postalCode: adresse.codePostal }),
+            addressLocality: adresse.ville,
+            addressCountry: 'FR',
+          },
+          ...(lieu.lat != null && {
+            geo: { '@type': 'GeoCoordinates', latitude: lieu.lat, longitude: lieu.lon },
+          }),
+          ...(lieu.concept && { description: lieu.concept }),
+        },
+        filAriane([
+          { nom: 'Accueil', chemin: '/accueil' },
+          { nom: 'Bars', chemin: '/bars' },
+          ...(groupe?.aSaPage ? [{ nom: `Bars ${libelle}`, chemin: `/bars/${groupe.slug}` }] : []),
+          { nom: lieu.nom, chemin },
+        ]),
+      ],
+    },
+  }
+}
+
+// Page d'un arrondissement (/bars/paris-11e) : « bar pas cher Paris 11e ».
+export function metaArrondissementBars(groupe, lieux, maj) {
+  if (!groupe) return null
+  const chemin = `/bars/${groupe.slug}`
+  const tries = trierParPrix(groupe.lieux, prixRepere)
+  const pinteMin = groupe.lieux
+    .map((l) => l.prix?.pinte_hh ?? l.prix?.pinte_hors_hh)
+    .filter((v) => v != null)
+    .sort((a, b) => a - b)[0]
+  const insolites = groupe.lieux.filter((l) => l.type === 'insolite').length
+  const n = groupe.lieux.length
+
+  const description = [
+    `Les ${n} bars repérés par le BDE IAE Paris Sorbonne à ${groupe.libelle}${insolites ? `, dont ${insolites} insolite${insolites > 1 ? 's' : ''}` : ''}.`,
+    pinteMin != null ? `Pinte dès ${formatEuro(pinteMin)}.` : null,
+    'Happy hours, métro le plus proche et carte.',
+    `Prix relevés le ${dateCourte(maj)}.`,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  return {
+    titre: avecMarque(`Bars pas chers à ${groupe.libelle} : ${n} adresses`),
+    description: resumer(description),
+    canonical: `${SITE}${chemin}`,
+    image: IMAGE_PARTAGE,
+    indexable: true,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ItemList',
+          name: `Bars pas chers à ${groupe.libelle}`,
+          numberOfItems: n,
+          itemListElement: tries.map((l, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: l.nom,
+            url: `${SITE}/bars/${indexBars(lieux).slugDe.get(l.id)}`,
+          })),
+        },
+        filAriane([
+          { nom: 'Accueil', chemin: '/accueil' },
+          { nom: 'Bars', chemin: '/bars' },
+          { nom: `Bars ${groupe.libelle}`, chemin },
         ]),
       ],
     },

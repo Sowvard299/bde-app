@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { OneSignal, initOneSignal } from '../lib/onesignal'
 import { canReceivePush } from '../lib/platform'
+import { suivre } from '../lib/mesure'
 
 function envSupport() {
   return {
@@ -100,6 +101,7 @@ export function usePushSubscription() {
       throw new Error('Permission accordée mais aucun abonnement créé (id vide)')
     }
 
+    suivre('abonnement_notifications')
     return id
   }, [])
 

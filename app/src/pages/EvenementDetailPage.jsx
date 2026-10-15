@@ -16,6 +16,7 @@ import RichText from '../components/RichText'
 import EventRow from '../components/EventRow'
 import SectionHeading from '../components/SectionHeading'
 import { InstagramIcon, WhatsAppIcon } from '../components/BrandIcons'
+import { suivre } from '../lib/mesure'
 
 const DATE_LONGUE = new Intl.DateTimeFormat('fr-FR', {
   weekday: 'long',
@@ -145,14 +146,33 @@ export default function EvenementDetailPage() {
           {!passe && (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {event.ticket_url && (
-                <a href={event.ticket_url} target="_blank" rel="noreferrer" className="btn">
+                <a
+                  href={event.ticket_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn"
+                  onClick={() => suivre('clic_billetterie', { evenement: event.title, serie: serie.label })}
+                >
                   Réserver ma place
                 </a>
               )}
-              <a href={buildGoogleCalendarUrl(event)} target="_blank" rel="noreferrer" className="btn-ghost">
+              <a
+                href={buildGoogleCalendarUrl(event)}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-ghost"
+                onClick={() => suivre('ajout_agenda', { evenement: event.title, methode: 'google' })}
+              >
                 Google Agenda
               </a>
-              <button type="button" onClick={() => downloadEventIcs(event)} className="btn-ghost">
+              <button
+                type="button"
+                onClick={() => {
+                  suivre('ajout_agenda', { evenement: event.title, methode: 'ics' })
+                  downloadEventIcs(event)
+                }}
+                className="btn-ghost"
+              >
                 Apple / Outlook
               </button>
             </div>
@@ -201,13 +221,25 @@ export default function EvenementDetailPage() {
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               {event.whatsapp_url && (
-                <a href={event.whatsapp_url} target="_blank" rel="noreferrer" className="btn-ghost">
+                <a
+                  href={event.whatsapp_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-ghost"
+                  onClick={() => suivre('clic_reseau', { reseau: 'whatsapp', evenement: event.title })}
+                >
                   <WhatsAppIcon />
                   WhatsApp
                 </a>
               )}
               {event.instagram_url && (
-                <a href={event.instagram_url} target="_blank" rel="noreferrer" className="btn-ghost">
+                <a
+                  href={event.instagram_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-ghost"
+                  onClick={() => suivre('clic_reseau', { reseau: 'instagram', evenement: event.title })}
+                >
                   <InstagramIcon />
                   Instagram
                 </a>

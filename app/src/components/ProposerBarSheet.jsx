@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { MAX_PHOTOS, envoyerSuggestion } from '../lib/barSuggestions'
 import { useSheetComportement } from '../hooks/useSheetComportement'
 import ViewToggle from './ViewToggle'
+import { suivre } from '../lib/mesure'
 
 function CameraIcon() {
   return (
@@ -79,6 +80,7 @@ export default function ProposerBarSheet({ onClose }) {
         piege,
       })
       setStatut('succes')
+      suivre('proposition_bar')
     } catch (err) {
       console.error('Envoi de la proposition impossible', err)
       setErreur("L'envoi n'a pas abouti. Vérifiez la connexion et réessayez.")

@@ -14,6 +14,8 @@ import BarsFilters from './BarsFilters'
 import BarsMap from './BarsMap'
 import ProposerBarSheet from './ProposerBarSheet'
 import ViewToggle from './ViewToggle'
+import { suivre } from '../lib/mesure'
+import { cheminBar } from '../lib/barsSeo'
 
 // Le seul état de la page qui vieillit tout seul, c'est l'heure : un
 // happy hour qui se termine doit éteindre sa pastille verte sans qu'on
@@ -137,6 +139,13 @@ export default function BarsContent() {
     }
   }, [donnees, selectionId, position])
 
+  // Quels bars intéressent vraiment : une ouverture de fiche par bar.
+  const nomSelection = selection?.lieu.nom
+  const arrSelection = selection?.lieu.arrondissement
+  useEffect(() => {
+    if (nomSelection) suivre('ouverture_bar', { lieu: nomSelection, arrondissement: arrSelection })
+  }, [nomSelection, arrSelection])
+
   const nbFiltresActifs = compterFiltresActifs(filtres)
   // « 2026-09-19 » se lit « 19/09/2026 ».
   const dateMaj = donnees?.maj.split('-').reverse().join('/')
@@ -230,6 +239,7 @@ export default function BarsContent() {
           libelles={donnees.libelles}
           maintenant={maintenant}
           maj={dateMaj}
+          lienFiche={cheminBar(donnees.lieux, selection.lieu)}
         />
       )}
 
